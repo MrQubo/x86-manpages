@@ -12,8 +12,8 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "MrQubo";
     repo = "x86-manpages";
-    rev = "1dc2e43e1e4d18032ac8b61087417e2f07c97554";
-    hash = "sha256-Rswm1X1H1V/snMXYmQtVObsjM7/4noNVug1hvTdAyxg=";
+    rev = "b7268dbb901c78ed4da1b773821f026ef6717ae6";
+    hash = "sha256-DoLfQ1cEi2OS8GMj8Z00y7d3oLlJV4izBsmYcCSgm+Q=";
   };
 
   installPhase = ''
