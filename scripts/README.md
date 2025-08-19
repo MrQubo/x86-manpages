@@ -4,6 +4,7 @@ You need:
 
 - https://github.com/threedaymonk/htmlbeautifier.git
 - https://github.com/kangax/html-minifier.git
+- https://github.com/cpuguy83/go-md2man.git
 - https://github.com/jgm/pandoc.git
 - GNU sed
 - Some other GNU tools
