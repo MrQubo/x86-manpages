@@ -1,41 +1,38 @@
+'\" t
 .nh
-.TH "X86-MOVLPS" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-MOVLPS" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-MOVLPS - MOVE LOW PACKED SINGLE-PRECISION FLOATING-POINT VALUES
+MOVLPS - MOVE LOW PACKED SINGLE PRECISION FLOATING-POINT VALUES
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp / En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 NP 0F 12 /r MOVLPS xmm1, m64	A	V/V	SSE	T{
-Move two packed single\-precision floating\-point values from m64 to low quadword of xmm1.
+Move two packed single precision floating-point values from m64 to low quadword of xmm1.
 T}
 T{
 VEX.128.0F.WIG 12 /r VMOVLPS xmm2, xmm1, m64
-T}
-	B	V/V	AVX	T{
-Merge two packed single\-precision floating\-point values from m64 and the high quadword of xmm1.
+T}	B	V/V	AVX	T{
+Merge two packed single precision floating-point values from m64 and the high quadword of xmm1.
 T}
 T{
 EVEX.128.0F.W0 12 /r VMOVLPS xmm2, xmm1, m64
-T}
-	D	V/V	AVX512F	T{
-Merge two packed single\-precision floating\-point values from m64 and the high quadword of xmm1.
+T}	D	V/V	AVX512F	T{
+Merge two packed single precision floating-point values from m64 and the high quadword of xmm1.
 T}
 0F 13/r MOVLPS m64, xmm1	C	V/V	SSE	T{
-Move two packed single\-precision floating\-point values from low quadword of xmm1 to m64.
+Move two packed single precision floating-point values from low quadword of xmm1 to m64.
 T}
 T{
 VEX.128.0F.WIG 13/r VMOVLPS m64, xmm1
-T}
-	C	V/V	AVX	T{
-Move two packed single\-precision floating\-point values from low quadword of xmm1 to m64.
+T}	C	V/V	AVX	T{
+Move two packed single precision floating-point values from low quadword of xmm1 to m64.
 T}
 T{
 EVEX.128.0F.W0 13/r VMOVLPS m64, xmm1
-T}
-	E	V/V	AVX512F	T{
-Move two packed single\-precision floating\-point values from low quadword of xmm1 to m64.
+T}	E	V/V	AVX512F	T{
+Move two packed single precision floating-point values from low quadword of xmm1 to m64.
 T}
 .TE
 
@@ -44,46 +41,45 @@ T}
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	NA	ModRM:reg (r, w)	ModRM:r/m (r)	NA	NA
-B	NA	ModRM:reg (w)	VEX.vvvv	ModRM:r/m (r)	NA
-C	NA	ModRM:r/m (w)	ModRM:reg (r)	NA	NA
-D	Tuple2	ModRM:reg (w)	EVEX.vvvv	ModRM:r/m (r)	NA
-E	Tuple2	ModRM:r/m (w)	ModRM:reg (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (r, w)	ModRM:r/m (r)	N/A	N/A
+B	N/A	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	N/A
+C	N/A	ModRM:r/m (w)	ModRM:reg (r)	N/A	N/A
+D	Tuple2	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	N/A
+E	Tuple2	ModRM:r/m (w)	ModRM:reg (r)	N/A	N/A
 .TE
 
-.SS Description
-.PP
+.SH DESCRIPTION
 This instruction cannot be used for register to register or memory to
 memory moves.
 
 .PP
-128\-bit Legacy SSE load:
+128-bit Legacy SSE load:
 
 .PP
-Moves two packed single\-precision floating\-point values from the source
-64\-bit memory operand and stores them in the low 64\-bits of the
+Moves two packed single precision floating-point values from the source
+64-bit memory operand and stores them in the low 64-bits of the
 destination XMM register. The upper 64bits of the XMM register are
-preserved. Bits (MAXVL\-1:128) of the corresponding destination register
+preserved. Bits (MAXVL-1:128) of the corresponding destination register
 are preserved.
 
 .PP
-VEX.128 \& EVEX encoded load:
+VEX.128 & EVEX encoded load:
 
 .PP
-Loads two packed single\-precision floating\-point values from the source
-64\-bit memory operand (the third operand), merges them with the upper
-64\-bits of the first source operand (the second operand), and stores
-them in the low 128\-bits of the destination register (the first
-operand). Bits (MAXVL\-1:128) of the corresponding destination register
+Loads two packed single precision floating-point values from the source
+64-bit memory operand (the third operand), merges them with the upper
+64-bits of the first source operand (the second operand), and stores
+them in the low 128-bits of the destination register (the first
+operand). Bits (MAXVL-1:128) of the corresponding destination register
 are zeroed.
 
 .PP
-128\-bit store:
+128-bit store:
 
 .PP
-Loads two packed single\-precision floating\-point values from the low
-64\-bits of the XMM register source (second operand) to the 64\-bit memory
+Loads two packed single precision floating-point values from the low
+64-bits of the XMM register source (second operand) to the 64-bit memory
 location (first operand).
 
 .PP
@@ -97,83 +93,69 @@ If VMOVLPS is encoded with VEX.L or EVEX.L’L= 1, an attempt to execute
 the instruction encoded with VEX.L or EVEX.L’L= 1 will cause an #UD
 exception.
 
-.SS Operation
-.SS MOVLPS (128\-bit Legacy SSE load)
+.SH OPERATION
+.SS MOVLPS (128-BIT LEGACY SSE LOAD)  href="movlps.html#movlps--128-bit-legacy-sse-load-"
+class="anchor">¶
+
+.EX
+DEST[63:0] := SRC[63:0]
+DEST[MAXVL-1:64] (Unmodified)
+.EE
+
+.SS VMOVLPS (VEX.128 & EVEX ENCODED LOAD)  href="movlps.html#vmovlps--vex-128---evex-encoded-load-"
+class="anchor">¶
+
+.EX
+DEST[63:0] := SRC2[63:0]
+DEST[127:64] := SRC1[127:64]
+DEST[MAXVL-1:128] := 0
+.EE
+
+.SS VMOVLPS (STORE)
+.EX
+DEST[63:0] := SRC[63:0]
+.EE
+
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="movlps.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
+
+.EX
+MOVLPS __m128 _mm_loadl_pi ( __m128 a, __m64 *p)
+
+MOVLPS void _mm_storel_pi (__m64 *p, __m128 a)
+.EE
+
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="movlps.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
+None.
 
-.nf
-DEST[63:0] ← SRC[63:0]
-DEST[MAXVL\-1:64] (Unmodified)
-
-.fi
-.RE
-
-.SS VMOVLPS (VEX.128 \& EVEX encoded load)
-.PP
-.RS
-
-.nf
-DEST[63:0] ← SRC2[63:0]
-DEST[127:64] ← SRC1[127:64]
-DEST[MAXVL\-1:128] ← 0
-
-.fi
-.RE
-
-.SS VMOVLPS (store)
-.PP
-.RS
-
-.nf
-DEST[63:0] ← SRC[63:0]
-
-.fi
-.RE
-
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
-
-.nf
-MOVLPS \_\_m128 \_mm\_loadl\_pi ( \_\_m128 a, \_\_m64 *p)
-
-MOVLPS void \_mm\_storel\_pi (\_\_m64 *p, \_\_m128 a)
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-None
-
-.SS Other Exceptions
-.PP
-Non\-EVEX\-encoded instruction, see Exceptions Type 5; additionally
+.SH OTHER EXCEPTIONS
+Non-EVEX-encoded instruction, see Table
+2-22, “Type 5 Class Exception Conditions,” additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If VEX.L = 1.
 .TE
 
 .PP
-EVEX\-encoded instruction, see Exceptions Type E9NF.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+EVEX-encoded instruction, see Table
+2-57, “Type E9NF Class Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

@@ -1,14 +1,15 @@
+'\" t
 .nh
-.TH "X86-NEG" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-NEG" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 NEG - TWO'S COMPLEMENT NEGATION
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
 F6 /3	NEG r/m8	M	Valid	Valid	Two's complement negate r/m8.
-REX + F6 /3	NEG r/m8*	M	Valid	N.E.	Two's complement negate r/m8.
+REX + F6 /3	NEG r/m81	M	Valid	N.E.	Two's complement negate r/m8.
 F7 /3	NEG r/m16	M	Valid	Valid	Two's complement negate r/m16.
 F7 /3	NEG r/m32	M	Valid	Valid	Two's complement negate r/m32.
 REX.W + F7 /3	NEG r/m64	M	Valid	N.E.	Two's complement negate r/m64.
@@ -18,8 +19,8 @@ REX.W + F7 /3	NEG r/m64	M	Valid	N.E.	Two's complement negate r/m64.
 .RS
 
 .PP
-*
-In64\-bitmode,r/m8cannotbeencodedtoaccessthefollowingbyteregistersifaREXprefixisused:AH,BH,CH,DH.
+1\&. In 64-bit mode, r/m8 can not be encoded to access the following
+byte registers if a REX prefix is used: AH, BH, CH, DH.
 
 .RE
 
@@ -28,15 +29,14 @@ In64\-bitmode,r/m8cannotbeencodedtoaccessthefollowingbyteregistersifaREXprefixis
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-M	ModRM:r/m (r, w)	NA	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+M	ModRM:r/m (r, w)	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Replaces the value of operand (the destination operand) with its two's
 complement. (This operation is equivalent to subtracting the operand
-from 0.) The destination operand is located in a general\-purpose
+from 0.) The destination operand is located in a general-purpose
 register or a memory location.
 
 .PP
@@ -44,38 +44,33 @@ This instruction can be used with a LOCK prefix to allow the instruction
 to be executed atomically.
 
 .PP
-In 64\-bit mode, the instruction’s default operation size is 32 bits.
+In 64-bit mode, the instruction’s default operation size is 32 bits.
 Using a REX prefix in the form of REX.R permits access to additional
-registers (R8\-R15). Using a REX prefix in the form of REX.W promotes
+registers (R8-R15). Using a REX prefix in the form of REX.W promotes
 operation to 64 bits. See the summary chart at the beginning of this
 section for encoding data and limits.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
+.EX
 IF DEST = 0
-    THEN CF ← 0;
-    ELSE CF ← 1;
+    THEN CF := 0;
+    ELSE CF := 1;
 FI;
-DEST ← [– (DEST)]
-
-.fi
-.RE
+DEST := [– (DEST)]
+.EE
 
 .SH FLAGS AFFECTED
-.PP
-The CF flag set to 0 if the source operand is 0; otherwise it is set to
-1. The OF, SF, ZF, AF, and PF flags are set according to the result.
+The CF flag set to 0 if the source operand is 0; otherwise it is set
+to 1. The OF, SF, ZF, AF, and PF flags are set according to the result.
 
 .SH PROTECTED MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
-If the destination is located in a non\-writable segment.
+If the destination is located in a non-writable segment.
 T}
 	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
@@ -86,7 +81,7 @@ T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
@@ -95,11 +90,12 @@ If the LOCK prefix is used but the destination is not a memory operand.
 T}
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
@@ -111,18 +107,19 @@ If the LOCK prefix is used but the destination is not a memory operand.
 T}
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made.
 T}
@@ -132,21 +129,21 @@ T}
 .TE
 
 .SH COMPATIBILITY MODE EXCEPTIONS
-.PP
 Same as for protected mode exceptions.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
-If a memory address referencing the SS segment is in a non\-canonical form.
+If a memory address referencing the SS segment is in a non-canonical form.
 T}
 #GP(0)	T{
-If the memory address is in a non\-canonical form.
+If the memory address is in a non-canonical form.
 T}
-#PF(fault\-code)	For a page fault.
+#PF(fault-code)	For a page fault.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
@@ -155,19 +152,15 @@ If the LOCK prefix is used but the destination is not a memory operand.
 T}
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

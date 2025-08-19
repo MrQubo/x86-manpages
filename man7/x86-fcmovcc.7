@@ -1,12 +1,16 @@
+'\" t
 .nh
-.TH "X86-FCMOVCC" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-FCMOVCC" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 FCMOVCC - FLOATING-POINT CONDITIONAL MOVE
+\fBOpcode1\fP
+
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode*\fR	\fB\fCInstruction\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode*\fR	\fB\fCDescription\fR
+\fB\fP	\fB\fP	\fB\fP	\fB\fP	\fB\fP
+	\fBInstruction\fP	\fB64-Bit Mode\fP	\fBCompat/ 1\fP \fBLeg Mode\fP	\fBDescription\fP
 DA C0+i	FCMOVB ST(0), ST(i)	Valid	Valid	Move if below (CF=1).
 DA C8+i	FCMOVE ST(0), ST(i)	Valid	Valid	Move if equal (ZF=1).
 DA D0+i	FCMOVBE ST(0), ST(i)	Valid	Valid	T{
@@ -25,72 +29,74 @@ DB D8+i	FCMOVNU ST(0), ST(i)	Valid	Valid	Move if not unordered (PF=0).
 .RS
 
 .PP
-* SeeIA\-32ArchitectureCompatibilitysectionbelow.
+1\&. See IA-32 Architecture Compatibility section below.
 
 .RE
 
 .SH DESCRIPTION
-.PP
 Tests the status flags in the EFLAGS register and moves the source
 operand (second operand) to the destination operand (first operand) if
 the given test condition is true. The condition for each mnemonic os
-given in the Description column above and in Chapter 8 in the Intel® 64
-and IA\-32 Architectures Software Developer’s Manual, Volume 1. The
-source operand is always in the ST(i) register and the destination
-operand is always ST(0).
+given in the Description column above and in Chapter 8 in the
+Intel® 64 and IA-32 Architectures Software Developer’s
+Manual, Volume 1. The source operand is always in the ST(i) register and
+the destination operand is always ST(0).
 
 .PP
-The FCMOVcc instructions are useful for optimizing small IF
+The FCMOV\fIcc\fP instructions are useful for optimizing small IF
 constructions. They also help eliminate branching overhead for IF
 operations and the possibility of branch mispredictions by the
 processor.
 
 .PP
-A processor may not support the FCMOVcc instructions are supported.
+A processor may not support the FCMOV\fIcc\fP instructions. Software can
+check if the FCMOV\fIcc\fP instructions are supported by checking the
+processor’s feature information with the CPUID instruction (see
+“COMISS—Compare Scalar Ordered Single Precision Floating-Point Values
+and Set EFLAGS” in this chapter). If both the CMOV and FPU feature bits
+are set, the FCMOV\fIcc\fP instructions are supported.
 
 .PP
-This instruction’s operation is the same in non\-64\-bit modes and 64\-bit
+This instruction’s operation is the same in non-64-bit modes and 64-bit
 mode.
 
-.SH IA\-32 ARCHITECTURE COMPATIBILITY
+.SH IA-32 ARCHITECTURE COMPATIBILITY  href="fcmovcc.html#ia-32-architecture-compatibility"
+class="anchor">¶
+
 .PP
-The FCMOVcc instructions were introduced to the IA\-32 Architecture in
-the P6 family processors and are not available in earlier IA\-32
+The FCMOVcc instructions were introduced to the IA-32 Architecture in
+the P6 family processors and are not available in earlier IA-32
 processors.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
+.EX
 IF condition TRUE
-    THEN ST(0) ← ST(i);
+    THEN ST(0) := ST(i);
 FI;
-
-.fi
-.RE
+.EE
 
 .SH FPU FLAGS AFFECTED
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 C1	T{
 Set to 0 if stack underflow occurred.
 T}
 C0, C2, C3	Undefined.
 .TE
 
-.SH FLOATING\-POINT EXCEPTIONS
+.SH FLOATING-POINT EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #IS	Stack underflow occurred.
 .TE
 
 .SH INTEGER FLAGS AFFECTED
-.PP
 None.
 
 .SH PROTECTED MODE EXCEPTIONS
@@ -98,47 +104,35 @@ None.
 allbox;
 l l 
 l l .
-#NM	CR0.EM
-[
-bit 2
-]
- or CR0.TS
-[
-bit 3
-]
- = 1.
+\fB\fP	\fB\fP
+#NM	CR0.EM[bit 2] or CR0.TS[bit 3] = 1.
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS
+Same exceptions as in protected mode.
+
+.SH VIRTUAL-8086 MODE EXCEPTIONS
+Same exceptions as in protected mode.
+
+.SH COMPATIBILITY MODE EXCEPTIONS  href="fcmovcc.html#compatibility-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in protected mode.
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
-.PP
+.SH 64-BIT MODE EXCEPTIONS
 Same exceptions as in protected mode.
-
-.SH COMPATIBILITY MODE EXCEPTIONS
-.PP
-Same exceptions as in protected mode.
-
-.SH 64\-BIT MODE EXCEPTIONS
-.PP
-Same exceptions as in protected mode.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

@@ -1,26 +1,27 @@
+'\" t
 .nh
-.TH "X86-MOVZX" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-MOVZX" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 MOVZX - MOVE WITH ZERO-EXTEND
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
 0F B6 /r	MOVZX r16, r/m8	RM	Valid	Valid	T{
-Move byte to word with zero\-extension.
+Move byte to word with zero-extension.
 T}
 0F B6 /r	MOVZX r32, r/m8	RM	Valid	Valid	T{
-Move byte to doubleword, zero\-extension.
+Move byte to doubleword, zero-extension.
 T}
-REX.W + 0F B6 /r	MOVZX r64, r/m8*	RM	Valid	N.E.	T{
-Move byte to quadword, zero\-extension.
+REX.W + 0F B6 /r	MOVZX r64, r/m81	RM	Valid	N.E.	T{
+Move byte to quadword, zero-extension.
 T}
 0F B7 /r	MOVZX r32, r/m16	RM	Valid	Valid	T{
-Move word to doubleword, zero\-extension.
+Move word to doubleword, zero-extension.
 T}
 REX.W + 0F B7 /r	MOVZX r64, r/m16	RM	Valid	N.E.	T{
-Move word to quadword, zero\-extension.
+Move word to quadword, zero-extension.
 T}
 .TE
 
@@ -28,8 +29,8 @@ T}
 .RS
 
 .PP
-*
-In64\-bitmode,r/m8cannotbeencodedtoaccessthefollowingbyteregistersiftheREXprefixisused:AH,BH,CH,DH.
+1\&. In 64-bit mode, r/m8 can not be encoded to access the following
+byte registers if the REX prefix is used: AH, BH, CH, DH.
 
 .RE
 
@@ -38,35 +39,28 @@ In64\-bitmode,r/m8cannotbeencodedtoaccessthefollowingbyteregistersiftheREXprefix
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-RM	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+RM	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Copies the contents of the source operand (register or memory location)
 to the destination operand (register) and zero extends the value. The
-size of the converted value depends on the operand\-size attribute.
+size of the converted value depends on the operand-size attribute.
 
 .PP
-In 64\-bit mode, the instruction’s default operation size is 32 bits. Use
-of the REX.R prefix permits access to additional registers (R8\-R15). Use
+In 64-bit mode, the instruction’s default operation size is 32 bits. Use
+of the REX.R prefix permits access to additional registers (R8-R15). Use
 of the REX.W prefix promotes operation to 64 bit operands. See the
 summary chart at the beginning of this section for encoding data and
 limits.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
-DEST ← ZeroExtend(SRC);
-
-.fi
-.RE
+.EX
+DEST := ZeroExtend(SRC);
+.EE
 
 .SH FLAGS AFFECTED
-.PP
 None.
 
 .SH PROTECTED MODE EXCEPTIONS
@@ -74,6 +68,7 @@ None.
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
@@ -83,18 +78,19 @@ T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
@@ -104,18 +100,19 @@ T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made.
 T}
@@ -123,40 +120,36 @@ T}
 .TE
 
 .SH COMPATIBILITY MODE EXCEPTIONS
-.PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
-If a memory address referencing the SS segment is in a non\-canonical form.
+If a memory address referencing the SS segment is in a non-canonical form.
 T}
 #GP(0)	T{
-If the memory address is in a non\-canonical form.
+If the memory address is in a non-canonical form.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

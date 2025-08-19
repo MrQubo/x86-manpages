@@ -1,62 +1,58 @@
+'\" t
 .nh
-.TH "X86-VPBROADCASTM" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VPBROADCASTM" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VPBROADCASTM - BROADCAST MASK TO VECTOR REGISTER
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 EVEX.128.F3.0F38.W1 2A /r VPBROADCASTMB2Q xmm1, k1
-T}
-	RM	V/V	AVX512VL AVX512CD	T{
+T}	RM	V/V	AVX512VL AVX512CD	T{
 Broadcast low byte value in k1 to two locations in xmm1.
 T}
 T{
 EVEX.256.F3.0F38.W1 2A /r VPBROADCASTMB2Q ymm1, k1
-T}
-	RM	V/V	AVX512VL AVX512CD	T{
+T}	RM	V/V	AVX512VL AVX512CD	T{
 Broadcast low byte value in k1 to four locations in ymm1.
 T}
 T{
 EVEX.512.F3.0F38.W1 2A /r VPBROADCASTMB2Q zmm1, k1
-T}
-	RM	V/V	AVX512CD	T{
+T}	RM	V/V	AVX512CD	T{
 Broadcast low byte value in k1 to eight locations in zmm1.
 T}
 T{
 EVEX.128.F3.0F38.W0 3A /r VPBROADCASTMW2D xmm1, k1
-T}
-	RM	V/V	AVX512VL AVX512CD	T{
+T}	RM	V/V	AVX512VL AVX512CD	T{
 Broadcast low word value in k1 to four locations in xmm1.
 T}
 T{
 EVEX.256.F3.0F38.W0 3A /r VPBROADCASTMW2D ymm1, k1
-T}
-	RM	V/V	AVX512VL AVX512CD	T{
+T}	RM	V/V	AVX512VL AVX512CD	T{
 Broadcast low word value in k1 to eight locations in ymm1.
 T}
 T{
 EVEX.512.F3.0F38.W0 3A /r VPBROADCASTMW2D zmm1, k1
-T}
-	RM	V/V	AVX512CD	T{
+T}	RM	V/V	AVX512CD	T{
 Broadcast low word value in k1 to sixteen locations in zmm1.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="vpbroadcastm.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-RM	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+RM	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
-.SS Description
-.PP
-Broadcasts the zero\-extended 64/32 bit value of the low byte/word of the
+.SS DESCRIPTION
+Broadcasts the zero-extended 64/32 bit value of the low byte/word of the
 source operand (the second operand) to each 64/32 bit element of the
 destination operand (the first operand). The source operand is an opmask
 register. The destination operand is a ZMM register (EVEX.512), YMM
@@ -66,78 +62,63 @@ register (EVEX.256), or XMM register (EVEX.128).
 EVEX.vvvv is reserved and must be 1111b otherwise instructions will
 #UD.
 
-.SS Operation
+.SS OPERATION
 .SS VPBROADCASTMB2Q
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
-FOR j←0 TO KL\-1
-    i←j*64
-    DEST[i+63:i] ← ZeroExtend(SRC[7:0])
+FOR j := 0 TO KL-1
+    i := j*64
+    DEST[i+63:i] := ZeroExtend(SRC[7:0])
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
-
-.fi
-.RE
+DEST[MAXVL-1:VL] := 0
+.EE
 
 .SS VPBROADCASTMW2D
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (4, 128), (8, 256),(16, 512)
-FOR j←0 TO KL\-1
-    i←j*32
-    DEST[i+31:i] ← ZeroExtend(SRC[15:0])
+FOR j := 0 TO KL-1
+    i := j*32
+    DEST[i+31:i] := ZeroExtend(SRC[15:0])
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vpbroadcastm.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+.EX
+VPBROADCASTMB2Q __m512i _mm512_broadcastmb_epi64( __mmask8);
 
-.nf
-VPBROADCASTMB2Q \_\_m512i \_mm512\_broadcastmb\_epi64( \_\_mmask8);
+VPBROADCASTMW2D __m512i _mm512_broadcastmw_epi32( __mmask16);
 
-VPBROADCASTMW2D \_\_m512i \_mm512\_broadcastmw\_epi32( \_\_mmask16);
+VPBROADCASTMB2Q __m256i _mm256_broadcastmb_epi64( __mmask8);
 
-VPBROADCASTMB2Q \_\_m256i \_mm256\_broadcastmb\_epi64( \_\_mmask8);
+VPBROADCASTMW2D __m256i _mm256_broadcastmw_epi32( __mmask8);
 
-VPBROADCASTMW2D \_\_m256i \_mm256\_broadcastmw\_epi32( \_\_mmask8);
+VPBROADCASTMB2Q __m128i _mm_broadcastmb_epi64( __mmask8);
 
-VPBROADCASTMB2Q \_\_m128i \_mm\_broadcastmb\_epi64( \_\_mmask8);
+VPBROADCASTMW2D __m128i _mm_broadcastmw_epi32( __mmask8);
+.EE
 
-VPBROADCASTMW2D \_\_m128i \_mm\_broadcastmw\_epi32( \_\_mmask8);
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vpbroadcastm.html#simd-floating-point-exceptions"
+class="anchor">¶
 
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
 None
 
-.SS Other Exceptions
-.PP
-EVEX\-encoded instruction, see Exceptions Type E6NF.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+.SS OTHER EXCEPTIONS
+EVEX-encoded instruction, see Table
+2-54, “Type E6NF Class Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

@@ -1,49 +1,48 @@
+'\" t
 .nh
-.TH "X86-VCVTQQ2PS" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VCVTQQ2PS" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-VCVTQQ2PS - CONVERT PACKED QUADWORD INTEGERS TO PACKED SINGLE-PRECISION FLOATING-POINT VALUES
+VCVTQQ2PS - CONVERT PACKED QUADWORD INTEGERS TO PACKED SINGLE PRECISION FLOATING-POINTVALUES
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 Bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 EVEX.128.0F.W1 5B /r VCVTQQ2PS xmm1 {k1}{z}, xmm2/m128/m64bcst
-T}
-	A	V/V	AVX512VL AVX512DQ	T{
-Convert two packed quadword integers from xmm2/mem to packed single\-precision floating\-point values in xmm1 with writemask k1.
+T}	A	V/V	AVX512VL AVX512DQ	T{
+Convert two packed quadword integers from xmm2/mem to packed single precision floating-point values in xmm1 with writemask k1.
 T}
 T{
 EVEX.256.0F.W1 5B /r VCVTQQ2PS xmm1 {k1}{z}, ymm2/m256/m64bcst
-T}
-	A	V/V	AVX512VL AVX512DQ	T{
-Convert four packed quadword integers from ymm2/mem to packed single\-precision floating\-point values in xmm1 with writemask k1.
+T}	A	V/V	AVX512VL AVX512DQ	T{
+Convert four packed quadword integers from ymm2/mem to packed single precision floating-point values in xmm1 with writemask k1.
 T}
 T{
 EVEX.512.0F.W1 5B /r VCVTQQ2PS ymm1 {k1}{z}, zmm2/m512/m64bcst{er}
-T}
-	A	V/V	AVX512DQ	T{
-Convert eight packed quadword integers from zmm2/mem to eight packed single\-precision floating\-point values in ymm1 with writemask k1.
+T}	A	V/V	AVX512DQ	T{
+Convert eight packed quadword integers from zmm2/mem to eight packed single precision floating-point values in ymm1 with writemask k1.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="vcvtqq2ps.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Full	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Full	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
-.SS Description
-.PP
+.SS DESCRIPTION
 Converts packed quadword integers in the source operand (second operand)
-to packed single\-precision floating\-point values in the destination
+to packed single precision floating-point values in the destination
 operand (first operand).
 
 .PP
-The source operand is a ZMM/YMM/XMM register or a 512/256/128\-bit memory
+The source operand is a ZMM/YMM/XMM register or a 512/256/128-bit memory
 location. The destination operation is a YMM/XMM/XMM (lower 64 bits)
 register conditionally updated with writemask k1.
 
@@ -51,124 +50,120 @@ register conditionally updated with writemask k1.
 EVEX.vvvv is reserved and must be 1111b otherwise instructions will
 #UD.
 
-.SS Operation
-.SS VCVTQQ2PS (EVEX encoded versions) when src operand is a register
-.PP
-.RS
+.SS OPERATION
+.SS VCVTQQ2PS (EVEX ENCODED VERSIONS) WHEN SRC OPERAND IS A REGISTER <a
+href="vcvtqq2ps.html#vcvtqq2ps--evex-encoded-versions--when-src-operand-is-a-register"
+class="anchor">¶
 
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
-FOR j←0 TO KL\-1
-    i←j * 64
-    k←j * 32
+FOR j := 0 TO KL-1
+    i := j * 64
+    k := j * 32
     IF k1[j] OR *no writemask*
-        THEN DEST[k+31:k]←
-            Convert\_QuadInteger\_To\_Single\_Precision\_Floating\_Point(SRC[i+63:i])
+        THEN DEST[k+31:k] :=
+            Convert_QuadInteger_To_Single_Precision_Floating_Point(SRC[i+63:i])
         ELSE
-            IF *merging\-masking* ; merging\-masking
+            IF *merging-masking* ; merging-masking
                 THEN *DEST[k+31:k] remains unchanged*
-                ELSE ; zeroing\-masking
-                    DEST[k+31:k] ← 0
+                ELSE
+                        ; zeroing-masking
+                    DEST[k+31:k] := 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL/2] ← 0
+DEST[MAXVL-1:VL/2] := 0
+.EE
 
-.fi
-.RE
+.SS VCVTQQ2PS (EVEX ENCODED VERSIONS) WHEN SRC OPERAND IS A MEMORY SOURCE <a
+href="vcvtqq2ps.html#vcvtqq2ps--evex-encoded-versions--when-src-operand-is-a-memory-source"
+class="anchor">¶
 
-.SS VCVTQQ2PS (EVEX encoded versions) when src operand is a memory source
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
-FOR j←0 TO KL\-1
-    i←j * 64
-    k←j * 32
+FOR j := 0 TO KL-1
+    i := j * 64
+    k := j * 32
     IF k1[j] OR *no writemask*
         THEN
             IF (EVEX.b == 1)
                 THEN
-                    DEST[k+31:k] ←
-            Convert\_QuadInteger\_To\_Single\_Precision\_Floating\_Point(SRC[63:0])
+                    DEST[k+31:k] :=
+            Convert_QuadInteger_To_Single_Precision_Floating_Point(SRC[63:0])
                 ELSE
-                    DEST[k+31:k] ←
-            Convert\_QuadInteger\_To\_Single\_Precision\_Floating\_Point(SRC[i+63:i])
+                    DEST[k+31:k] :=
+            Convert_QuadInteger_To_Single_Precision_Floating_Point(SRC[i+63:i])
             FI;
         ELSE
-            IF *merging\-masking* ; merging\-masking
+            IF *merging-masking* ; merging-masking
                 THEN *DEST[k+31:k] remains unchanged*
-                ELSE ; zeroing\-masking
-                    DEST[k+31:k] ← 0
+                ELSE ; zeroing-masking
+                    DEST[k+31:k] := 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL/2] ← 0
+DEST[MAXVL-1:VL/2] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vcvtqq2ps.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
+.EX
+VCVTQQ2PS __m256 _mm512_cvtepi64_ps( __m512i a);
+
+VCVTQQ2PS __m256 _mm512_mask_cvtepi64_ps( __m256 s, __mmask16 k, __m512i a);
+
+VCVTQQ2PS __m256 _mm512_maskz_cvtepi64_ps( __mmask16 k, __m512i a);
+
+VCVTQQ2PS __m256 _mm512_cvt_roundepi64_ps( __m512i a, int r);
+
+VCVTQQ2PS __m256 _mm512_mask_cvt_roundepi_ps( __m256 s, __mmask8 k, __m512i a, int r);
+
+VCVTQQ2PS __m256 _mm512_maskz_cvt_roundepi64_ps( __mmask8 k, __m512i a, int r);
+
+VCVTQQ2PS __m128 _mm256_cvtepi64_ps( __m256i a);
+
+VCVTQQ2PS __m128 _mm256_mask_cvtepi64_ps( __m128 s, __mmask8 k, __m256i a);
+
+VCVTQQ2PS __m128 _mm256_maskz_cvtepi64_ps( __mmask8 k, __m256i a);
+
+VCVTQQ2PS __m128 _mm_cvtepi64_ps( __m128i a);
+
+VCVTQQ2PS __m128 _mm_mask_cvtepi64_ps( __m128 s, __mmask8 k, __m128i a);
+
+VCVTQQ2PS __m128 _mm_maskz_cvtepi64_ps( __mmask8 k, __m128i a);
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vcvtqq2ps.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
+Precision.
 
-.nf
-VCVTQQ2PS \_\_m256 \_mm512\_cvtepi64\_ps( \_\_m512i a);
+.SS OTHER EXCEPTIONS
+EVEX-encoded instructions, see Table
+2-46, “Type E2 Class Exception Conditions.”
 
-VCVTQQ2PS \_\_m256 \_mm512\_mask\_cvtepi64\_ps( \_\_m256 s, \_\_mmask16 k, \_\_m512i a);
-
-VCVTQQ2PS \_\_m256 \_mm512\_maskz\_cvtepi64\_ps( \_\_mmask16 k, \_\_m512i a);
-
-VCVTQQ2PS \_\_m256 \_mm512\_cvt\_roundepi64\_ps( \_\_m512i a, int r);
-
-VCVTQQ2PS \_\_m256 \_mm512\_mask\_cvt\_roundepi\_ps( \_\_m256 s, \_\_mmask8 k, \_\_m512i a, int r);
-
-VCVTQQ2PS \_\_m256 \_mm512\_maskz\_cvt\_roundepi64\_ps( \_\_mmask8 k, \_\_m512i a, int r);
-
-VCVTQQ2PS \_\_m128 \_mm256\_cvtepi64\_ps( \_\_m256i a);
-
-VCVTQQ2PS \_\_m128 \_mm256\_mask\_cvtepi64\_ps( \_\_m128 s, \_\_mmask8 k, \_\_m256i a);
-
-VCVTQQ2PS \_\_m128 \_mm256\_maskz\_cvtepi64\_ps( \_\_mmask8 k, \_\_m256i a);
-
-VCVTQQ2PS \_\_m128 \_mm\_cvtepi64\_ps( \_\_m128i a);
-
-VCVTQQ2PS \_\_m128 \_mm\_mask\_cvtepi64\_ps( \_\_m128 s, \_\_mmask8 k, \_\_m128i a);
-
-VCVTQQ2PS \_\_m128 \_mm\_maskz\_cvtepi64\_ps( \_\_mmask8 k, \_\_m128i a);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
-Precision
-
-.SS Other Exceptions
-.PP
-EVEX\-encoded instructions, see Exceptions Type E2
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If EVEX.vvvv != 1111B.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

@@ -1,17 +1,18 @@
+'\" t
 .nh
-.TH "X86-XBEGIN" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-XBEGIN" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 XBEGIN - TRANSACTIONAL BEGIN
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 C7 F8 XBEGIN rel16	A	V/V	RTM	T{
-Specifies the start of an RTM region. Provides a 16\-bit relative offset to compute the address of the fallback instruction address at which execution resumes following an RTM abort.
+Specifies the start of an RTM region. Provides a 16-bit relative offset to compute the address of the fallback instruction address at which execution resumes following an RTM abort.
 T}
 C7 F8 XBEGIN rel32	A	V/V	RTM	T{
-Specifies the start of an RTM region. Provides a 32\-bit relative offset to compute the address of the fallback instruction address at which execution resumes following an RTM abort.
+Specifies the start of an RTM region. Provides a 32-bit relative offset to compute the address of the fallback instruction address at which execution resumes following an RTM abort.
 T}
 .TE
 
@@ -20,12 +21,11 @@ T}
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand2	Operand3	Operand4
-A	Offset	NA	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand2\fP	\fBOperand3\fP	\fBOperand4\fP
+A	Offset	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 The XBEGIN instruction specifies the start of an RTM code region. If the
 logical processor was not already in transactional execution, then the
 XBEGIN instruction causes the logical processor to transition into
@@ -33,7 +33,9 @@ transactional execution. The XBEGIN instruction that transitions the
 logical processor into transactional execution is referred to as the
 outermost XBEGIN instruction. The instruction also specifies a relative
 offset to compute the address of the fallback code path following a
-transactional abort.
+transactional abort. (Use of the 16-bit operand size does not cause this
+address to be truncated to 16 bits, unlike a near jump to a relative
+offset.)
 
 .PP
 On an RTM abort, the logical processor discards all architectural
@@ -42,155 +44,138 @@ restores architectural state to that corresponding to the outermost
 XBEGIN instruction. The fallback address following an abort is computed
 from the outermost XBEGIN instruction.
 
+.PP
+Execution of XBEGIN while in a suspend read address tracking region
+causes a transactional abort.
+
 .SH OPERATION
 .SS XBEGIN
-.PP
-.RS
-
-.nf
-IF RTM\_NEST\_COUNT < MAX\_RTM\_NEST\_COUNT
+.EX
+IF RTM_NEST_COUNT < MAX_RTM_NEST_COUNT AND SUSLDTRK_ACTIVE = 0
     THEN
-        RTM\_NEST\_COUNT++
-        IF RTM\_NEST\_COUNT = 1 THEN
-            IF 64\-bit Mode
+        RTM_NEST_COUNT++
+        IF RTM_NEST_COUNT = 1 THEN
+            IF 64-bit Mode
                 THEN
-                        fallbackRIP ← RIP + SignExtend64(IMM)
-                            (* RIP is instruction following XBEGIN instruction *)
-                    ELSE
-                        fallbackEIP ← EIP + SignExtend32(IMM)
-                            (* EIP is instruction following XBEGIN instruction *)
+                    IF OperandSize = 16
+                        THEN fallbackRIP := RIP + SignExtend64(rel16);
+                        ELSE fallbackRIP := RIP + SignExtend64(rel32);
+                    FI;
+                    IF fallbackRIP is not canonical
+                        THEN #GP(0);
+                    FI;
+                ELSE
+                    IF OperandSize = 16
+                        THEN fallbackEIP := EIP + SignExtend32(rel16);
+                        ELSE fallbackEIP := EIP + rel32;
+                    FI;
+                    IF fallbackEIP outside code segment limit
+                        THEN #GP(0);
+                    FI;
             FI;
-            IF (64\-bit mode)
-                THEN IF (fallbackRIP is not canonical)
-                    THEN #GP(0)
-                FI;
-                ELSE IF (fallbackEIP outside code segment limit)
-                    THEN #GP(0)
-                FI;
-            FI;
-            RTM\_ACTIVE ← 1
+            RTM_ACTIVE := 1
             Enter RTM Execution (* record register state, start tracking memory state*)
-        FI; (* RTM\_NEST\_COUNT = 1 *)
-    ELSE (* RTM\_NEST\_COUNT = MAX\_RTM\_NEST\_COUNT *)
-        GOTO RTM\_ABORT\_PROCESSING
+        FI; (* RTM_NEST_COUNT = 1 *)
+    ELSE (* RTM_NEST_COUNT = MAX_RTM_NEST_COUNT OR SUSLDTRK_ACTIVE = 1 *)
+        GOTO RTM_ABORT_PROCESSING
 FI;
 (* For any RTM abort condition encountered during RTM execution *)
-RTM\_ABORT\_PROCESSING:
+RTM_ABORT_PROCESSING:
     Restore architectural register state
     Discard memory updates performed in transaction
     Update EAX with status
-    RTM\_NEST\_COUNT ← 0
-    RTM\_ACTIVE ← 0
-    IF 64\-bit mode
+    RTM_NEST_COUNT := 0
+    RTM_ACTIVE := 0
+    SUSLDTRK_ACTIVE := 0
+    IF 64-bit mode
         THEN
-            RIP ← fallbackRIP
+            RIP := fallbackRIP
         ELSE
-            EIP ← fallbackEIP
+            EIP := fallbackEIP
     FI;
 END
-
-.fi
-.RE
+.EE
 
 .SH FLAGS AFFECTED
+None.
+
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="xbegin.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
+
+.EX
+XBEGIN unsigned int _xbegin( void );
+.EE
+
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="xbegin.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-None
-
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
-
-.nf
-XBEGIN: unsigned int \_xbegin( void );
-
-.fi
-.RE
-
-.SH SIMD FLOATING\-POINT EXCEPTIONS
-.PP
-None
+None.
 
 .SH PROTECTED MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
-#UD	CPUID.(EAX=7, ECX=0):EBX.RTM
-[
-bit 11
-]
-=0.
+\fB\fP	\fB\fP
+#UD	CPUID.(EAX=7, ECX=0):EBX.RTM[bit 11]=0.
 	If LOCK prefix is used.
 #GP(0)	T{
 If the fallback address is outside the CS segment.
 T}
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If the fallback address is outside the address space 0000H and FFFFH.
 T}
-#UD	CPUID.(EAX=7, ECX=0):EBX.RTM
-[
-bit 11
-]
-=0.
+#UD	CPUID.(EAX=7, ECX=0):EBX.RTM[bit 11]=0.
 	If LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If the fallback address is outside the address space 0000H and FFFFH.
 T}
-#UD	CPUID.(EAX=7, ECX=0):EBX.RTM
-[
-bit 11
-]
-=0.
+#UD	CPUID.(EAX=7, ECX=0):EBX.RTM[bit 11]=0.
 	If LOCK prefix is used.
 .TE
 
 .SH COMPATIBILITY MODE EXCEPTIONS
-.PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
-#UD	CPUID.(EAX=7, ECX=0):EBX.RTM
-[
-bit 11
-]
- = 0.
+\fB\fP	\fB\fP
+#UD	CPUID.(EAX=7, ECX=0):EBX.RTM[bit 11] = 0.
 	If LOCK prefix is used.
 #GP(0)	T{
-If the fallback address is non\-canonical.
+If the fallback address is non-canonical.
 T}
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

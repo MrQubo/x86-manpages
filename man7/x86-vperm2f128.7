@@ -1,124 +1,113 @@
+'\" t
 .nh
-.TH "X86-VPERM2F128" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VPERM2F128" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VPERM2F128 - PERMUTE FLOATING-POINT VALUES
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 VEX.256.66.0F3A.W0 06 /r ib VPERM2F128 ymm1, ymm2, ymm3/m256, imm8
-T}
-	RVMI	V/V	AVX	T{
-Permute 128\-bit floating\-point fields in ymm1.
+T}	RV MI	V/V	AVX	T{
+Permute 128-bit floating-point fields in ymm2 and ymm3/mem using controls from imm8 and store result in ymm1.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="vperm2f128.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
 RVMI	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	imm8
 .TE
 
 .SH DESCRIPTION
-.PP
-Permute 128 bit floating\-point\-containing fields from the first source
+Permute 128 bit floating-point-containing fields from the first source
 operand (second operand) and second source operand (third operand) using
-bits in the 8\-bit immediate and store results in the destination operand
+bits in the 8-bit immediate and store results in the destination operand
 (first operand). The first source operand is a YMM register, the second
-source operand is a YMM register or a 256\-bit memory location, and the
+source operand is a YMM register or a 256-bit memory location, and the
 destination operand is a YMM register.
 
 .PP
-Y1Y0SRC2X1X0SRC1X0, X1, Y0, or Y1DESTX0, X1, Y0, or Y1
-
-.PP
-Figure 5\-21. VPERM2F128 Operation
-
-.PP
-Imm8[1:0] select the source for the first destination 128\-bit field,
+Imm8[1:0] select the source for the first destination 128-bit field,
 imm8[5:4] select the source for the second destination field. If
-imm8[3] is set, the low 128\-bit field is zeroed. If imm8[7] is set,
-the high 128\-bit field is zeroed.
+imm8[3] is set, the low 128-bit field is zeroed. If imm8[7] is set,
+the high 128-bit field is zeroed.
 
 .PP
 VEX.L must be 1, otherwise the instruction will #UD.
 
 .SH OPERATION
 .SS VPERM2F128
-.PP
-.RS
-
-.nf
+.EX
 CASE IMM8[1:0] of
-0: DEST[127:0]←SRC1[127:0]
-1: DEST[127:0]←SRC1[255:128]
-2: DEST[127:0]←SRC2[127:0]
-3: DEST[127:0]←SRC2[255:128]
+0: DEST[127:0] := SRC1[127:0]
+1: DEST[127:0] := SRC1[255:128]
+2: DEST[127:0] := SRC2[127:0]
+3: DEST[127:0] := SRC2[255:128]
 ESAC
 CASE IMM8[5:4] of
-0: DEST[255:128]←SRC1[127:0]
-1: DEST[255:128]←SRC1[255:128]
-2: DEST[255:128]←SRC2[127:0]
-3: DEST[255:128]←SRC2[255:128]
+0: DEST[255:128] := SRC1[127:0]
+1: DEST[255:128] := SRC1[255:128]
+2: DEST[255:128] := SRC2[127:0]
+3: DEST[255:128] := SRC2[255:128]
 ESAC
 IF (imm8[3])
-DEST[127:0] ← 0
+DEST[127:0] := 0
 FI
 IF (imm8[7])
-DEST[MAXVL\-1:128] ← 0
+DEST[MAXVL-1:128] := 0
 FI
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vperm2f128.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
+.EX
+VPERM2F128: __m256 _mm256_permute2f128_ps (__m256 a, __m256 b, int control)
 
-.nf
-VPERM2F128: \_\_m256 \_mm256\_permute2f128\_ps (\_\_m256 a, \_\_m256 b, int control)
+VPERM2F128: __m256d _mm256_permute2f128_pd (__m256d a, __m256d b, int control)
 
-VPERM2F128: \_\_m256d \_mm256\_permute2f128\_pd (\_\_m256d a, \_\_m256d b, int control)
+VPERM2F128: __m256i _mm256_permute2f128_si256 (__m256i a, __m256i b, int control)
+.EE
 
-VPERM2F128: \_\_m256i \_mm256\_permute2f128\_si256 (\_\_m256i a, \_\_m256i b, int control)
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="vperm2f128.html#simd-floating-point-exceptions"
+class="anchor">¶
 
-.fi
-.RE
-
-.SH SIMD FLOATING\-POINT EXCEPTIONS
 .PP
 None.
 
 .SH OTHER EXCEPTIONS
+See Table 2-23, “Type 6 Class
+Exception Conditions.”
+
 .PP
-See Exceptions Type 6; additionally
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If VEX.L = 0
 	If VEX.W = 1.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

@@ -1,57 +1,51 @@
+'\" t
 .nh
-.TH "X86-BLENDVPD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-BLENDVPD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 BLENDVPD - VARIABLE BLEND PACKED DOUBLE PRECISION FLOATING-POINT VALUES
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32\-bit Mode\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32-bit Mode\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
-66 0F 38 15 /r BLENDVPD xmm1, xmm2/m128 , 
-T}
-\&lt;XMM0\&gt;	RM0	V/V	SSE4\_1	T{
-Select packed DP FP values from xmm1.
+66 0F 38 15 /r BLENDVPD xmm1, xmm2/m128 , &lt;XMM0&gt;
+T}	RM0	V/V	SSE4_1	T{
+Select packed double precision floating-point values from xmm1 and xmm2 from mask specified in XMM0 and store the values in xmm1.
 T}
 T{
 VEX.128.66.0F3A.W0 4B /r /is4 VBLENDVPD xmm1, xmm2, xmm3/m128, xmm4
-T}
-	RVMR	V/V	AVX	T{
-Conditionally copy double\-precision floating\-point values from xmm2 or xmm3/m128 to xmm1, based on mask bits in the mask operand, xmm4.
+T}	RVMR	V/V	AVX	T{
+Conditionally copy double precision floating-point values from xmm2 or xmm3/m128 to xmm1, based on mask bits in the mask operand, xmm4.
 T}
 T{
 VEX.256.66.0F3A.W0 4B /r /is4 VBLENDVPD ymm1, ymm2, ymm3/m256, ymm4
-T}
-	RVMR	V/V	AVX	T{
-Conditionally copy double\-precision floating\-point values from ymm2 or ymm3/m256 to ymm1, based on mask bits in the mask operand, ymm4.
+T}	RVMR	V/V	AVX	T{
+Conditionally copy double precision floating-point values from ymm2 or ymm3/m256 to ymm1, based on mask bits in the mask operand, ymm4.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="blendvpd.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-RM0	ModRM:reg (r, w)	ModRM:r/m (r)	implicit XMM0	NA
-RVMR	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	imm8
-[
-7:4
-]
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+RM0	ModRM:reg (r, w)	ModRM:r/m (r)	implicit XMM0	N/A
+RVMR	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	imm8[7:4]
 .TE
 
 .SH DESCRIPTION
-.PP
-Conditionally copy each quadword data element of double\-precision
-floating\-point value from the second source operand and the first source
+Conditionally copy each quadword data element of double precision
+floating-point value from the second source operand and the first source
 operand depending on mask bits defined in the mask register operand. The
 mask bits are the most significant bit in each quadword element of the
 mask register.
 
 .PP
 Each quadword element of the destination operand is copied from:
-
-.RS
 .IP \(bu 2
 the corresponding quadword element in the second source operand, if
 a mask bit is “1”; or
@@ -59,15 +53,13 @@ a mask bit is “1”; or
 the corresponding quadword element in the first source operand, if a
 mask bit is “0”
 
-.RE
-
 .PP
 The register assignment of the implicit mask operand for BLENDVPD is
 defined to be the architectural register XMM0.
 
 .PP
-128\-bit Legacy SSE version: The first source operand and the destination
-operand is the same. Bits (MAXVL\-1:128) of the corresponding YMM
+128-bit Legacy SSE version: The first source operand and the destination
+operand is the same. Bits (MAXVL-1:128) of the corresponding YMM
 destination register remain unchanged. The mask register operand is
 implicitly defined to be the architectural register XMM0. An attempt to
 execute BLENDVPD with a VEX prefix will cause #UD.
@@ -75,117 +67,104 @@ execute BLENDVPD with a VEX prefix will cause #UD.
 .PP
 VEX.128 encoded version: The first source operand and the destination
 operand are XMM registers. The second source operand is an XMM register
-or 128\-bit memory location. The mask operand is the third source
+or 128-bit memory location. The mask operand is the third source
 register, and encoded in bits[7:4] of the immediate byte(imm8). The
-bits[3:0] of imm8 are ignored. In 32\-bit mode, imm8[7] is ignored.
-The upper bits (MAXVL\-1:128) of the corresponding YMM register
+bits[3:0] of imm8 are ignored. In 32-bit mode, imm8[7] is ignored.
+The upper bits (MAXVL-1:128) of the corresponding YMM register
 (destination register) are zeroed. VEX.W must be 0, otherwise, the
 instruction will #UD.
 
 .PP
 VEX.256 encoded version: The first source operand and destination
 operand are YMM registers. The second source operand can be a YMM
-register or a 256\-bit memory location. The mask operand is the third
+register or a 256-bit memory location. The mask operand is the third
 source register, and encoded in bits[7:4] of the immediate byte(imm8).
-The bits[3:0] of imm8 are ignored. In 32\-bit mode, imm8[7] is
+The bits[3:0] of imm8 are ignored. In 32-bit mode, imm8[7] is
 ignored. VEX.W must be 0, otherwise, the instruction will #UD.
 
 .PP
 VBLENDVPD permits the mask to be any XMM or YMM register. In contrast,
 BLENDVPD treats XMM0 implicitly as the mask and do not support
-non\-destructive destination operation.
+non-destructive destination operation.
 
 .SH OPERATION
-.SS BLENDVPD (128\-bit Legacy SSE version)
+.SS BLENDVPD (128-BIT LEGACY SSE VERSION)  href="blendvpd.html#blendvpd--128-bit-legacy-sse-version-"
+class="anchor">¶
+
+.EX
+MASK := XMM0
+IF (MASK[63] = 0) THEN DEST[63:0] := DEST[63:0]
+    ELSE DEST [63:0] := SRC[63:0] FI
+IF (MASK[127] = 0) THEN DEST[127:64] := DEST[127:64]
+    ELSE DEST [127:64] := SRC[127:64] FI
+DEST[MAXVL-1:128] (Unmodified)
+.EE
+
+.SS VBLENDVPD (VEX.128 ENCODED VERSION)  href="blendvpd.html#vblendvpd--vex-128-encoded-version-"
+class="anchor">¶
+
+.EX
+MASK := SRC3
+IF (MASK[63] = 0) THEN DEST[63:0] := SRC1[63:0]
+    ELSE DEST [63:0] := SRC2[63:0] FI
+IF (MASK[127] = 0) THEN DEST[127:64] := SRC1[127:64]
+    ELSE DEST [127:64] := SRC2[127:64] FI
+DEST[MAXVL-1:128] := 0
+.EE
+
+.SS VBLENDVPD (VEX.256 ENCODED VERSION)  href="blendvpd.html#vblendvpd--vex-256-encoded-version-"
+class="anchor">¶
+
+.EX
+MASK := SRC3
+IF (MASK[63] = 0) THEN DEST[63:0] := SRC1[63:0]
+    ELSE DEST [63:0] := SRC2[63:0] FI
+IF (MASK[127] = 0) THEN DEST[127:64] := SRC1[127:64]
+    ELSE DEST [127:64] := SRC2[127:64] FI
+IF (MASK[191] = 0) THEN DEST[191:128] := SRC1[191:128]
+    ELSE DEST [191:128] := SRC2[191:128] FI
+IF (MASK[255] = 0) THEN DEST[255:192] := SRC1[255:192]
+    ELSE DEST [255:192] := SRC2[255:192] FI
+.EE
+
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="blendvpd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
+
+.EX
+BLENDVPD __m128d _mm_blendv_pd(__m128d v1, __m128d v2, __m128d v3);
+
+VBLENDVPD __m128 _mm_blendv_pd (__m128d a, __m128d b, __m128d mask);
+
+VBLENDVPD __m256 _mm256_blendv_pd (__m256d a, __m256d b, __m256d mask);
+.EE
+
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="blendvpd.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
-
-.nf
-MASK ← XMM0
-IF (MASK[63] = 0) THEN DEST[63:0]←DEST[63:0]
-    ELSE DEST [63:0]←SRC[63:0] FI
-IF (MASK[127] = 0) THEN DEST[127:64]←DEST[127:64]
-    ELSE DEST [127:64]←SRC[127:64] FI
-DEST[MAXVL\-1:128] (Unmodified)
-
-.fi
-.RE
-
-.SS VBLENDVPD (VEX.128 encoded version)
-.PP
-.RS
-
-.nf
-MASK ← SRC3
-IF (MASK[63] = 0) THEN DEST[63:0]←SRC1[63:0]
-    ELSE DEST [63:0]←SRC2[63:0] FI
-IF (MASK[127] = 0) THEN DEST[127:64]←SRC1[127:64]
-    ELSE DEST [127:64]←SRC2[127:64] FI
-DEST[MAXVL\-1:128] ← 0
-
-.fi
-.RE
-
-.SS VBLENDVPD (VEX.256 encoded version)
-.PP
-.RS
-
-.nf
-MASK ← SRC3
-IF (MASK[63] = 0) THEN DEST[63:0]←SRC1[63:0]
-    ELSE DEST [63:0]←SRC2[63:0] FI
-IF (MASK[127] = 0) THEN DEST[127:64]←SRC1[127:64]
-    ELSE DEST [127:64]←SRC2[127:64] FI
-IF (MASK[191] = 0) THEN DEST[191:128]←SRC1[191:128]
-    ELSE DEST [191:128]←SRC2[191:128] FI
-IF (MASK[255] = 0) THEN DEST[255:192]←SRC1[255:192]
-    ELSE DEST [255:192]←SRC2[255:192] FI
-
-.fi
-.RE
-
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
-
-.nf
-BLENDVPD: \_\_m128d \_mm\_blendv\_pd(\_\_m128d v1, \_\_m128d v2, \_\_m128d v3);
-
-VBLENDVPD: \_\_m128 \_mm\_blendv\_pd (\_\_m128d a, \_\_m128d b, \_\_m128d mask);
-
-VBLENDVPD: \_\_m256 \_mm256\_blendv\_pd (\_\_m256d a, \_\_m256d b, \_\_m256d mask);
-
-.fi
-.RE
-
-.SH SIMD FLOATING\-POINT EXCEPTIONS
-.PP
-None
+None.
 
 .SH OTHER EXCEPTIONS
-.PP
-See Exceptions Type 4; additionally
+See Table 2-21, “Type 4 Class
+Exception Conditions,” additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If VEX.W = 1.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

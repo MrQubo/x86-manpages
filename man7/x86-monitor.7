@@ -1,28 +1,28 @@
+'\" t
 .nh
-.TH "X86-MONITOR" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-MONITOR" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 MONITOR - SET UP MONITOR ADDRESS
 .TS
 allbox;
-l 
-l .
-T{
-Opcode Instruction Op/ 64\-Bit Compat/ Description En Mode Leg Mode 0F 01 C8 MONITOR ZO Valid Valid Sets up a linear address range to be monitored by hardware and activates the monitor. The address range should be a write\-back memory caching type. The address is DS:RAX/EAX/AX.
+l l l l l l 
+l l l l l l .
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
+0F 01 C8	MONITOR	ZO	Valid	Valid	T{
+Sets up a linear address range to be monitored by hardware and activates the monitor. The address range should be a write-back memory caching type. The address is DS:RAX/EAX/AX.
 T}
 .TE
 
 .SH INSTRUCTION OPERAND ENCODING
 .TS
 allbox;
-l 
-l .
-T{
-Op/En Operand 1 Operand 2 Operand 3 Operand 4 ZO NA NA NA NA
-T}
+l l l l l 
+l l l l l .
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+ZO	N/A	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 The MONITOR instruction arms address monitoring hardware using an
 address specified in EAX (the address range that the monitoring hardware
 checks for store operations can be determined by using CPUID). A store
@@ -44,64 +44,56 @@ are defined. Undefined hints in EDX are ignored by the processor;
 undefined extensions in ECX raises a general protection fault.
 
 .PP
-The address range must use memory of the write\-back type. Only
-write\-back memory will correctly trigger the monitoring hardware.
+The address range must use memory of the write-back type. Only
+write-back memory will correctly trigger the monitoring hardware.
 Additional information on determining what address range to use in order
-to prevent false wake\-ups is described in Chapter 8, “Multiple\-Processor
-Management” of the Intel® 64 and IA\-32 Architectures Software
-Developer’s Manual, Volume 3A.
+to prevent false wake-ups is described in Chapter 9, “Multiple-Processor
+Management‚” of the Intel® 64 and IA-32 Architectures
+Software Developer’s Manual, Volume 3A.
 
 .PP
 The MONITOR instruction is ordered as a load operation with respect to
 other memory transactions. The instruction is subject to the permission
 checking and faults associated with a byte load. Like a load, MONITOR
-sets the A\-bit but not the D\-bit in page tables.
+sets the A-bit but not the D-bit in page tables.
 
 .PP
 CPUID.01H:ECX.MONITOR[bit 3] indicates the availability of MONITOR and
 MWAIT in the processor. When set, MONITOR may be executed only at
 privilege level 0 (use at any other privilege level results in an
-invalid\-opcode exception). The operating system or system BIOS may
-disable this instruction by using the IA32\_MISC\_ENABLE MSR; disabling
+invalid-opcode exception). The operating system or system BIOS may
+disable this instruction by using the IA32_MISC_ENABLE MSR; disabling
 MONITOR clears the CPUID feature flag and causes execution to generate
-an invalid\-opcode exception.
+an invalid-opcode exception.
 
 .PP
-The instruction’s operation is the same in non\-64\-bit modes and 64\-bit
+The instruction’s operation is the same in non-64-bit modes and 64-bit
 mode.
 
 .SH OPERATION
-.PP
-.RS
+.EX
+MONITOR sets up an address range for the monitor hardware using the content of EAX (RAX in 64-bit mode) as an effective address
+and puts the monitor hardware in armed state. Always use memory of the write-back caching type. A store to the specified address
+range will trigger the monitor hardware. The content of ECX and EDX are used to communicate other information to the monitor
+hardware.
+.EE
 
-.nf
-MONITOR sets up an address range for the monitor hardware using the content of EAX (RAX in 64\-bit mode) as an
-effective address and puts the monitor hardware in armed state. Always use memory of the write\-back caching
-type. A store to the specified address range will trigger the monitor hardware. The content of ECX and EDX are
-used to communicate other information to the monitor hardware.
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="monitor.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.fi
-.RE
-
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
-
-.nf
-MONITOR: void \_mm\_monitor(void const *p, unsigned extensions,unsigned hints)
-
-.fi
-.RE
+.EX
+MONITOR void _mm_monitor(void const *p, unsigned extensions,unsigned hints)
+.EE
 
 .SH NUMERIC EXCEPTIONS
-.PP
-None
+None.
 
 .SH PROTECTED MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If the value in EAX is outside the CS, DS, ES, FS, or GS segment limit.
 T}
@@ -112,12 +104,8 @@ T}
 #SS(0)	T{
 If the value in EAX is outside the SS segment limit.
 T}
-#PF(fault\-code)	For a page fault.
-#UD	If CPUID.01H:ECX.MONITOR
-[
-bit 3
-]
- = 0.
+#PF(fault-code)	For a page fault.
+#UD	If CPUID.01H:ECX.MONITOR[bit 3] = 0.
 	T{
 If current privilege level is not 0.
 T}
@@ -128,6 +116,7 @@ T}
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP	T{
 If the CS, DS, ES, FS, or GS register is used to access memory and the value in EAX is outside of the effective address space from 0 to FFFFH.
 T}
@@ -135,11 +124,7 @@ T}
 #SS	T{
 If the SS register is used to access memory and the value in EAX is outside of the effective address space from 0 to FFFFH.
 T}
-#UD	If CPUID.01H:ECX.MONITOR
-[
-bit 3
-]
- = 0.
+#UD	If CPUID.01H:ECX.MONITOR[bit 3] = 0.
 .TE
 
 .SH VIRTUAL 8086 MODE EXCEPTIONS
@@ -147,55 +132,47 @@ bit 3
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	T{
-The MONITOR instruction is not recognized in virtual\-8086 mode (even if CPUID.01H:ECX.MONITOR
+The MONITOR instruction is not recognized in virtual-8086 mode (even if CPUID.01H:ECX.MONITOR[bit 3] = 1).
 T}
-[
-bit 3
-]
- = 1).
 .TE
 
-.SH COMPATIBILITY MODE EXCEPTIONS
+.SH COMPATIBILITY MODE EXCEPTIONS  href="monitor.html#compatibility-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
-If the linear address of the operand in the CS, DS, ES, FS, or GS segment is in a non\-canonical form.
+If the linear address of the operand in the CS, DS, ES, FS, or GS segment is in a non-canonical form.
 T}
 	If RCX ≠ 0.
 #SS(0)	T{
-If the SS register is used to access memory and the value in EAX is in a non\-canonical form.
+If the SS register is used to access memory and the value in EAX is in a non-canonical form.
 T}
-#PF(fault\-code)	For a page fault.
+#PF(fault-code)	For a page fault.
 #UD	T{
 If the current privilege level is not 0.
 T}
-	If CPUID.01H:ECX.MONITOR
-[
-bit 3
-]
- = 0.
+	If CPUID.01H:ECX.MONITOR[bit 3] = 0.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

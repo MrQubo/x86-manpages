@@ -1,66 +1,61 @@
+'\" t
 .nh
-.TH "X86-VPGATHERQD-VPGATHERQQ" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VPGATHERQD-VPGATHERQQ" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VPGATHERQD-VPGATHERQQ - GATHER PACKED DWORD, PACKED QWORD WITH SIGNED QWORD INDICES
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 EVEX.128.66.0F38.W0 91 /vsib VPGATHERQD xmm1 {k1}, vm64x
-T}
-	A	V/V	AVX512VL AVX512F	T{
-Using signed qword indices, gather dword values from memory using writemask k1 for merging\-masking.
+T}	A	V/V	AVX512VL AVX512F	T{
+Using signed qword indices, gather dword values from memory using writemask k1 for merging-masking.
 T}
 T{
 EVEX.256.66.0F38.W0 91 /vsib VPGATHERQD xmm1 {k1}, vm64y
-T}
-	A	V/V	AVX512VL AVX512F	T{
-Using signed qword indices, gather dword values from memory using writemask k1 for merging\-masking.
+T}	A	V/V	AVX512VL AVX512F	T{
+Using signed qword indices, gather dword values from memory using writemask k1 for merging-masking.
 T}
 T{
 EVEX.512.66.0F38.W0 91 /vsib VPGATHERQD ymm1 {k1}, vm64z
-T}
-	A	V/V	AVX512F	T{
-Using signed qword indices, gather dword values from memory using writemask k1 for merging\-masking.
+T}	A	V/V	AVX512F	T{
+Using signed qword indices, gather dword values from memory using writemask k1 for merging-masking.
 T}
 T{
 EVEX.128.66.0F38.W1 91 /vsib VPGATHERQQ xmm1 {k1}, vm64x
-T}
-	A	V/V	AVX512VL AVX512F	T{
-Using signed qword indices, gather quadword values from memory using writemask k1 for merging\-masking.
+T}	A	V/V	AVX512VL AVX512F	T{
+Using signed qword indices, gather quadword values from memory using writemask k1 for merging-masking.
 T}
 T{
 EVEX.256.66.0F38.W1 91 /vsib VPGATHERQQ ymm1 {k1}, vm64y
-T}
-	A	V/V	AVX512VL AVX512F	T{
-Using signed qword indices, gather quadword values from memory using writemask k1 for merging\-masking.
+T}	A	V/V	AVX512VL AVX512F	T{
+Using signed qword indices, gather quadword values from memory using writemask k1 for merging-masking.
 T}
 T{
 EVEX.512.66.0F38.W1 91 /vsib VPGATHERQQ zmm1 {k1}, vm64z
-T}
-	A	V/V	AVX512F	T{
-Using signed qword indices, gather quadword values from memory using writemask k1 for merging\-masking.
+T}	A	V/V	AVX512F	T{
+Using signed qword indices, gather quadword values from memory using writemask k1 for merging-masking.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./vpgatherqd:vpgatherqq.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
 A	Tuple1 Scalar	ModRM:reg (w)	T{
 BaseReg (R): VSIB:base, VectorReg(R): VSIB:index
-T}
-	NA	NA
+T}	N/A	N/A
 .TE
 
-.SS Description
-.PP
+.SS DESCRIPTION
 A set of 8 doubleword/quadword memory locations pointed to by base
-address BASE\_ADDR and index vector VINDEX with scale SCALE are
+address BASE_ADDR and index vector VINDEX with scale SCALE are
 gathered. The result is written into a vector register. The elements are
 specified via the VSIB (i.e., the index register is a vector register,
 holding packed indices). Elements will only be loaded if their
@@ -78,7 +73,7 @@ partially updated; those elements that have been gathered are placed
 into the destination register and have their mask bits set to zero. If
 any traps or interrupts are pending from already gathered elements, they
 will be delivered in lieu of the exception; in this case, EFLAG.RF is
-set to one so an instruction breakpoint is not re\-triggered when the
+set to one so an instruction breakpoint is not re-triggered when the
 instruction is continued.
 
 .PP
@@ -91,36 +86,32 @@ instruction triggers the exception before gathering any elements.
 
 .PP
 Note that:
-
-.RS
 .IP \(bu 2
 The values may be read from memory in any order. Memory ordering
-with other instructions follows the Intel\-64 memory\-ordering model.
+with other instructions follows the Intel-64 memory-ordering model.
 .IP \(bu 2
-Faults are delivered in a right\-to\-left manner. That is, if a fault
+Faults are delivered in a right-to-left manner. That is, if a fault
 is triggered by an element and delivered, all elements closer to the
-LSB of the destination zmm will be completed (and non\-faulting).
+LSB of the destination zmm will be completed (and non-faulting).
 Individual elements closer to the MSB may or may not be completed.
 If a given element triggers multiple faults, they are delivered in
 the conventional order.
 .IP \(bu 2
 Elements may be gathered in any order, but faults must be delivered
-in a right\-to\-left order; thus, elements to the left of a faulting
+in a right-to-left order; thus, elements to the left of a faulting
 one may be gathered before the fault is delivered. A given
-implementation of this instruction is repeatable \- given the same
+implementation of this instruction is repeatable - given the same
 input values and architectural state, the same set of elements to
 the left of the faulting one will be gathered.
 .IP \(bu 2
 This instruction does not perform AC checks, and so will never
 deliver an AC fault.
 .IP \(bu 2
-Not valid with 16\-bit effective addresses. Will deliver a #UD
+Not valid with 16-bit effective addresses. Will deliver a #UD
 fault.
 .IP \(bu 2
-These instructions do not accept zeroing\-masking since the 0 values
+These instructions do not accept zeroing-masking since the 0 values
 in k1 are used to determine completion.
-
-.RE
 
 .PP
 Note that the presence of VSIB byte is enforced in this instruction.
@@ -138,112 +129,100 @@ mask register is specified.
 
 .PP
 The scaled index may require more bits to represent than the address
-bits used by the processor (e.g., in 32\-bit mode, if the scale is
+bits used by the processor (e.g., in 32-bit mode, if the scale is
 greater than one). In this case, the most significant bits beyond the
 number of address bits are ignored.
 
-.SS Operation
-.PP
-.RS
-
-.nf
-BASE\_ADDR stands for the memory operand base address (a GPR); may not exist
+.SS OPERATION
+.EX
+BASE_ADDR stands for the memory operand base address (a GPR); may not exist
 VINDEX stands for the memory operand vector of indices (a ZMM register)
 SCALE stands for the memory operand scalar (1, 2, 4 or 8)
 DISP is the optional 1 or 4 byte displacement
+.EE
 
-.fi
-.RE
+.SS VPGATHERQD (EVEX ENCODED VERSION)  href="./vpgatherqd:vpgatherqq.html#vpgatherqd--evex-encoded-version-"
+class="anchor">¶
 
-.SS VPGATHERQD (EVEX encoded version)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
-FOR j←0 TO KL\-1
-    i←j * 32
-    k←j * 64
+FOR j := 0 TO KL-1
+    i := j * 32
+    k := j * 64
     IF k1[j]
-        THEN DEST[i+31:i]←MEM[BASE\_ADDR + (VINDEX[k+63:k]) * SCALE + DISP]), 1)
-            k1[j] ← 0
-        ELSE *DEST[i+31:i]←remains unchanged*
+        THEN DEST[i+31:i] := MEM[BASE_ADDR + (VINDEX[k+63:k]) * SCALE + DISP]
+            k1[j] := 0
+        ELSE *DEST[i+31:i] := remains unchanged*
                 ; Only merging masking is allowed
     FI;
 ENDFOR
-k1[MAX\_KL\-1:KL] ← 0
-DEST[MAXVL\-1:VL/2] ← 0
+k1[MAX_KL-1:KL] := 0
+DEST[MAXVL-1:VL/2] := 0
+.EE
 
-.fi
-.RE
+.SS VPGATHERQQ (EVEX ENCODED VERSION)  href="./vpgatherqd:vpgatherqq.html#vpgatherqq--evex-encoded-version-"
+class="anchor">¶
 
-.SS VPGATHERQQ (EVEX encoded version)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (2, 64), (4, 128), (8, 256)
-FOR j←0 TO KL\-1
-    i←j * 64
+FOR j := 0 TO KL-1
+    i := j * 64
     IF k1[j]
-        THEN DEST[i+63:i]←
-            MEM[BASE\_ADDR + (VINDEX[i+63:i]) * SCALE + DISP])
-            k1[j] ← 0
-        ELSE *DEST[i+63:i]←remains unchanged*
+        THEN DEST[i+63:i] :=
+            MEM[BASE_ADDR + (VINDEX[i+63:i]) * SCALE + DISP]
+            k1[j] := 0
+        ELSE *DEST[i+63:i] := remains unchanged*
                 ; Only merging masking is allowed
     FI;
 ENDFOR
-k1[MAX\_KL\-1:KL] ← 0
-DEST[MAXVL\-1:VL] ← 0
+k1[MAX_KL-1:KL] := 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT <a
+href="./vpgatherqd:vpgatherqq.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
+.EX
+VPGATHERQD __m256i _mm512_i64gather_epi32(__m512i vdx, void * base, int scale);
+
+VPGATHERQD __m256i _mm512_mask_i64gather_epi32lo(__m256i s, __mmask8 k, __m512i vdx, void * base, int scale);
+
+VPGATHERQD __m128i _mm256_mask_i64gather_epi32lo(__m128i s, __mmask8 k, __m256i vdx, void * base, int scale);
+
+VPGATHERQD __m128i _mm_mask_i64gather_epi32(__m128i s, __mmask8 k, __m128i vdx, void * base, int scale);
+
+VPGATHERQQ __m512i _mm512_i64gather_epi64( __m512i vdx, void * base, int scale);
+
+VPGATHERQQ __m512i _mm512_mask_i64gather_epi64(__m512i s, __mmask8 k, __m512i vdx, void * base, int scale);
+
+VPGATHERQQ __m256i _mm256_mask_i64gather_epi64(__m256i s, __mmask8 k, __m256i vdx, void * base, int scale);
+
+VPGATHERQQ __m128i _mm_mask_i64gather_epi64(__m128i s, __mmask8 k, __m128i vdx, void * base, int scale);
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="./vpgatherqd:vpgatherqq.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
+None.
 
-.nf
-VPGATHERQD \_\_m256i \_mm512\_i64gather\_epi32(\_\_m512i vdx, void * base, int scale);
+.SS OTHER EXCEPTIONS  href="./vpgatherqd:vpgatherqq.html#other-exceptions"
+class="anchor">¶
 
-VPGATHERQD \_\_m256i \_mm512\_mask\_i64gather\_epi32lo(\_\_m256i s, \_\_mmask8 k, \_\_m512i vdx, void * base, int scale);
-
-VPGATHERQD \_\_m128i \_mm256\_mask\_i64gather\_epi32lo(\_\_m128i s, \_\_mmask8 k, \_\_m256i vdx, void * base, int scale);
-
-VPGATHERQD \_\_m128i \_mm\_mask\_i64gather\_epi32(\_\_m128i s, \_\_mmask8 k, \_\_m128i vdx, void * base, int scale);
-
-VPGATHERQQ \_\_m512i \_mm512\_i64gather\_epi64( \_\_m512i vdx, void * base, int scale);
-
-VPGATHERQQ \_\_m512i \_mm512\_mask\_i64gather\_epi64(\_\_m512i s, \_\_mmask8 k, \_\_m512i vdx, void * base, int scale);
-
-VPGATHERQQ \_\_m256i \_mm256\_mask\_i64gather\_epi64(\_\_m256i s, \_\_mmask8 k, \_\_m256i vdx, void * base, int scale);
-
-VPGATHERQQ \_\_m128i \_mm\_mask\_i64gather\_epi64(\_\_m128i s, \_\_mmask8 k, \_\_m128i vdx, void * base, int scale);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
-None
-
-.SS Other Exceptions
-.PP
-See Exceptions Type E12.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+See Table 2-61, “Type E12 Class
+Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

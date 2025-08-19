@@ -1,112 +1,112 @@
+'\" t
 .nh
-.TH "X86-LGDT-LIDT" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-LGDT-LIDT" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 LGDT-LIDT - LOAD GLOBAL-INTERRUPT DESCRIPTOR TABLE REGISTER
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
-0F 01 /2	LGDT m16\&32	M	N.E.	Valid	Load m into GDTR.
-0F 01 /3	LIDT m16\&32	M	N.E.	Valid	Load m into IDTR.
-0F 01 /2	LGDT m16\&64	M	Valid	N.E.	Load m into GDTR.
-0F 01 /3	LIDT m16\&64	M	Valid	N.E.	Load m into IDTR.
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
+0F 01 /2	LGDT m16&32	M	N.E.	Valid	Load m into GDTR.
+0F 01 /3	LIDT m16&32	M	N.E.	Valid	Load m into IDTR.
+0F 01 /2	LGDT m16&64	M	Valid	N.E.	Load m into GDTR.
+0F 01 /3	LIDT m16&64	M	Valid	N.E.	Load m into IDTR.
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./lgdt:lidt.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-M	ModRM:r/m (r)	NA	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+M	ModRM:r/m (r)	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Loads the values in the source operand into the global descriptor table
 register (GDTR) or the interrupt descriptor table register (IDTR). The
-source operand specifies a 6\-byte memory location that contains the base
+source operand specifies a 6-byte memory location that contains the base
 address (a linear address) and the limit (size of table in bytes) of the
 global descriptor table (GDT) or the interrupt descriptor table (IDT).
-If operand\-size attribute is 32 bits, a 16\-bit limit (lower 2 bytes of
-the 6\-byte data operand) and a 32\-bit base address (upper 4 bytes of the
-data operand) are loaded into the register. If the operand\-size
-attribute is 16 bits, a 16\-bit limit (lower 2 bytes) and a 24\-bit base
-address (third, fourth, and fifth byte) are loaded. Here, the high\-order
-byte of the operand is not used and the high\-order byte of the base
+If operand-size attribute is 32 bits, a 16-bit limit (lower 2 bytes of
+the 6-byte data operand) and a 32-bit base address (upper 4 bytes of the
+data operand) are loaded into the register. If the operand-size
+attribute is 16 bits, a 16-bit limit (lower 2 bytes) and a 24-bit base
+address (third, fourth, and fifth byte) are loaded. Here, the high-order
+byte of the operand is not used and the high-order byte of the base
 address in the GDTR or IDTR is filled with zeros.
 
 .PP
-The LGDT and LIDT instructions are used only in operating\-system
+The LGDT and LIDT instructions are used only in operating-system
 software; they are not used in application programs. They are the only
 instructions that directly load a linear address (that is, not a
-segment\-relative address) and a limit in protected mode. They are
-commonly executed in real\-address mode to allow processor initialization
+segment-relative address) and a limit in protected mode. They are
+commonly executed in real-address mode to allow processor initialization
 prior to switching to protected mode.
 
 .PP
-In 64\-bit mode, the instruction’s operand size is fixed at 8+2 bytes (an
-8\-byte base and a 2\-byte limit). See the summary chart at the beginning
+In 64-bit mode, the instruction’s operand size is fixed at 8+2 bytes (an
+8-byte base and a 2-byte limit). See the summary chart at the beginning
 of this section for encoding data and limits.
 
 .PP
-See “SGDT—Store Global Descriptor Table Register” in Chapter 4, Intel®
-64 and IA\-32 Architectures Software Developer’s Manual, Volume 2B, for
-information on storing the contents of the GDTR and IDTR.
+See “SGDT—Store Global Descriptor Table Register” in Chapter 4, of the
+Intel® 64 and IA-32 Architectures Software Developer’s
+Manual, Volume 2B, for information on storing the contents of the GDTR
+and IDTR.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
+.EX
 IF Instruction is LIDT
     THEN
         IF OperandSize = 16
             THEN
-                IDTR(Limit) ← SRC[0:15];
-                IDTR(Base) ← SRC[16:47] AND 00FFFFFFH;
-            ELSE IF 32\-bit Operand Size
+                IDTR(Limit) := SRC[0:15];
+                IDTR(Base) := SRC[16:47] AND 00FFFFFFH;
+            ELSE IF 32-bit Operand Size
                 THEN
-                    IDTR(Limit) ← SRC[0:15];
-                    IDTR(Base) ← SRC[16:47];
+                    IDTR(Limit) := SRC[0:15];
+                    IDTR(Base) := SRC[16:47];
                 FI;
-            ELSE IF 64\-bit Operand Size (* In 64\-Bit Mode *)
+            ELSE IF 64-bit Operand Size (* In 64-Bit Mode *)
                 THEN
-                    IDTR(Limit) ← SRC[0:15];
-                    IDTR(Base) ← SRC[16:79];
+                    IDTR(Limit) := SRC[0:15];
+                    IDTR(Base) := SRC[16:79];
                 FI;
         FI;
     ELSE (* Instruction is LGDT *)
         IF OperandSize = 16
             THEN
-                GDTR(Limit) ← SRC[0:15];
-                GDTR(Base) ← SRC[16:47] AND 00FFFFFFH;
-            ELSE IF 32\-bit Operand Size
+                GDTR(Limit) := SRC[0:15];
+                GDTR(Base) := SRC[16:47] AND 00FFFFFFH;
+            ELSE IF 32-bit Operand Size
                 THEN
-                    GDTR(Limit) ← SRC[0:15];
-                    GDTR(Base) ← SRC[16:47];
+                    GDTR(Limit) := SRC[0:15];
+                    GDTR(Base) := SRC[16:47];
                 FI;
-            ELSE IF 64\-bit Operand Size (* In 64\-Bit Mode *)
+            ELSE IF 64-bit Operand Size (* In 64-Bit Mode *)
                 THEN
-                    GDTR(Limit) ← SRC[0:15];
-                    GDTR(Base) ← SRC[16:79];
+                    GDTR(Limit) := SRC[0:15];
+                    GDTR(Base) := SRC[16:79];
                 FI;
         FI;
 FI;
-
-.fi
-.RE
+.EE
 
 .SH FLAGS AFFECTED
-.PP
-None
+None.
 
-.SH PROTECTED MODE EXCEPTIONS
+.SH PROTECTED MODE EXCEPTIONS  href="./lgdt:lidt.html#protected-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If the LOCK prefix is used.
 #GP(0)	T{
 If the current privilege level is not 0.
@@ -120,14 +120,17 @@ T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS  href="./lgdt:lidt.html#real-address-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If the LOCK prefix is used.
 #GP	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
@@ -137,52 +140,54 @@ If a memory operand effective address is outside the SS segment limit.
 T}
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS  href="./lgdt:lidt.html#virtual-8086-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If the LOCK prefix is used.
 #GP	T{
 If the current privilege level is not 0.
 T}
 .TE
 
-.SH COMPATIBILITY MODE EXCEPTIONS
+.SH COMPATIBILITY MODE EXCEPTIONS  href="./lgdt:lidt.html#compatibility-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
-If a memory address referencing the SS segment is in a non\-canonical form.
+If a memory address referencing the SS segment is in a non-canonical form.
 T}
 #GP(0)	T{
 If the current privilege level is not 0.
 T}
 	T{
-If the memory address is in a non\-canonical form.
+If the memory address is in a non-canonical form.
 T}
 #UD	If the LOCK prefix is used.
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

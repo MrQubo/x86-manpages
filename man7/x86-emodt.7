@@ -1,47 +1,31 @@
+'\" t
 .nh
-.TH "X86-EMODT" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-EMODT" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 EMODT - CHANGE THE TYPE OF AN EPC PAGE
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 EAX = 0FH ENCLS[EMODT]	IR	V/V	SGX2	T{
 This leaf function changes the type of an existing EPC page.
 T}
 .TE
 
 .SH INSTRUCTION OPERAND ENCODING
-.PP
-Op/En
-
-.PP
-EAX
-
-.PP
-RBX
-
-.PP
-RCX
-
-.PP
-IR
-
-.PP
-EMODT (In)
-
-.PP
-Return Error Code (Out)
-
-.PP
-Address of a SECINFO (In)
-
-.PP
+.TS
+allbox;
+l l l l l 
+l l l l l .
+\fB\fP	\fB\fP	\fB\fP	\fB\fP	\fB\fP
+Op/En	EAX		RBX	RCX
+IR	EMODT (In)	Return Error Code (Out)	Address of a SECINFO (In)	T{
 Address of the destination EPC page (In)
+T}
+.TE
 
-.SS Description
-.PP
+.SS DESCRIPTION
 This leaf function modifies the type of an EPC page. The security
 attributes are configured to prevent access to the EPC page at its new
 type until a corresponding invocation of the EACCEPT leaf confirms the
@@ -54,16 +38,18 @@ contains the effective address of an EPC page. The table below provides
 additional information on the memory parameter of the EMODT leaf
 function.
 
-.SH EMODT MEMORY PARAMETER SEMANTICS
+.SH EMODT MEMORY PARAMETER SEMANTICS  href="emodt.html#emodt-memory-parameter-semantics"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 SECINFO	EPCPAGE
 T{
 Read access permitted by Non Enclave
-T}
-	T{
+T}	T{
 Read/Write access permitted by Enclave
 T}
 .TE
@@ -76,153 +62,42 @@ The instruction faults if any of the following:
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 T{
 The operands are not properly aligned.
-T}
-	T{
+T}	T{
 If unsupported security attributes are set.
 T}
 T{
 The Enclave is not initialized.
-T}
-	T{
+T}	T{
 SECS is locked by another thread.
 T}
 T{
 The EPC page is locked by another thread.
-T}
-	T{
+T}	T{
 RCX does not contain an effective address of an EPC page in the running enclave.
 T}
-The EPC page is not valid.	.TE
+The EPC page is not valid.	
+.TE
 
 .PP
 The error codes are:
 
-.TS
-allbox;
-l l 
-l l .
-\fB\fCError Code (see Table 40\-4)\fR	\fB\fCDescription\fR
-No Error	EMODT successful.
-SGX\_PAGE\_NOT\_MODIFIABLE	T{
-The EPC page cannot be modified because it is in the PENDING or MODIFIED state.
-T}
-SGX\_EPC\_PAGE\_CONFLICT	T{
-Page is being written by EADD, EAUG, ECREATE, ELDU/B, EMODPR, or EWB.
-T}
-.TE
+.SS CONCURRENCY RESTRICTIONS
+.SS OPERATION
+.SH TEMP VARIABLES IN EMODT OPERATIONAL FLOW  href="emodt.html#temp-variables-in-emodt-operational-flow"
+class="anchor">¶
 
-.PP
-Table 40\-34\&. EMODT Return Value in RAX
-
-.SS Concurrency Restrictions
-.PP
-Leaf
-
-.PP
-Parameter
-
-.PP
-Base Concurrency Restrictions
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-SGX\_CONFLICT VM Exit Qualification
-
-.PP
-EMODT
-
-.PP
-Target [DS:RCX]
-
-.PP
-Exclusive
-
-.PP
-SGX\_EPC\_PAGE\_ CONFLICT
-
-.PP
-EPC\_PAGE\_CONFLICT\_ERROR
-
-.PP
-Table 40\-35\&. Base Concurrency
-Restrictions of EMODT
-
-.PP
-Leaf
-
-.PP
-Parameter
-
-.PP
-Additional Concurrency Restrictions
-
-.PP
-vs. EACCEPT, EACCEPTCOPY, EMODPE, EMODPR, EMODT
-
-.PP
-vs. EADD, EEXTEND, EINIT
-
-.PP
-vs. ETRACK, ETRACKC
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-EMODT
-
-.PP
-Target [DS:RCX]
-
-.PP
-Exclusive
-
-.PP
-SGX\_EPC\_PAGE \_CONFLICT
-
-.PP
-Concurrent
-
-.PP
-Concurrent
-
-.PP
-Table 40\-36\&. Additional Concurrency
-Restrictions of EMODT
-
-.SS Operation
-.SH TEMP VARIABLES IN EMODT OPERATIONAL FLOW
 .TS
 allbox;
 l l l l 
 l l l l .
-\fB\fCName\fR	\fB\fCType\fR	\fB\fCSize (bits)\fR	\fB\fCDescription\fR
-TMP\_SECS	Effective Address	32/64	T{
+\fBName\fP	\fBType\fP	\fBSize (bits)\fP	\fBDescription\fP
+TMP_SECS	Effective Address	32/64	T{
 Physical address of SECS to which EPC operand belongs.
 T}
-SCRATCH\_SECINFO	SECINFO	512	T{
+SCRATCH_SECINFO	SECINFO	512	T{
 Scratch storage for holding the contents of DS:RBX.
 T}
 .TE
@@ -246,17 +121,17 @@ IF (DS:RCX does not resolve within an EPC)
 THEN #PF(DS:RCX); FI;
 
 .PP
-SCRATCH\_SECINFO ← DS:RBX;
+SCRATCH_SECINFO := DS:RBX;
 
 .PP
 (* Check for misconfigured SECINFO flags*)
 
 .PP
-IF ( (SCRATCH\_SECINFO reserved fields are not zero ) or
+IF ( (SCRATCH_SECINFO reserved fields are not zero ) or
 
 .PP
-!(SCRATCH\_SECINFO.FLAGS.PT is PT\_TCS or SCRATCH\_SECINFO.FLAGS.PT is
-PT\_TRIM) )
+!(SCRATCH_SECINFO.FLAGS.PT is PT_TCS or SCRATCH_SECINFO.FLAGS.PT is
+PT_TRIM) )
 
 .PP
 THEN #GP(0); FI;
@@ -271,10 +146,10 @@ IF (other SGX1 instructions accessing EPC page)
 THEN
 
 .PP
-RFLAGS.ZF ← 1;
+RFLAGS.ZF := 1;
 
 .PP
-RAX ← SGX\_EPC\_PAGE\_CONFLICT;
+RAX := SGX_EPC_PAGE_CONFLICT;
 
 .PP
 GOTO DONE;
@@ -298,10 +173,10 @@ IF (EPC page in use by another SGX2 instruction)
 THEN
 
 .PP
-RFLAGS.ZF ← 1;
+RFLAGS.ZF := 1;
 
 .PP
-RAX ← SGX\_EPC\_PAGE\_CONFLICT;
+RAX := SGX_EPC_PAGE_CONFLICT;
 
 .PP
 GOTO DONE;
@@ -310,10 +185,11 @@ GOTO DONE;
 FI;
 
 .PP
-IF (!(EPCM(DS:RCX).PT is PT\_REG or
+IF (!(EPCM(DS:RCX).PT is PT_REG or
 
 .PP
-(EPCM(DS:RCX).PT is PT\_TCS and SCRATCH\_SECINFO.FLAGS.PT is PT\_TRIM)))
+((EPCM(DS:RCX).PT is PT_TCS or PT_SS_FIRST or PT_SS_REST) and
+SCRATCH_SECINFO.FLAGS.PT is PT_TRIM)))
 
 .PP
 THEN #PF(DS:RCX); FI;
@@ -325,10 +201,10 @@ IF (EPCM(DS:RCX).PENDING is not 0 or (EPCM(DS:RCX).MODIFIED is not 0) )
 THEN
 
 .PP
-RFLAGS.ZF ← 1;
+RFLAGS.ZF := 1;
 
 .PP
-RAX ← SGX\_PAGE\_NOT\_MODIFIABLE;
+RAX := SGX_PAGE_NOT_MODIFIABLE;
 
 .PP
 GOTO DONE;
@@ -337,10 +213,10 @@ GOTO DONE;
 FI;
 
 .PP
-TMP\_SECS ← GET\_SECS\_ADDRESS
+TMP_SECS := GET_SECS_ADDRESS
 
 .PP
-IF (TMP\_SECS.ATTRIBUTES.INIT = 0)
+IF (TMP_SECS.ATTRIBUTES.INIT = 0)
 
 .PP
 THEN #GP(0); FI;
@@ -349,97 +225,90 @@ THEN #GP(0); FI;
 (* Update EPCM fields *)
 
 .PP
-EPCM(DS:RCX).PR ← 0;
+EPCM(DS:RCX).PR := 0;
 
 .PP
-EPCM(DS:RCX).MODIFIED ← 1;
+EPCM(DS:RCX).MODIFIED := 1;
 
 .PP
-EPCM(DS:RCX).R ← 0;
+EPCM(DS:RCX).R := 0;
 
 .PP
-EPCM(DS:RCX).W ← 0;
+EPCM(DS:RCX).W := 0;
 
 .PP
-EPCM(DS:RCX).X ← 0;
+EPCM(DS:RCX).X := 0;
 
 .PP
-EPCM(DS:RCX).PT ← SCRATCH\_SECINFO.FLAGS.PT;
+EPCM(DS:RCX).PT := SCRATCH_SECINFO.FLAGS.PT;
 
 .PP
-RFLAGS.ZF ← 0;
+RFLAGS.ZF := 0;
 
 .PP
-RAX←0;
+RAX := 0;
 
 .PP
 DONE:
 
 .PP
-RFLAGS.CF,PF,AF,OF,SF ← 0;
+RFLAGS.CF,PF,AF,OF,SF := 0;
 
-.SS Flags Affected
-.PP
+.SS FLAGS AFFECTED
 Sets ZF if page is not modifiable or if other SGX2 instructions are
 executing concurrently, otherwise cleared. Clears CF, PF, AF, OF, SF.
 
-.SS Protected Mode Exceptions
-.PP
-#GP(0)
-
-.PP
+.SS PROTECTED MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
 If a memory operand effective address is outside the DS segment limit.
-
-.PP
+T}
+	T{
 If a memory operand is not properly aligned.
-
-.PP
-If a memory operand is locked.
-
-.PP
-#PF(error
-
-.PP
+T}
+	If a memory operand is locked.
+#PF(error	T{
 code) If a page fault occurs in accessing memory operands.
-
-.PP
+T}
+	T{
 If a memory operand is not an EPC page.
+T}
+.TE
 
-.SS 64\-Bit Mode Exceptions
-.PP
-#GP(0)
-
-.PP
-If a memory operand is non\-canonical form.
-
-.PP
+.SS 64-BIT MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
+If a memory operand is non-canonical form.
+T}
+	T{
 If a memory operand is not properly aligned.
-
-.PP
-If a memory operand is locked.
-
-.PP
-#PF(error
-
-.PP
+T}
+	If a memory operand is locked.
+#PF(error	T{
 code) If a page fault occurs in accessing memory operands.
-
-.PP
+T}
+	T{
 If a memory operand is not an EPC page.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+T}
+.TE
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

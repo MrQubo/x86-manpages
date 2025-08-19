@@ -1,82 +1,77 @@
+'\" t
 .nh
-.TH "X86-PAVGB-PAVGW" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-PAVGB-PAVGW" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 PAVGB-PAVGW - AVERAGE PACKED INTEGERS
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
-NP 0F E0 /mm1, mm2/m64	A	V/V	SSE	T{
-Average packed unsigned byte integers from mm1 with rounding.
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
+NP 0F E0 /r1 PAVGB mm1, mm2/m64	A	V/V	SSE	T{
+Average packed unsigned byte integers from mm2/m64 and mm1 with rounding.
 T}
-66 0F E0, /xmm2/m128	A	V/V	SSE2	T{
-Average packed unsigned byte integers from xmm1 with rounding.
+T{
+66 0F E0, /r PAVGB xmm1, xmm2/m128
+T}	A	V/V	SSE2	T{
+Average packed unsigned byte integers from xmm2/m128 and xmm1 with rounding.
 T}
-NP 0F E3 /mm1, mm2/m64	A	V/V	SSE	T{
+NP 0F E3 /r1 PAVGW mm1, mm2/m64	A	V/V	SSE	T{
 Average packed unsigned word integers from mm2/m64 and mm1 with rounding.
 T}
-66 0F E3 /xmm2/m128	A	V/V	SSE2	T{
-Average packed unsigned word integers from xmm1 with rounding.
+T{
+66 0F E3 /r PAVGW xmm1, xmm2/m128
+T}	A	V/V	SSE2	T{
+Average packed unsigned word integers from xmm2/m128 and xmm1 with rounding.
 T}
 T{
 VEX.128.66.0F.WIG E0 /r VPAVGB xmm1, xmm2, xmm3/m128
-T}
-	B	V/V	AVX	T{
-Average packed unsigned byte integers from xmm2 with rounding.
+T}	B	V/V	AVX	T{
+Average packed unsigned byte integers from xmm3/m128 and xmm2 with rounding.
 T}
 T{
 VEX.128.66.0F.WIG E3 /r VPAVGW xmm1, xmm2, xmm3/m128
-T}
-	B	V/V	AVX	T{
-Average packed unsigned word integers from xmm2 with rounding.
-T}
-T{
-VEX.256.66.0F.WIG E0 /r VPAVGB ymm2, ymm3/m256
-T}
-	B	V/V	AVX2	T{
-Average packed unsigned byte integers from ymm2, and ymm1.
+T}	B	V/V	AVX	T{
+Average packed unsigned word integers from xmm3/m128 and xmm2 with rounding.
 T}
 T{
-VEX.256.66.0F.WIG E3 /r VPAVGW ymm2, ymm3/m256
-T}
-	B	V/V	AVX2	T{
-Average packed unsigned word integers from ymm1.
+VEX.256.66.0F.WIG E0 /r VPAVGB ymm1, ymm2, ymm3/m256
+T}	B	V/V	AVX2	T{
+Average packed unsigned byte integers from ymm2, and ymm3/m256 with rounding and store to ymm1.
 T}
 T{
-EVEX.128.66.0F.WIG E0 /r VPAVGB xmm2, xmm3/m128
+VEX.256.66.0F.WIG E3 /r VPAVGW ymm1, ymm2, ymm3/m256
+T}	B	V/V	AVX2	T{
+Average packed unsigned word integers from ymm2, ymm3/m256 with rounding to ymm1.
 T}
-	C	V/V	AVX512VL AVX512BW	T{
+T{
+EVEX.128.66.0F.WIG E0 /r VPAVGB xmm1 {k1}{z}, xmm2, xmm3/m128
+T}	C	V/V	AVX512VL AVX512BW	T{
 Average packed unsigned byte integers from xmm2, and xmm3/m128 with rounding and store to xmm1 under writemask k1.
 T}
 T{
-EVEX.256.66.0F.WIG E0 /r VPAVGB ymm2, ymm3/m256
-T}
-	C	V/V	AVX512VL AVX512BW	T{
+EVEX.256.66.0F.WIG E0 /r VPAVGB ymm1 {k1}{z}, ymm2, ymm3/m256
+T}	C	V/V	AVX512VL AVX512BW	T{
 Average packed unsigned byte integers from ymm2, and ymm3/m256 with rounding and store to ymm1 under writemask k1.
 T}
 T{
-EVEX.512.66.0F.WIG E0 /r VPAVGB zmm2, zmm3/m512
-T}
-	C	V/V	AVX512BW	T{
+EVEX.512.66.0F.WIG E0 /r VPAVGB zmm1 {k1}{z}, zmm2, zmm3/m512
+T}	C	V/V	AVX512BW	T{
 Average packed unsigned byte integers from zmm2, and zmm3/m512 with rounding and store to zmm1 under writemask k1.
 T}
 T{
-EVEX.128.66.0F.WIG E3 /r VPAVGW xmm2, xmm3/m128
-T}
-	C	V/V	AVX512VL AVX512BW	T{
+EVEX.128.66.0F.WIG E3 /r VPAVGW xmm1 {k1}{z}, xmm2, xmm3/m128
+T}	C	V/V	AVX512VL AVX512BW	T{
 Average packed unsigned word integers from xmm2, xmm3/m128 with rounding to xmm1 under writemask k1.
 T}
 T{
-EVEX.256.66.0F.WIG E3 /r VPAVGW ymm2, ymm3/m256
-T}
-	C	V/V	AVX512VL AVX512BW	T{
+EVEX.256.66.0F.WIG E3 /r VPAVGW ymm1 {k1}{z}, ymm2, ymm3/m256
+T}	C	V/V	AVX512VL AVX512BW	T{
 Average packed unsigned word integers from ymm2, ymm3/m256 with rounding to ymm1 under writemask k1.
 T}
 T{
-EVEX.512.66.0F.WIG E3 /r VPAVGW zmm2, zmm3/m512
-T}
-	C	V/V	AVX512BW	T{
+EVEX.512.66.0F.WIG E3 /r VPAVGW zmm1 {k1}{z}, zmm2, zmm3/m512
+T}	C	V/V	AVX512BW	T{
 Average packed unsigned word integers from zmm2, zmm3/m512 with rounding to zmm1 under writemask k1.
 T}
 .TE
@@ -85,25 +80,29 @@ T}
 .RS
 
 .PP
-1\&. See note in Section 2.4, “AVX and SSE Instruction Exception
-Specification” in the Intel® 64 and IA\-32 Architectures Software
-Developer’s Manual, Volume 3A.
+1\&. See note in Section 2.5, “Intel® AVX and Intel® SSE Instruction
+Exception Classification,” in the Intel® 64 and IA-32
+Architectures Software Developer’s Manual, Volume 2B, and Section
+23.25.3, “Exception Conditions of Legacy SIMD Instructions Operating
+on MMX Registers,” in the Intel® 64 and IA-32 Architectures
+Software Developer’s Manual, Volume 3B.
 
 .RE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./pavgb:pavgw.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	NA	ModRM:reg (r, w)	ModRM:r/m (r)	NA	NA
-B	NA	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	NA
-C	Full Mem	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (r, w)	ModRM:r/m (r)	N/A	N/A
+B	N/A	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	N/A
+C	Full Mem	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Performs a SIMD average of the packed unsigned integers from the source
 operand (second operand) and the destination operand (first operand),
 and stores the results in the destination operand. For each
@@ -116,254 +115,220 @@ The (V)PAVGB instruction operates on packed unsigned bytes and the
 (V)PAVGW instruction operates on packed unsigned words.
 
 .PP
-In 64\-bit mode and not encoded with VEX/EVEX, using a REX prefix in the
+In 64-bit mode and not encoded with VEX/EVEX, using a REX prefix in the
 form of REX.R permits this instruction to access additional registers
-(XMM8\-XMM15).
+(XMM8-XMM15).
 
 .PP
 Legacy SSE instructions: The source operand can be an MMX technology
-register or a 64\-bit memory location. The destination operand can be an
+register or a 64-bit memory location. The destination operand can be an
 MMX technology register.
 
 .PP
-128\-bit Legacy SSE version: The first source operand is an XMM register.
-The second operand can be an XMM register or an 128\-bit memory location.
+128-bit Legacy SSE version: The first source operand is an XMM register.
+The second operand can be an XMM register or an 128-bit memory location.
 The destination is not distinct from the first source XMM register and
-the upper bits (MAXVL\-1:128) of the corresponding register destination
+the upper bits (MAXVL-1:128) of the corresponding register destination
 are unmodified.
 
 .PP
 EVEX.512 encoded version: The first source operand is a ZMM register.
-The second source operand is a ZMM register or a 512\-bit memory
+The second source operand is a ZMM register or a 512-bit memory
 location. The destination operand is a ZMM register.
 
 .PP
 VEX.256 and EVEX.256 encoded versions: The first source operand is a YMM
-register. The second source operand is a YMM register or a 256\-bit
+register. The second source operand is a YMM register or a 256-bit
 memory location. The destination operand is a YMM register.
 
 .PP
 VEX.128 and EVEX.128 encoded versions: The first source operand is an
-XMM register. The second source operand is an XMM register or 128\-bit
+XMM register. The second source operand is an XMM register or 128-bit
 memory location. The destination operand is an XMM register. The upper
-bits (MAXVL\-1:128) of the corresponding register destination are zeroed.
+bits (MAXVL-1:128) of the corresponding register destination are zeroed.
 
 .SH OPERATION
-.SS PAVGB (with 64\-bit operands)
-.PP
-.RS
+.SS PAVGB (WITH 64-BIT OPERANDS)  href="./pavgb:pavgw.html#pavgb--with-64-bit-operands-"
+class="anchor">¶
 
-.nf
-DEST[7:0] ← (SRC[7:0] + DEST[7:0] + 1) >> 1; (* Temp sum before shifting is 9 bits *)
+.EX
+DEST[7:0] := (SRC[7:0] + DEST[7:0] + 1) >> 1; (* Temp sum before shifting is 9 bits *)
 (* Repeat operation performed for bytes 2 through 6 *)
-DEST[63:56] ← (SRC[63:56] + DEST[63:56] + 1) >> 1;
+DEST[63:56] := (SRC[63:56] + DEST[63:56] + 1) >> 1;
+.EE
 
-.fi
-.RE
+.SS PAVGW (WITH 64-BIT OPERANDS)  href="./pavgb:pavgw.html#pavgw--with-64-bit-operands-"
+class="anchor">¶
 
-.SS PAVGW (with 64\-bit operands)
-.PP
-.RS
-
-.nf
-DEST[15:0] ← (SRC[15:0] + DEST[15:0] + 1) >> 1; (* Temp sum before shifting is 17 bits *)
+.EX
+DEST[15:0] := (SRC[15:0] + DEST[15:0] + 1) >> 1; (* Temp sum before shifting is 17 bits *)
 (* Repeat operation performed for words 2 and 3 *)
-DEST[63:48] ← (SRC[63:48] + DEST[63:48] + 1) >> 1;
+DEST[63:48] := (SRC[63:48] + DEST[63:48] + 1) >> 1;
+.EE
 
-.fi
-.RE
+.SS PAVGB (WITH 128-BIT OPERANDS)  href="./pavgb:pavgw.html#pavgb--with-128-bit-operands-"
+class="anchor">¶
 
-.SS PAVGB (with 128\-bit operands)
-.PP
-.RS
-
-.nf
-DEST[7:0] ← (SRC[7:0] + DEST[7:0] + 1) >> 1; (* Temp sum before shifting is 9 bits *)
+.EX
+DEST[7:0] := (SRC[7:0] + DEST[7:0] + 1) >> 1; (* Temp sum before shifting is 9 bits *)
 (* Repeat operation performed for bytes 2 through 14 *)
-DEST[127:120] ← (SRC[127:120] + DEST[127:120] + 1) >> 1;
+DEST[127:120] := (SRC[127:120] + DEST[127:120] + 1) >> 1;
+.EE
 
-.fi
-.RE
+.SS PAVGW (WITH 128-BIT OPERANDS)  href="./pavgb:pavgw.html#pavgw--with-128-bit-operands-"
+class="anchor">¶
 
-.SS PAVGW (with 128\-bit operands)
-.PP
-.RS
-
-.nf
-DEST[15:0] ← (SRC[15:0] + DEST[15:0] + 1) >> 1; (* Temp sum before shifting is 17 bits *)
+.EX
+DEST[15:0] := (SRC[15:0] + DEST[15:0] + 1) >> 1; (* Temp sum before shifting is 17 bits *)
 (* Repeat operation performed for words 2 through 6 *)
-DEST[127:112] ← (SRC[127:112] + DEST[127:112] + 1) >> 1;
+DEST[127:112] := (SRC[127:112] + DEST[127:112] + 1) >> 1;
+.EE
 
-.fi
-.RE
+.SS VPAVGB (VEX.128 ENCODED VERSION)  href="./pavgb:pavgw.html#vpavgb--vex-128-encoded-version-"
+class="anchor">¶
 
-.SS VPAVGB (VEX.128 encoded version)
-.PP
-.RS
-
-.nf
-DEST[7:0]←(SRC1[7:0] + SRC2[7:0] + 1) >> 1;
+.EX
+DEST[7:0] := (SRC1[7:0] + SRC2[7:0] + 1) >> 1;
 (* Repeat operation performed for bytes 2 through 15 *)
-DEST[127:120]←(SRC1[127:120] + SRC2[127:120] + 1) >> 1
-DEST[MAXVL\-1:128] ← 0
+DEST[127:120] := (SRC1[127:120] + SRC2[127:120] + 1) >> 1
+DEST[MAXVL-1:128] := 0
+.EE
 
-.fi
-.RE
+.SS VPAVGW (VEX.128 ENCODED VERSION)  href="./pavgb:pavgw.html#vpavgw--vex-128-encoded-version-"
+class="anchor">¶
 
-.SS VPAVGW (VEX.128 encoded version)
-.PP
-.RS
+.EX
+DEST[15:0] := (SRC1[15:0] + SRC2[15:0] + 1) >> 1;
+(* Repeat operation performed for 16-bit words 2 through 7 *)
+DEST[127:112] := (SRC1[127:112] + SRC2[127:112] + 1) >> 1
+DEST[MAXVL-1:128] := 0
+.EE
 
-.nf
-DEST[15:0]←(SRC1[15:0] + SRC2[15:0] + 1) >> 1;
-(* Repeat operation performed for 16\-bit words 2 through 7 *)
-DEST[127:112]←(SRC1[127:112] + SRC2[127:112] + 1) >> 1
-DEST[MAXVL\-1:128] ← 0
+.SS VPAVGB (VEX.256 ENCODED INSTRUCTION)  href="./pavgb:pavgw.html#vpavgb--vex-256-encoded-instruction-"
+class="anchor">¶
 
-.fi
-.RE
-
-.SS VPAVGB (VEX.256 encoded instruction)
-.PP
-.RS
-
-.nf
-DEST[7:0] ← (SRC1[7:0] + SRC2[7:0] + 1) >> 1; (* Temp sum before shifting is 9 bits *)
+.EX
+DEST[7:0] := (SRC1[7:0] + SRC2[7:0] + 1) >> 1; (* Temp sum before shifting is 9 bits *)
 (* Repeat operation performed for bytes 2 through 31)
-DEST[255:248]←(SRC1[255:248] + SRC2[255:248] + 1) >> 1;
+DEST[255:248] := (SRC1[255:248] + SRC2[255:248] + 1) >> 1;
+.EE
 
-.fi
-.RE
+.SS VPAVGW (VEX.256 ENCODED INSTRUCTION)  href="./pavgb:pavgw.html#vpavgw--vex-256-encoded-instruction-"
+class="anchor">¶
 
-.SS VPAVGW (VEX.256 encoded instruction)
-.PP
-.RS
-
-.nf
-    DEST[15:0] ← (SRC1[15:0] + SRC2[15:0] + 1) >> 1; (* Temp sum before shifting is 17 bits *)
+.EX
+    DEST[15:0] := (SRC1[15:0] + SRC2[15:0] + 1) >> 1; (* Temp sum before shifting is 17 bits *)
     (* Repeat operation performed for words 2 through 15)
-    DEST[255:14])←(SRC1[255:240] + SRC2[255:240] + 1) >> 1;
+    DEST[255:14]) := (SRC1[255:240] + SRC2[255:240] + 1) >> 1;
 VPAVGB (EVEX encoded versions)
 (KL, VL) = (16, 128), (32, 256), (64, 512)
-FOR j←0 TO KL\-1
-    i←j * 8
+FOR j := 0 TO KL-1
+    i := j * 8
     IF k1[j] OR *no writemask*
-        THEN DEST[i+7:i] ← (SRC1[i+7:i] + SRC2[i+7:i] + 1) >> 1; (* Temp sum before shifting is 9 bits *)
+        THEN DEST[i+7:i] := (SRC1[i+7:i] + SRC2[i+7:i] + 1) >> 1; (* Temp sum before shifting is 9 bits *)
         ELSE
-            IF *merging\-masking* ; merging\-masking
+            IF *merging-masking* ; merging-masking
                 THEN *DEST[i+7:i] remains unchanged*
-                ELSE *zeroing\-masking*
-                        ; zeroing\-masking
+                ELSE *zeroing-masking*
+                        ; zeroing-masking
                     DEST[i+7:i] = 0
             FI
     FI;
 ENDFOR;
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS VPAVGW (EVEX ENCODED VERSIONS)  href="./pavgb:pavgw.html#vpavgw--evex-encoded-versions-"
+class="anchor">¶
 
-.SS VPAVGW (EVEX encoded versions)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (8, 128), (16, 256), (32, 512)
-FOR j←0 TO KL\-1
-    i←j * 16
+FOR j := 0 TO KL-1
+    i := j * 16
     IF k1[j] OR *no writemask*
-        THEN DEST[i+15:i]←(SRC1[i+15:i] + SRC2[i+15:i] + 1) >> 1
+        THEN DEST[i+15:i] := (SRC1[i+15:i] + SRC2[i+15:i] + 1) >> 1
                         ; (* Temp sum before shifting is 17 bits *)
         ELSE
-            IF *merging\-masking* ; merging\-masking
+            IF *merging-masking* ; merging-masking
                 THEN *DEST[i+15:i] remains unchanged*
-                ELSE *zeroing\-masking*
-                            ; zeroing\-masking
+                ELSE *zeroing-masking*
+                            ; zeroing-masking
                     DEST[i+15:i] = 0
             FI
     FI;
 ENDFOR;
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENTS  href="./pavgb:pavgw.html#intel-c-c++-compiler-intrinsic-equivalents"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalents
-.PP
-.RS
+.EX
+VPAVGB __m512i _mm512_avg_epu8( __m512i a, __m512i b);
 
-.nf
-VPAVGB \_\_m512i \_mm512\_avg\_epu8( \_\_m512i a, \_\_m512i b);
+VPAVGW __m512i _mm512_avg_epu16( __m512i a, __m512i b);
 
-VPAVGW \_\_m512i \_mm512\_avg\_epu16( \_\_m512i a, \_\_m512i b);
+VPAVGB __m512i _mm512_mask_avg_epu8(__m512i s, __mmask64 m, __m512i a, __m512i b);
 
-VPAVGB \_\_m512i \_mm512\_mask\_avg\_epu8(\_\_m512i s, \_\_mmask64 m, \_\_m512i a, \_\_m512i b);
+VPAVGW __m512i _mm512_mask_avg_epu16(__m512i s, __mmask32 m, __m512i a, __m512i b);
 
-VPAVGW \_\_m512i \_mm512\_mask\_avg\_epu16(\_\_m512i s, \_\_mmask32 m, \_\_m512i a, \_\_m512i b);
+VPAVGB __m512i _mm512_maskz_avg_epu8( __mmask64 m, __m512i a, __m512i b);
 
-VPAVGB \_\_m512i \_mm512\_maskz\_avg\_epu8( \_\_mmask64 m, \_\_m512i a, \_\_m512i b);
+VPAVGW __m512i _mm512_maskz_avg_epu16( __mmask32 m, __m512i a, __m512i b);
 
-VPAVGW \_\_m512i \_mm512\_maskz\_avg\_epu16( \_\_mmask32 m, \_\_m512i a, \_\_m512i b);
+VPAVGB __m256i _mm256_mask_avg_epu8(__m256i s, __mmask32 m, __m256i a, __m256i b);
 
-VPAVGB \_\_m256i \_mm256\_mask\_avg\_epu8(\_\_m256i s, \_\_mmask32 m, \_\_m256i a, \_\_m256i b);
+VPAVGW __m256i _mm256_mask_avg_epu16(__m256i s, __mmask16 m, __m256i a, __m256i b);
 
-VPAVGW \_\_m256i \_mm256\_mask\_avg\_epu16(\_\_m256i s, \_\_mmask16 m, \_\_m256i a, \_\_m256i b);
+VPAVGB __m256i _mm256_maskz_avg_epu8( __mmask32 m, __m256i a, __m256i b);
 
-VPAVGB \_\_m256i \_mm256\_maskz\_avg\_epu8( \_\_mmask32 m, \_\_m256i a, \_\_m256i b);
+VPAVGW __m256i _mm256_maskz_avg_epu16( __mmask16 m, __m256i a, __m256i b);
 
-VPAVGW \_\_m256i \_mm256\_maskz\_avg\_epu16( \_\_mmask16 m, \_\_m256i a, \_\_m256i b);
+VPAVGB __m128i _mm_mask_avg_epu8(__m128i s, __mmask16 m, __m128i a, __m128i b);
 
-VPAVGB \_\_m128i \_mm\_mask\_avg\_epu8(\_\_m128i s, \_\_mmask16 m, \_\_m128i a, \_\_m128i b);
+VPAVGW __m128i _mm_mask_avg_epu16(__m128i s, __mmask8 m, __m128i a, __m128i b);
 
-VPAVGW \_\_m128i \_mm\_mask\_avg\_epu16(\_\_m128i s, \_\_mmask8 m, \_\_m128i a, \_\_m128i b);
+VPAVGB __m128i _mm_maskz_avg_epu8( __mmask16 m, __m128i a, __m128i b);
 
-VPAVGB \_\_m128i \_mm\_maskz\_avg\_epu8( \_\_mmask16 m, \_\_m128i a, \_\_m128i b);
+VPAVGW __m128i _mm_maskz_avg_epu16( __mmask8 m, __m128i a, __m128i b);
 
-VPAVGW \_\_m128i \_mm\_maskz\_avg\_epu16( \_\_mmask8 m, \_\_m128i a, \_\_m128i b);
+PAVGB __m64 _mm_avg_pu8 (__m64 a, __m64 b)
 
-PAVGB: \_\_m64 \_mm\_avg\_pu8 (\_\_m64 a, \_\_m64 b)
+PAVGW __m64 _mm_avg_pu16 (__m64 a, __m64 b)
 
-PAVGW: \_\_m64 \_mm\_avg\_pu16 (\_\_m64 a, \_\_m64 b)
+(V)PAVGB __m128i _mm_avg_epu8 ( __m128i a, __m128i b)
 
-(V)PAVGB: \_\_m128i \_mm\_avg\_epu8 ( \_\_m128i a, \_\_m128i b)
+(V)PAVGW __m128i _mm_avg_epu16 ( __m128i a, __m128i b)
 
-(V)PAVGW: \_\_m128i \_mm\_avg\_epu16 ( \_\_m128i a, \_\_m128i b)
+VPAVGB __m256i _mm256_avg_epu8 ( __m256i a, __m256i b)
 
-VPAVGB: \_\_m256i \_mm256\_avg\_epu8 ( \_\_m256i a, \_\_m256i b)
-
-VPAVGW: \_\_m256i \_mm256\_avg\_epu16 ( \_\_m256i a, \_\_m256i b)
-
-.fi
-.RE
+VPAVGW __m256i _mm256_avg_epu16 ( __m256i a, __m256i b)
+.EE
 
 .SH FLAGS AFFECTED
-.PP
 None.
 
 .SH NUMERIC EXCEPTIONS
-.PP
 None.
 
 .SH OTHER EXCEPTIONS
-.PP
-Non\-EVEX\-encoded instruction, see Exceptions Type 4.
+Non-EVEX-encoded instruction, see Table
+2-21, “Type 4 Class Exception Conditions.”
 
 .PP
-EVEX\-encoded instruction, see Exceptions Type E4.nb.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+EVEX-encoded instruction, see Exceptions Type E4.nb in
+Table 2-49, “Type E4 Class Exception
+Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

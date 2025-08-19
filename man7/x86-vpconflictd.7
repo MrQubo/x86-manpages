@@ -1,60 +1,59 @@
+'\" t
 .nh
-.TH "X86-VPCONFLICTD-VPCONFLICTQ" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VPCONFLICTD-VPCONFLICTQ" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-VPCONFLICTD-VPCONFLICTQ - DETECT CONFLICTS WITHIN A VECTOR OF PACKED DWORD-QWORD VALUES INTO DENSE MEMORY- REGISTER
+VPCONFLICTD-VPCONFLICTQ - DETECT CONFLICTS WITHIN A VECTOR OF PACKED DWORD-QWORD VALUES INTO DENSEMEMORY- REGISTER
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 EVEX.128.66.0F38.W0 C4 /r VPCONFLICTD xmm1 {k1}{z}, xmm2/m128/m32bcst
-T}
-	A	V/V	AVX512VL AVX512CD	T{
-Detect duplicate double\-word values in xmm2/m128/m32bcst using writemask k1.
+T}	A	V/V	AVX512VL AVX512CD	T{
+Detect duplicate double-word values in xmm2/m128/m32bcst using writemask k1.
 T}
 T{
 EVEX.256.66.0F38.W0 C4 /r VPCONFLICTD ymm1 {k1}{z}, ymm2/m256/m32bcst
-T}
-	A	V/V	AVX512VL AVX512CD	T{
-Detect duplicate double\-word values in ymm2/m256/m32bcst using writemask k1.
+T}	A	V/V	AVX512VL AVX512CD	T{
+Detect duplicate double-word values in ymm2/m256/m32bcst using writemask k1.
 T}
 T{
 EVEX.512.66.0F38.W0 C4 /r VPCONFLICTD zmm1 {k1}{z}, zmm2/m512/m32bcst
-T}
-	A	V/V	AVX512CD	T{
-Detect duplicate double\-word values in zmm2/m512/m32bcst using writemask k1.
+T}	A	V/V	AVX512CD	T{
+Detect duplicate double-word values in zmm2/m512/m32bcst using writemask k1.
 T}
 T{
 EVEX.128.66.0F38.W1 C4 /r VPCONFLICTQ xmm1 {k1}{z}, xmm2/m128/m64bcst
-T}
-	A	V/V	AVX512VL AVX512CD	T{
-Detect duplicate quad\-word values in xmm2/m128/m64bcst using writemask k1.
+T}	A	V/V	AVX512VL AVX512CD	T{
+Detect duplicate quad-word values in xmm2/m128/m64bcst using writemask k1.
 T}
 T{
 EVEX.256.66.0F38.W1 C4 /r VPCONFLICTQ ymm1 {k1}{z}, ymm2/m256/m64bcst
-T}
-	A	V/V	AVX512VL AVX512CD	T{
-Detect duplicate quad\-word values in ymm2/m256/m64bcst using writemask k1.
+T}	A	V/V	AVX512VL AVX512CD	T{
+Detect duplicate quad-word values in ymm2/m256/m64bcst using writemask k1.
 T}
 T{
 EVEX.512.66.0F38.W1 C4 /r VPCONFLICTQ zmm1 {k1}{z}, zmm2/m512/m64bcst
-T}
-	A	V/V	AVX512CD	T{
-Detect duplicate quad\-word values in zmm2/m512/m64bcst using writemask k1.
+T}	A	V/V	AVX512CD	T{
+Detect duplicate quad-word values in zmm2/m512/m64bcst using writemask k1.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./vpconflictd:vpconflictq.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Full	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Full	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
-.SS Description
+.SS DESCRIPTION  href="./vpconflictd:vpconflictq.html#description"
+class="anchor">¶
+
 .PP
 Test each dword/qword element of the source operand (the second operand)
 for equality with all other elements in the source operand closer to the
@@ -64,154 +63,147 @@ according to the writemask.
 
 .PP
 EVEX.512 encoded version: The source operand is a ZMM register, a
-512\-bit memory location, or a 512\-bit vector broadcasted from a
-32/64\-bit memory location. The destination operand is a ZMM register,
+512-bit memory location, or a 512-bit vector broadcasted from a
+32/64-bit memory location. The destination operand is a ZMM register,
 conditionally updated using writemask k1.
 
 .PP
 EVEX.256 encoded version: The source operand is a YMM register, a
-256\-bit memory location, or a 256\-bit vector broadcasted from a
-32/64\-bit memory location. The destination operand is a YMM register,
+256-bit memory location, or a 256-bit vector broadcasted from a
+32/64-bit memory location. The destination operand is a YMM register,
 conditionally updated using writemask k1.
 
 .PP
 EVEX.128 encoded version: The source operand is a XMM register, a
-128\-bit memory location, or a 128\-bit vector broadcasted from a
-32/64\-bit memory location. The destination operand is a XMM register,
+128-bit memory location, or a 128-bit vector broadcasted from a
+32/64-bit memory location. The destination operand is a XMM register,
 conditionally updated using writemask k1.
 
 .PP
 EVEX.vvvv is reserved and must be 1111b otherwise instructions will
 #UD.
 
-.SS Operation
-.SS VPCONFLICTD
-.PP
-.RS
+.SS OPERATION
+.SS VPCONFLICTD  href="./vpconflictd:vpconflictq.html#vpconflictd"
+class="anchor">¶
 
-.nf
+.EX
 (KL, VL) = (4, 128), (8, 256), (16, 512)
-FOR j←0 TO KL\-1
-    i←j*32
+FOR j := 0 TO KL-1
+    i := j*32
     IF MaskBit(j) OR *no writemask*THEN
-        FOR k←0 TO j\-1
-            m←k*32
+        FOR k := 0 TO j-1
+            m := k*32
             IF ((SRC[i+31:i] = SRC[m+31:m])) THEN
-                DEST[i+k] ← 1
+                DEST[i+k] := 1
             ELSE
-                DEST[i+k] ← 0
+                DEST[i+k] := 0
             FI
         ENDFOR
-        DEST[i+31:i+j] ← 0
+        DEST[i+31:i+j] := 0
     ELSE
-        IF *merging\-masking* THEN
+        IF *merging-masking* THEN
             *DEST[i+31:i] remains unchanged*
         ELSE
-            DEST[i+31:i] ← 0
+            DEST[i+31:i] := 0
         FI
     FI
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS VPCONFLICTQ  href="./vpconflictd:vpconflictq.html#vpconflictq"
+class="anchor">¶
 
-.SS VPCONFLICTQ
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
-FOR j←0 TO KL\-1
-        i←j*64
+FOR j := 0 TO KL-1
+        i := j*64
         IF MaskBit(j) OR *no writemask*THEN
-            FOR k←0 TO j\-1
-                    m←k*64
+            FOR k := 0 TO j-1
+                    m := k*64
                         IF ((SRC[i+63:i] = SRC[m+63:m])) THEN
-                            DEST[i+k] ← 1
+                            DEST[i+k] := 1
                         ELSE
-                            DEST[i+k] ← 0
+                            DEST[i+k] := 0
                     FI
             ENDFOR
-            DEST[i+63:i+j] ← 0
+            DEST[i+63:i+j] := 0
     ELSE
-            IF *merging\-masking* THEN
+            IF *merging-masking* THEN
                         *DEST[i+63:i] remains unchanged*
                 ELSE
-                        DEST[i+63:i] ← 0
+                        DEST[i+63:i] := 0
                 FI
     FI
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT <a
+href="./vpconflictd:vpconflictq.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+.EX
+VPCONFLICTD __m512i _mm512_conflict_epi32( __m512i a);
 
-.nf
-VPCONFLICTD \_\_m512i \_mm512\_conflict\_epi32( \_\_m512i a);
+VPCONFLICTD __m512i _mm512_mask_conflict_epi32(__m512i s, __mmask16 m, __m512i a);
 
-VPCONFLICTD \_\_m512i \_mm512\_mask\_conflict\_epi32(\_\_m512i s, \_\_mmask16 m, \_\_m512i a);
+VPCONFLICTD __m512i _mm512_maskz_conflict_epi32(__mmask16 m, __m512i a);
 
-VPCONFLICTD \_\_m512i \_mm512\_maskz\_conflict\_epi32(\_\_mmask16 m, \_\_m512i a);
+VPCONFLICTQ __m512i _mm512_conflict_epi64( __m512i a);
 
-VPCONFLICTQ \_\_m512i \_mm512\_conflict\_epi64( \_\_m512i a);
+VPCONFLICTQ __m512i _mm512_mask_conflict_epi64(__m512i s, __mmask8 m, __m512i a);
 
-VPCONFLICTQ \_\_m512i \_mm512\_mask\_conflict\_epi64(\_\_m512i s, \_\_mmask8 m, \_\_m512i a);
+VPCONFLICTQ __m512i _mm512_maskz_conflict_epi64(__mmask8 m, __m512i a);
 
-VPCONFLICTQ \_\_m512i \_mm512\_maskz\_conflict\_epi64(\_\_mmask8 m, \_\_m512i a);
+VPCONFLICTD __m256i _mm256_conflict_epi32( __m256i a);
 
-VPCONFLICTD \_\_m256i \_mm256\_conflict\_epi32( \_\_m256i a);
+VPCONFLICTD __m256i _mm256_mask_conflict_epi32(__m256i s, __mmask8 m, __m256i a);
 
-VPCONFLICTD \_\_m256i \_mm256\_mask\_conflict\_epi32(\_\_m256i s, \_\_mmask8 m, \_\_m256i a);
+VPCONFLICTD __m256i _mm256_maskz_conflict_epi32(__mmask8 m, __m256i a);
 
-VPCONFLICTD \_\_m256i \_mm256\_maskz\_conflict\_epi32(\_\_mmask8 m, \_\_m256i a);
+VPCONFLICTQ __m256i _mm256_conflict_epi64( __m256i a);
 
-VPCONFLICTQ \_\_m256i \_mm256\_conflict\_epi64( \_\_m256i a);
+VPCONFLICTQ __m256i _mm256_mask_conflict_epi64(__m256i s, __mmask8 m, __m256i a);
 
-VPCONFLICTQ \_\_m256i \_mm256\_mask\_conflict\_epi64(\_\_m256i s, \_\_mmask8 m, \_\_m256i a);
+VPCONFLICTQ __m256i _mm256_maskz_conflict_epi64(__mmask8 m, __m256i a);
 
-VPCONFLICTQ \_\_m256i \_mm256\_maskz\_conflict\_epi64(\_\_mmask8 m, \_\_m256i a);
+VPCONFLICTD __m128i _mm_conflict_epi32( __m128i a);
 
-VPCONFLICTD \_\_m128i \_mm\_conflict\_epi32( \_\_m128i a);
+VPCONFLICTD __m128i _mm_mask_conflict_epi32(__m128i s, __mmask8 m, __m128i a);
 
-VPCONFLICTD \_\_m128i \_mm\_mask\_conflict\_epi32(\_\_m128i s, \_\_mmask8 m, \_\_m128i a);
+VPCONFLICTD __m128i _mm_maskz_conflict_epi32(__mmask8 m, __m128i a);
 
-VPCONFLICTD \_\_m128i \_mm\_maskz\_conflict\_epi32(\_\_mmask8 m, \_\_m128i a);
+VPCONFLICTQ __m128i _mm_conflict_epi64( __m128i a);
 
-VPCONFLICTQ \_\_m128i \_mm\_conflict\_epi64( \_\_m128i a);
+VPCONFLICTQ __m128i _mm_mask_conflict_epi64(__m128i s, __mmask8 m, __m128i a);
 
-VPCONFLICTQ \_\_m128i \_mm\_mask\_conflict\_epi64(\_\_m128i s, \_\_mmask8 m, \_\_m128i a);
+VPCONFLICTQ __m128i _mm_maskz_conflict_epi64(__mmask8 m, __m128i a);
+.EE
 
-VPCONFLICTQ \_\_m128i \_mm\_maskz\_conflict\_epi64(\_\_mmask8 m, \_\_m128i a);
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="./vpconflictd:vpconflictq.html#simd-floating-point-exceptions"
+class="anchor">¶
 
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
 None
 
-.SS Other Exceptions
-.PP
-EVEX\-encoded instruction, see Exceptions Type E4NF.
+.SS OTHER EXCEPTIONS  href="./vpconflictd:vpconflictq.html#other-exceptions"
+class="anchor">¶
 
-.SH SEE ALSO
 .PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+EVEX-encoded instruction, see Table
+2-50, “Type E4NF Class Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

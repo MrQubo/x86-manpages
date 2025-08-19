@@ -1,28 +1,26 @@
+'\" t
 .nh
-.TH "X86-PTEST" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-PTEST" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 PTEST - LOGICAL COMPARE
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 66 0F 38 17 /r PTEST xmm1, xmm2/m128
-T}
-	RM	V/V	SSE4\_1	T{
-Set ZF if xmm1 result is all 0s.
+T}	RM	V/V	SSE4_1	T{
+Set ZF if xmm2/m128 AND xmm1 result is all 0s. Set CF if xmm2/m128 AND NOT xmm1 result is all 0s.
 T}
 T{
 VEX.128.66.0F38.WIG 17 /r VPTEST xmm1, xmm2/m128
-T}
-	RM	V/V	AVX	T{
+T}	RM	V/V	AVX	T{
 Set ZF and CF depending on bitwise AND and ANDN of sources.
 T}
 T{
 VEX.256.66.0F38.WIG 17 /r VPTEST ymm1, ymm2/m256
-T}
-	RM	V/V	AVX	T{
+T}	RM	V/V	AVX	T{
 Set ZF and CF depending on bitwise AND and ANDN of sources.
 T}
 .TE
@@ -32,12 +30,11 @@ T}
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-RM	ModRM:reg (r)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+RM	ModRM:reg (r)	ModRM:r/m (r)	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 PTEST and VPTEST set the ZF flag if all bits in the result are 0 of the
 bitwise AND of the first source operand (first operand) and the second
 source operand (second operand). VPTEST sets the CF flag if all bits in
@@ -45,114 +42,98 @@ the result are 0 of the bitwise AND of the second source operand (second
 operand) and the logical NOT of the destination operand.
 
 .PP
-The first source register is specified by the ModR/M reg field.
+The first source register is specified by the ModR/M \fIreg\fP field.
 
 .PP
-128\-bit versions: The first source register is an XMM register. The
-second source register can be an XMM register or a 128\-bit memory
+128-bit versions: The first source register is an XMM register. The
+second source register can be an XMM register or a 128-bit memory
 location. The destination register is not modified.
 
 .PP
 VEX.256 encoded version: The first source register is a YMM register.
-The second source register can be a YMM register or a 256\-bit memory
+The second source register can be a YMM register or a 256-bit memory
 location. The destination register is not modified.
 
 .PP
-Note: In VEX\-encoded versions, VEX.vvvv is reserved and must be 1111b,
+Note: In VEX-encoded versions, VEX.vvvv is reserved and must be 1111b,
 otherwise instructions will #UD.
 
 .SH OPERATION
-.SS (V)PTEST (128\-bit version)
-.PP
-.RS
-
-.nf
+.SS (V)PTEST (128-BIT VERSION)
+.EX
 IF (SRC[127:0] BITWISE AND DEST[127:0] = 0)
-    THEN ZF←1;
-    ELSE ZF←0;
+    THEN ZF := 1;
+    ELSE ZF := 0;
 IF (SRC[127:0] BITWISE AND NOT DEST[127:0] = 0)
-    THEN CF←1;
-    ELSE CF←0;
+    THEN CF := 1;
+    ELSE CF := 0;
 DEST (unmodified)
-AF←OF←PF←SF←0;
+AF := OF := PF := SF := 0;
+.EE
 
-.fi
-.RE
+.SS VPTEST (VEX.256 ENCODED VERSION)  href="ptest.html#vptest--vex-256-encoded-version-"
+class="anchor">¶
 
-.SS VPTEST (VEX.256 encoded version)
-.PP
-.RS
-
-.nf
-IF (SRC[255:0] BITWISE AND DEST[255:0] = 0) THEN ZF←1;
-    ELSE ZF←0;
-IF (SRC[255:0] BITWISE AND NOT DEST[255:0] = 0) THEN CF←1;
-    ELSE CF←0;
+.EX
+IF (SRC[255:0] BITWISE AND DEST[255:0] = 0) THEN ZF := 1;
+    ELSE ZF := 0;
+IF (SRC[255:0] BITWISE AND NOT DEST[255:0] = 0) THEN CF := 1;
+    ELSE CF := 0;
 DEST (unmodified)
-AF←OF←PF←SF←0;
+AF := OF := PF := SF := 0;
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="ptest.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
+.EX
+PTEST int _mm_testz_si128 (__m128i s1, __m128i s2);
 
-.nf
-PTEST int \_mm\_testz\_si128 (\_\_m128i s1, \_\_m128i s2);
+PTEST int _mm_testc_si128 (__m128i s1, __m128i s2);
 
-int \_mm\_testc\_si128 (\_\_m128i s1, \_\_m128i s2);
+PTEST int _mm_testnzc_si128 (__m128i s1, __m128i s2);
 
-int \_mm\_testnzc\_si128 (\_\_m128i s1, \_\_m128i s2);
+VPTEST int _mm256_testz_si256 (__m256i s1, __m256i s2);
 
-VPTEST int \_mm256\_testz\_si256 (\_\_m256i s1, \_\_m256i s2);
+VPTEST int _mm256_testc_si256 (__m256i s1, __m256i s2);
 
-int \_mm256\_testc\_si256 (\_\_m256i s1, \_\_m256i s2);
+VPTEST int _mm256_testnzc_si256 (__m256i s1, __m256i s2);
 
-int \_mm256\_testnzc\_si256 (\_\_m256i s1, \_\_m256i s2);
+VPTEST int _mm_testz_si128 (__m128i s1, __m128i s2);
 
-int \_mm\_testz\_si128 (\_\_m128i s1, \_\_m128i s2);
+VPTEST int _mm_testc_si128 (__m128i s1, __m128i s2);
 
-int \_mm\_testc\_si128 (\_\_m128i s1, \_\_m128i s2);
-
-int \_mm\_testnzc\_si128 (\_\_m128i s1, \_\_m128i s2);
-
-.fi
-.RE
+VPTEST int _mm_testnzc_si128 (__m128i s1, __m128i s2);
+.EE
 
 .SH FLAGS AFFECTED
-.PP
-The 0F, AF, PF, SF flags are cleared and the ZF, CF flags are set
+The OF, AF, PF, SF flags are cleared and the ZF, CF flags are set
 according to the operation.
 
-.SH SIMD FLOATING\-POINT EXCEPTIONS
-.PP
+.SH SIMD FLOATING-POINT EXCEPTIONS
 None.
 
 .SH OTHER EXCEPTIONS
-.PP
-See Exceptions Type 4; additionally
+See Table 2-21, “Type 4 Class
+Exception Conditions,” additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If VEX.vvvv ≠ 1111B.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

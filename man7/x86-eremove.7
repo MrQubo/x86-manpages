@@ -1,12 +1,13 @@
+'\" t
 .nh
-.TH "X86-EREMOVE" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-EREMOVE" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 EREMOVE - REMOVE A PAGE FROM THE EPC
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 EAX = 03H ENCLS[EREMOVE]	IR	V/V	SGX1	T{
 This leaf function removes a page from the EPC.
 T}
@@ -15,17 +16,17 @@ T}
 .SH INSTRUCTION OPERAND ENCODING
 .TS
 allbox;
-l l l 
-l l l .
-Op/En	EAX	RCX
-IR	EREMOVE (In)	T{
+l l l l 
+l l l l .
+\fB\fP	\fB\fP	\fB\fP	\fB\fP
+Op/En	EAX		RCX
+IR	EREMOVE (In)	Return error code (Out)	T{
 Effective address of the EPC page (In)
 T}
 .TE
 
-.SS Description
-.PP
-This leaf function causes an EPC page to be un\-associated with its SECS
+.SS DESCRIPTION
+This leaf function causes an EPC page to be un-associated with its SECS
 and be marked as unused. This instruction leaf can only be executed when
 the current privilege level is 0.
 
@@ -41,11 +42,14 @@ threads are running in the enclave to which the page belongs. In
 addition the instruction fails if the operand refers to an SECS with
 associations.
 
-.SH EREMOVE MEMORY PARAMETER SEMANTICS
+.SH EREMOVE MEMORY PARAMETER SEMANTICS  href="eremove.html#eremove-memory-parameter-semantics"
+class="anchor">¶
+
 .TS
 allbox;
 l 
 l .
+\fB\fP
 EPCPAGE
 T{
 Write access permitted by Enclave
@@ -60,10 +64,10 @@ The instruction faults if any of the following:
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 T{
 The memory operand is not properly aligned.
-T}
-	T{
+T}	T{
 The memory operand does not resolve in an EPC page.
 T}
 Refers to an invalid SECS.	T{
@@ -71,137 +75,28 @@ Refers to an EPC page that is locked by another thread.
 T}
 T{
 Another Intel SGX instruction is accessing the EPC page.
-T}
-	T{
+T}	T{
 RCX does not contain an effective address of an EPC page.
 T}
 T{
 the EPC page refers to an SECS with associations.
-T}
-	.TE
+T}	
+.TE
 
 .PP
 The error codes are:
 
-.TS
-allbox;
-l l 
-l l .
-\fB\fCError Code (see Table 40\-4)\fR	\fB\fCDescription\fR
-No Error	EREMOVE successful.
-SGX\_CHILD\_PRESENT	T{
-If the SECS still have enclave pages loaded into EPC.
-T}
-SGX\_ENCLAVE\_ACT	T{
-If there are still logical processors executing inside the enclave.
-T}
-.TE
+.SS CONCURRENCY RESTRICTIONS
+.SS OPERATION
+.SH TEMP VARIABLES IN EREMOVE OPERATIONAL FLOW  href="eremove.html#temp-variables-in-eremove-operational-flow"
+class="anchor">¶
 
-.PP
-Table 40\-42\&. EREMOVE Return Value in
-RAX
-
-.SS Concurrency Restrictions
-.PP
-Leaf
-
-.PP
-Parameter
-
-.PP
-Base Concurrency Restrictions
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-SGX\_CONFLICT VM Exit Qualification
-
-.PP
-EREMOVE
-
-.PP
-Target [DS:RCX]
-
-.PP
-Exclusive
-
-.PP
-#GP
-
-.PP
-EPC\_PAGE\_CONFLICT\_EXCEPTION
-
-.PP
-Table 40\-43\&. Base Concurrency
-Restrictions of EREMOVE
-
-.PP
-Leaf
-
-.PP
-Parameter
-
-.PP
-Additional Concurrency Restrictions
-
-.PP
-vs. EACCEPT, EACCEPTCOPY, EMODPE, EMODPR, EMODT
-
-.PP
-vs. EADD, EEXTEND, EINIT
-
-.PP
-vs. ETRACK, ETRACKC
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-EREMOVE
-
-.PP
-Target [DS:RCX]
-
-.PP
-Concurrent
-
-.PP
-Concurrent
-
-.PP
-Concurrent
-
-.PP
-Table 40\-44\&. Additional Concurrency
-Restrictions of EREMOVE
-
-.SS Operation
-.SH TEMP VARIABLES IN EREMOVE OPERATIONAL FLOW
 .TS
 allbox;
 l l l l 
 l l l l .
-\fB\fCName\fR	\fB\fCType\fR	\fB\fCSize (Bits)\fR	\fB\fCDescription\fR
-TMP\_SECS	Effective Address	32/64	T{
+\fBName\fP	\fBType\fP	\fBSize (Bits)\fP	\fBDescription\fP
+TMP_SECS	Effective Address	32/64	T{
 Effective address of the SECS destination page.
 T}
 .TE
@@ -219,7 +114,7 @@ IF (DS:RCX does not resolve to an EPC page)
 THEN #PF(DS:RCX); FI;
 
 .PP
-TMP\_SECS ← Get\_SECS\_ADDRESS();
+TMP_SECS := Get_SECS_ADDRESS();
 
 .PP
 (* Check the EPC page for concurrency *)
@@ -231,27 +126,27 @@ IF (EPC page being referenced by another Intel SGX instruction)
 THEN
 
 .PP
-IF (\&lt;\&lt;VMX non\-root operation\&gt;\&gt; AND
-\&lt;\&lt;ENABLE\_EPC\_VIRTUALIZATION\_EXTENSIONS\&gt;\&gt;)
+IF (&lt;&lt;VMX non-root operation&gt;&gt; AND
+&lt;&lt;ENABLE_EPC_VIRTUALIZATION_EXTENSIONS&gt;&gt;)
 
 .PP
 THEN
 
 .PP
-VMCS.Exit\_reason ← SGX\_CONFLICT;
+VMCS.Exit_reason := SGX_CONFLICT;
 
 .PP
-VMCS.Exit\_qualification.code ← EPC\_PAGE\_CONFLICT\_EXCEPTION;
+VMCS.Exit_qualification.code := EPC_PAGE_CONFLICT_EXCEPTION;
 
 .PP
-VMCS.Exit\_qualification.error ← 0;
+VMCS.Exit_qualification.error := 0;
 
 .PP
-VMCS.Guest\-physical\_address←\&lt;\&lt; translation of DS:RCX produced by
-paging \&gt;\&gt;;
+VMCS.Guest-physical_address := &lt;&lt; translation of DS:RCX produced
+by paging &gt;&gt;;
 
 .PP
-VMCS.Guest\-linear\_address ← DS:RCX;
+VMCS.Guest-linear_address := DS:RCX;
 
 .PP
 Deliver VMEXIT;
@@ -272,7 +167,7 @@ FI;
 (* if DS:RCX is already unused, nothing to do*)
 
 .PP
-IF ( (EPCM(DS:RCX).VALID = 0) or (EPCM(DS:RCX).PT = PT\_TRIM AND
+IF ( (EPCM(DS:RCX).VALID = 0) or (EPCM(DS:RCX).PT = PT_TRIM AND
 EPCM(DS:RCX).MODIFIED = 0))
 
 .PP
@@ -282,16 +177,16 @@ THEN GOTO DONE;
 FI;
 
 .PP
-IF ( (EPCM(DS:RCX).PT = PT\_VA) OR
+IF ( (EPCM(DS:RCX).PT = PT_VA) OR
 
 .PP
-((EPCM(DS:RCX).PT = PT\_TRIM) AND (EPCM(DS:RCX).MODIFIED = 0)) )
+((EPCM(DS:RCX).PT = PT_TRIM) AND (EPCM(DS:RCX).MODIFIED = 0)) )
 
 .PP
 THEN
 
 .PP
-EPCM(DS:RCX).VALID ← 0;
+EPCM(DS:RCX).VALID := 0;
 
 .PP
 GOTO DONE;
@@ -300,7 +195,7 @@ GOTO DONE;
 FI;
 
 .PP
-IF (EPCM(DS:RCX).PT = PT\_SECS)
+IF (EPCM(DS:RCX).PT = PT_SECS)
 
 .PP
 THEN
@@ -312,25 +207,25 @@ IF (DS:RCX has an EPC page associated with it)
 THEN
 
 .PP
-RFLAGS.ZF ← 1;
+RFLAGS.ZF := 1;
 
 .PP
-RAX← SGX\_CHILD\_PRESENT;
+RAX := SGX_CHILD_PRESENT;
 
 .PP
-GOTO ERROR\_EXIT;
+GOTO ERROR_EXIT;
 
 .PP
 FI;
 
 .PP
-(* treat SECS as having a child page when VIRTCHILDCNT is non\-zero *)
+(* treat SECS as having a child page when VIRTCHILDCNT is non-zero *)
 
 .PP
-IF (\&lt;\&lt;in VMX non\-root operation\&gt;\&gt; AND
+IF (&lt;&lt;in VMX non-root operation&gt;&gt; AND
 
 .PP
-\&lt;\&lt;ENABLE\_EPC\_VIRTUALIZATION\_EXTENSIONS\&gt;\&gt; AND
+&lt;&lt;ENABLE_EPC_VIRTUALIZATION_EXTENSIONS&gt;&gt; AND
 
 .PP
 (SECS(DS:RCX).VIRTCHILDCNT ≠ 0))
@@ -339,19 +234,19 @@ IF (\&lt;\&lt;in VMX non\-root operation\&gt;\&gt; AND
 THEN
 
 .PP
-RFLAGS.ZF ← 1;
+RFLAGS.ZF := 1;
 
 .PP
-RAX ← SGX\_CHILD\_PRESENT
+RAX := SGX_CHILD_PRESENT
 
 .PP
-GOTO ERROR\_EXIT
+GOTO ERROR_EXIT
 
 .PP
 FI;
 
 .PP
-EPCM(DS:RCX).VALID ← 0;
+EPCM(DS:RCX).VALID := 0;
 
 .PP
 GOTO DONE;
@@ -366,26 +261,29 @@ IF (Other threads active using SECS)
 THEN
 
 .PP
-RFLAGS.ZF ← 1;
+RFLAGS.ZF := 1;
 
 .PP
-RAX← SGX\_ENCLAVE\_ACT;
+RAX := SGX_ENCLAVE_ACT;
 
 .PP
-GOTO ERROR\_EXIT;
+GOTO ERROR_EXIT;
 
 .PP
 FI;
 
 .PP
-IF ( (EPCM(DS:RCX).PT is PT\_REG) or (EPCM(DS:RCX).PT is PT\_TCS) or
-(EPCM(DS:RCX).PT is PT\_TRIM) )
+IF ( (EPCM(DS:RCX).PT is PT_REG) or (EPCM(DS:RCX).PT is PT_TCS) or
+(EPCM(DS:RCX).PT is PT_TRIM) or
+
+.PP
+(EPCM(DS:RCX).PT is PT_SS_FIRST) or (EPCM(DS:RCX).PT is PT_SS_REST))
 
 .PP
 THEN
 
 .PP
-EPCM(DS:RCX).VALID ← 0;
+EPCM(DS:RCX).VALID := 0;
 
 .PP
 GOTO DONE;
@@ -397,79 +295,76 @@ FI;
 DONE:
 
 .PP
-RAX← 0;
+RAX := 0;
 
 .PP
-RFLAGS.ZF ← 0;
+RFLAGS.ZF := 0;
 
 .PP
-ERROR\_EXIT:
+ERROR_EXIT:
 
 .PP
-RFLAGS.CF,PF,AF,OF,SF ← 0;
+RFLAGS.CF,PF,AF,OF,SF := 0;
 
-.SS Flags Affected
-.PP
+.SS FLAGS AFFECTED
 Sets ZF if unsuccessful, otherwise cleared and RAX returns error code.
 Clears CF, PF, AF, OF, SF.
 
-.SS Protected Mode Exceptions
-.PP
-#GP(0)
-
-.PP
+.SS PROTECTED MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
 If a memory operand effective address is outside the DS segment limit.
-
-.PP
+T}
+	T{
 If a memory operand is not properly aligned.
-
-.PP
+T}
+	T{
 If another Intel SGX instruction is accessing the page.
-
-.PP
-#PF(error
-
-.PP
+T}
+#PF(error	T{
 code) If a page fault occurs in accessing memory operands.
-
-.PP
+T}
+	T{
 If the memory operand is not an EPC page.
+T}
+.TE
 
-.SS 64\-Bit Mode Exceptions
-.PP
-#GP(0)
-
-.PP
-If the memory operand is non\-canonical form.
-
-.PP
+.SS 64-BIT MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
+If the memory operand is non-canonical form.
+T}
+	T{
 If a memory operand is not properly aligned.
-
-.PP
+T}
+	T{
 If another Intel SGX instruction is accessing the page.
-
-.PP
-#PF(error
-
-.PP
+T}
+#PF(error	T{
 code) If a page fault occurs in accessing memory operands.
-
-.PP
+T}
+	T{
 If the memory operand is not an EPC page.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+T}
+.TE
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

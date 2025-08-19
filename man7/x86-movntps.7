@@ -1,44 +1,40 @@
+'\" t
 .nh
-.TH "X86-MOVNTPS" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-MOVNTPS" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-MOVNTPS - STORE PACKED SINGLE-PRECISION FLOATING-POINT VALUES USING NON-TEMPORAL HINT
+MOVNTPS - STORE PACKED SINGLE PRECISION FLOATING-POINT VALUES USING NON-TEMPORAL HINT
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 NP 0F 2B /r MOVNTPS m128, xmm1	A	V/V	SSE	T{
-Move packed single\-precision values xmm1 to mem using non\-temporal hint.
+Move packed single precision values xmm1 to mem using non-temporal hint.
 T}
 T{
 VEX.128.0F.WIG 2B /r VMOVNTPS m128, xmm1
-T}
-	A	V/V	AVX	T{
-Move packed single\-precision values xmm1 to mem using non\-temporal hint.
+T}	A	V/V	AVX	T{
+Move packed single precision values xmm1 to mem using non-temporal hint.
 T}
 T{
 VEX.256.0F.WIG 2B /r VMOVNTPS m256, ymm1
-T}
-	A	V/V	AVX	T{
-Move packed single\-precision values ymm1 to mem using non\-temporal hint.
+T}	A	V/V	AVX	T{
+Move packed single precision values ymm1 to mem using non-temporal hint.
 T}
 T{
 EVEX.128.0F.W0 2B /r VMOVNTPS m128, xmm1
-T}
-	B	V/V	AVX512VL AVX512F	T{
-Move packed single\-precision values in xmm1 to m128 using non\-temporal hint.
+T}	B	V/V	AVX512VL AVX512F	T{
+Move packed single precision values in xmm1 to m128 using non-temporal hint.
 T}
 T{
 EVEX.256.0F.W0 2B /r VMOVNTPS m256, ymm1
-T}
-	B	V/V	AVX512VL AVX512F	T{
-Move packed single\-precision values in ymm1 to m256 using non\-temporal hint.
+T}	B	V/V	AVX512VL AVX512F	T{
+Move packed single precision values in ymm1 to m256 using non-temporal hint.
 T}
 T{
 EVEX.512.0F.W0 2B /r VMOVNTPS m512, zmm1
-T}
-	B	V/V	AVX512F	T{
-Move packed single\-precision values in zmm1 to m512 using non\-temporal hint.
+T}	B	V/V	AVX512F	T{
+Move packed single precision values in zmm1 to m512 using non-temporal hint.
 T}
 .TE
 
@@ -55,38 +51,37 @@ T}
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	NA	ModRM:r/m (w)	ModRM:reg (r)	NA	NA
-B	Full Mem	ModRM:r/m (w)	ModRM:reg (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:r/m (w)	ModRM:reg (r)	N/A	N/A
+B	Full Mem	ModRM:r/m (w)	ModRM:reg (r)	N/A	N/A
 .TE
 
-.SS Description
-.PP
-Moves the packed single\-precision floating\-point values in the source
+.SH DESCRIPTION
+Moves the packed single precision floating-point values in the source
 operand (second operand) to the destination operand (first operand)
-using a non\-temporal hint to prevent caching of the data during the
+using a non-temporal hint to prevent caching of the data during the
 write to memory. The source operand is an XMM register, YMM register or
-ZMM register, which is assumed to contain packed single\-precision,
-floating\-pointing. The destination operand is a 128\-bit, 256\-bit or
-512\-bit memory location. The memory operand must be aligned on a 16\-byte
-(128\-bit version), 32\-byte (VEX.256 encoded version) or 64\-byte
-(EVEX.512 encoded version) boundary otherwise a general\-protection
+ZMM register, which is assumed to contain packed single precision,
+floating-pointing. The destination operand is a 128-bit, 256-bit or
+512-bit memory location. The memory operand must be aligned on a 16-byte
+(128-bit version), 32-byte (VEX.256 encoded version) or 64-byte
+(EVEX.512 encoded version) boundary otherwise a general-protection
 exception (#GP) will be generated.
 
 .PP
-The non\-temporal hint is implemented by using a write combining (WC)
+The non-temporal hint is implemented by using a write combining (WC)
 memory type protocol when writing the data to memory. Using this
 protocol, the processor does not write the data into the cache
 hierarchy, nor does it fetch the corresponding cache line from memory
 into the cache hierarchy. The memory type of the region being written to
-can override the non\-temporal hint, if the memory address specified for
-the non\-temporal store is in an uncacheable (UC) or write protected (WP)
-memory region. For more information on non\-temporal stores, see “Caching
-of Temporal vs. Non\-Temporal Data” in Chapter 10 in the IA\-32 Intel
+can override the non-temporal hint, if the memory address specified for
+the non-temporal store is in an uncacheable (UC) or write protected (WP)
+memory region. For more information on non-temporal stores, see “Caching
+of Temporal vs. Non-Temporal Data” in Chapter 10 in the IA-32 Intel
 Architecture Software Developer’s Manual, Volume 1.
 
 .PP
-Because the WC protocol uses a weakly\-ordered memory consistency model,
+Because the WC protocol uses a weakly-ordered memory consistency model,
 a fencing operation implemented with the SFENCE or MFENCE instruction
 should be used in conjunction with MOVNTPS instructions if multiple
 processors might use different memory types to read/write the
@@ -96,76 +91,69 @@ destination memory locations.
 Note: VEX.vvvv and EVEX.vvvv are reserved and must be 1111b otherwise
 instructions will #UD.
 
-.SS Operation
-.SS VMOVNTPS (EVEX encoded versions)
-.PP
-.RS
+.SH OPERATION
+.SS VMOVNTPS (EVEX ENCODED VERSIONS)  href="movntps.html#vmovntps--evex-encoded-versions-"
+class="anchor">¶
 
-.nf
+.EX
 VL = 128, 256, 512
-DEST[VL\-1:0] ← SRC[VL\-1:0]
-DEST[MAXVL\-1:VL] ← 0
-
-.fi
-.RE
+DEST[VL-1:0] := SRC[VL-1:0]
+DEST[MAXVL-1:VL] := 0
+.EE
 
 .SS MOVNTPS
-.PP
-.RS
+.EX
+DEST := SRC
+.EE
 
-.nf
-DEST ← SRC
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="movntps.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.fi
-.RE
+.EX
+VMOVNTPS void _mm512_stream_ps(float * p, __m512d a);
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+MOVNTPS void _mm_stream_ps (float * p, __m128d a);
 
-.nf
-VMOVNTPS void \_mm512\_stream\_ps(float * p, \_\_m512d a);
+VMOVNTPS void _mm256_stream_ps (float * p, __m256 a);
+.EE
 
-MOVNTPS void \_mm\_stream\_ps (float * p, \_\_m128d a);
-
-VMOVNTPS void \_mm256\_stream\_ps (float * p, \_\_m256 a);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-None
-
-.SS Other Exceptions
-.PP
-Non\-EVEX\-encoded instruction, see Exceptions Type1.SSE; additionally
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="movntps.html#simd-floating-point-exceptions"
+class="anchor">¶
 
 .PP
-EVEX\-encoded instruction, see Exceptions Type E1NF.
+None.
+
+.SH OTHER EXCEPTIONS
+Non-EVEX-encoded instruction, see Exceptions Type1.SSE in
+Table 2-18, “Type 1 Class Exception
+Conditions.”
+
+.PP
+EVEX-encoded instruction, see Table
+2-45, “Type E1NF Class Exception Conditions.”
+
+.PP
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	T{
 If VEX.vvvv != 1111B or EVEX.vvvv != 1111B.
 T}
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

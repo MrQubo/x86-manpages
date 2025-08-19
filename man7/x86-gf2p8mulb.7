@@ -1,106 +1,171 @@
+'\" t
 .nh
-.TH "X86-GF2P8MULB" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-GF2P8MULB" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 GF2P8MULB - GALOIS FIELD MULTIPLY BYTES
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 66 0F38 CF /r GF2P8MULB xmm1, xmm2/m128
+T}	A	V/V	GFNI	T{
+Multiplies elements in the finite field GF(2^8).
 T}
-	A	V/V	GFNI	T{
+T{
+VEX.128.66.0F38.W0 CF /r VGF2P8MULB xmm1, xmm2, xmm3/m128
+T}	B	V/V	AVX GFNI	T{
+Multiplies elements in the finite field GF(2^8).
+T}
+T{
+VEX.256.66.0F38.W0 CF /r VGF2P8MULB ymm1, ymm2, ymm3/m256
+T}	B	V/V	AVX GFNI	T{
+Multiplies elements in the finite field GF(2^8).
+T}
+T{
+EVEX.128.66.0F38.W0 CF /r VGF2P8MULB xmm1{k1}{z}, xmm2, xmm3/m128
+T}	C	V/V	AVX512VL GFNI	T{
+Multiplies elements in the finite field GF(2^8).
+T}
+T{
+EVEX.256.66.0F38.W0 CF /r VGF2P8MULB ymm1{k1}{z}, ymm2, ymm3/m256
+T}	C	V/V	AVX512VL GFNI	T{
+Multiplies elements in the finite field GF(2^8).
+T}
+T{
+EVEX.512.66.0F38.W0 CF /r VGF2P8MULB zmm1{k1}{z}, zmm2, zmm3/m512
+T}	C	V/V	AVX512F GFNI	T{
 Multiplies elements in the finite field GF(2^8).
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="gf2p8mulb.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOp/En\fR	\fB\fCTuple\fR	\fB\fCOperand 1\fR	\fB\fCOperand 2\fR	\fB\fCOperand 3\fR	\fB\fCOperand 4\fR
-A	NA	ModRM:reg (r, w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBTuple\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (r, w)	ModRM:r/m (r)	N/A	N/A
+B	N/A	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	N/A
+C	Full Mem	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	N/A
 .TE
 
-.SS Description
-.PP
-The instruction multiplies elements in the finite field GF(23 + x + 1.
+.SS DESCRIPTION
+The instruction multiplies elements in the finite field
+GF(28), operating on a byte (field element) in the first
+source operand and the corresponding byte in a second source operand.
+The field GF(28) is represented in polynomial representation
+with the reduction polynomial x8 + x4 +
+x3 + x + 1.
 
 .PP
 This instruction does not support broadcasting.
 
 .PP
-The SSE encoded forms of the instruction require16B alignment on their
-memory operations.
+The EVEX encoded form of this instruction supports memory fault
+suppression. The SSE encoded forms of the instruction require16B
+alignment on their memory operations.
 
-.SS Operation
-.PP
-.RS
-
-.nf
-define gf2p8mul\_byte(src1byte, src2byte):
-    tword ← 0
-    FOR i ← 0 to 7:
+.SS OPERATION
+.EX
+define gf2p8mul_byte(src1byte, src2byte):
+    tword := 0
+    FOR i := 0 to 7:
         IF src2byte.bit[i]:
-            tword ← tword XOR (src1byte<< i)
+            tword := tword XOR (src1byte<< i)
         * carry out polynomial reduction by the characteristic polynomial p*
-    FOR i ← 14 downto 8:
-        p ← 0x11B << (i\-8) *0x11B = 0000\_0001\_0001\_1011 in binary*
+    FOR i := 14 downto 8:
+        p := 0x11B << (i-8)
+                *0x11B = 0000_0001_0001_1011 in binary*
         IF tword.bit[i]:
-            tword ← tword XOR p
+            tword := tword XOR p
 return tword.byte[0]
+.EE
 
-.fi
-.RE
+.SS VGF2P8MULB DEST, SRC1, SRC2 (EVEX ENCODED VERSION) <a
+href="gf2p8mulb.html#vgf2p8mulb-dest--src1--src2--evex-encoded-version-"
+class="anchor">¶
 
-.SS GF2P8MULB srcdest, src1 (128b SSE encoded version)
-.PP
-.RS
+.EX
+(KL, VL) = (16, 128), (32, 256), (64, 512)
+FOR j := 0 TO KL-1:
+    IF k1[j] OR *no writemask*:
+        DEST.byte[j] := gf2p8mul_byte(SRC1.byte[j], SRC2.byte[j])
+    ELSE iF *zeroing*:
+        DEST.byte[j] := 0
+    * ELSE DEST.byte[j] remains unchanged*
+DEST[MAX_VL-1:VL] := 0
+.EE
 
-.nf
-FOR j ← 0 TO 15:
-    SRCDEST.byte[j] ← gf2p8mul\_byte(SRCDEST.byte[j], SRC1.byte[j])
+.SS VGF2P8MULB DEST, SRC1, SRC2 (128B AND 256B VEX ENCODED VERSIONS) <a
+href="gf2p8mulb.html#vgf2p8mulb-dest--src1--src2--128b-and-256b-vex-encoded-versions-"
+class="anchor">¶
 
-.fi
-.RE
+.EX
+(KL, VL) = (16, 128), (32, 256)
+FOR j := 0 TO KL-1:
+    DEST.byte[j] := gf2p8mul_byte(SRC1.byte[j], SRC2.byte[j])
+DEST[MAX_VL-1:VL] := 0
+.EE
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+.SS GF2P8MULB SRCDEST, SRC1 (128B SSE ENCODED VERSION) <a
+href="gf2p8mulb.html#gf2p8mulb-srcdest--src1--128b-sse-encoded-version-"
+class="anchor">¶
 
-.nf
-VGF2P8MULB \_\_m128i \_mm\_gf2p8mul\_epi8(\_\_m128i, \_\_m128i);
+.EX
+FOR j := 0 TO 15:
+    SRCDEST.byte[j] :=gf2p8mul_byte(SRCDEST.byte[j], SRC1.byte[j])
+.EE
 
-VGF2P8MULB \_\_m128i \_mm\_mask\_gf2p8mul\_epi8(\_\_m128i, \_\_mmask16, \_\_m128i, \_\_m128i);
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="gf2p8mulb.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-VGF2P8MULB \_\_m128i \_mm\_maskz\_gf2p8mul\_epi8(\_\_mmask16, \_\_m128i, \_\_m128i);
+.EX
+(V)GF2P8MULB __m128i _mm_gf2p8mul_epi8(__m128i, __m128i);
 
-.fi
-.RE
+(V)GF2P8MULB __m128i _mm_mask_gf2p8mul_epi8(__m128i, __mmask16, __m128i, __m128i);
 
-.SS SIMD Floating\-Point Exceptions
+(V)GF2P8MULB __m128i _mm_maskz_gf2p8mul_epi8(__mmask16, __m128i, __m128i);
+
+VGF2P8MULB __m256i _mm256_gf2p8mul_epi8(__m256i, __m256i);
+
+VGF2P8MULB __m256i _mm256_mask_gf2p8mul_epi8(__m256i, __mmask32, __m256i, __m256i);
+
+VGF2P8MULB __m256i _mm256_maskz_gf2p8mul_epi8(__mmask32, __m256i, __m256i);
+
+VGF2P8MULB __m512i _mm512_gf2p8mul_epi8(__m512i, __m512i);
+
+VGF2P8MULB __m512i _mm512_mask_gf2p8mul_epi8(__m512i, __mmask64, __m512i, __m512i);
+
+VGF2P8MULB __m512i _mm512_maskz_gf2p8mul_epi8(__mmask64, __m512i, __m512i);
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="gf2p8mulb.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
 None.
 
-.SS Other Exceptions
-.PP
-Legacy\-encoded: Exceptions Type 4.
+.SS OTHER EXCEPTIONS
+Legacy-encoded and VEX-encoded: See Table
+2-21, “Type 4 Class Exception Conditions.”
 
-.SH SEE ALSO
 .PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+EVEX-encoded: See Table 2-49, “Type E4
+Class Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

@@ -1,12 +1,13 @@
+'\" t
 .nh
-.TH "X86-EADD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-EADD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 EADD - ADD A PAGE TO AN UNINITIALIZED ENCLAVE
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 EAX = 01H ENCLS[EADD]	IR	V/V	SGX1	T{
 This leaf function adds a page to an uninitialized enclave.
 T}
@@ -17,15 +18,15 @@ T}
 allbox;
 l l l l 
 l l l l .
+\fB\fP	\fB\fP	\fB\fP	\fB\fP
 Op/En	EAX	RBX	RCX
 IR	EADD (In)	Address of a PAGEINFO (In)	T{
 Address of the destination EPC page (In)
 T}
 .TE
 
-.SS Description
-.PP
-This leaf function copies a source page from non\-enclave memory into the
+.SS DESCRIPTION
+This leaf function copies a source page from non-enclave memory into the
 EPC, associates the EPC page with an SECS page residing in the EPC, and
 stores the linear address and security attributes in EPCM. As part of
 the association, the enclave offset and the security attributes are
@@ -42,20 +43,17 @@ additional information on the memory parameter of EADD leaf function.
 allbox;
 l l l l l 
 l l l l l .
+\fB\fP	\fB\fP	\fB\fP	\fB\fP	\fB\fP
 PAGEINFO	PAGEINFO.SECS	PAGEINFO.SRCPGE	PAGEINFO.SECINFO	EPCPAGE
 T{
 Read access permitted by Non Enclave
-T}
-	T{
+T}	T{
 Read/Write access permitted by Enclave
-T}
-	T{
+T}	T{
 Read access permitted by Non Enclave
-T}
-	T{
+T}	T{
 Read access permitted by Non Enclave
-T}
-	T{
+T}	T{
 Write access permitted by Enclave
 T}
 .TE
@@ -68,10 +66,10 @@ The instruction faults if any of the following:
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 T{
 The operands are not properly aligned.
-T}
-	T{
+T}	T{
 Unsupported security attributes are set.
 T}
 Refers to an invalid SECS.	T{
@@ -79,8 +77,7 @@ Reference is made to an SECS that is locked by another thread.
 T}
 T{
 The EPC page is locked by another thread.
-T}
-	T{
+T}	T{
 RCX does not contain an effective address of an EPC page.
 T}
 The EPC page is already valid.	T{
@@ -91,157 +88,37 @@ The specified enclave offset is outside of the enclave address space.
 T}
 .TE
 
-.SS Concurrency Restrictions
-.PP
-Leaf
+.SS CONCURRENCY RESTRICTIONS
+.SS OPERATION
+.SH TEMP VARIABLES IN EADD OPERATIONAL FLOW  href="eadd.html#temp-variables-in-eadd-operational-flow"
+class="anchor">¶
 
-.PP
-Parameter
-
-.PP
-Base Concurrency Restrictions
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-SGX\_CONFLICT VM Exit Qualification
-
-.PP
-EADD
-
-.PP
-Target [DS:RCX]
-
-.PP
-Exclusive
-
-.PP
-#GP
-
-.PP
-EPC\_PAGE\_CONFLICT\_EXCEPTION
-
-.PP
-SECS [DS:RBX]PAGEINFO.SECS
-
-.PP
-Shared
-
-.PP
-#GP
-
-.PP
-Table 40\-8\&. Base Concurrency
-Restrictions of EADD
-
-.PP
-Leaf
-
-.PP
-Parameter
-
-.PP
-Additional Concurrency Restrictions
-
-.PP
-vs. EACCEPT, EACCEPTCOPY, EMODPE, EMODPR, EMODT
-
-.PP
-vs. EADD, EEXTEND, EINIT
-
-.PP
-vs. ETRACK, ETRACKC
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-EADD
-
-.PP
-Target [DS:RCX]
-
-.PP
-Concurrent
-
-.PP
-Concurrent
-
-.PP
-Concurrent
-
-.PP
-SECS [DS:RBX]PAGEINFO.SECS
-
-.PP
-Concurrent
-
-.PP
-Exclusive
-
-.PP
-#GP
-
-.PP
-Concurrent
-
-.PP
-Table 40\-9\&. Additional Concurrency
-Restrictions of EADD
-
-.SS Operation
-.SH TEMP VARIABLES IN EADD OPERATIONAL FLOW
 .TS
 allbox;
 l l l l 
 l l l l .
-\fB\fCName\fR	\fB\fCType\fR	\fB\fCSize (bits)\fR	\fB\fCDescription\fR
-TMP\_SRCPGE	Effective Address	32/64	T{
+\fBName\fP	\fBType\fP	\fBSize (bits)\fP	\fBDescription\fP
+TMP_SRCPGE	Effective Address	32/64	T{
 Effective address of the source page.
 T}
-TMP\_SECS	Effective Address	32/64	T{
+TMP_SECS	Effective Address	32/64	T{
 Effective address of the SECS destination page.
 T}
-TMP\_SECINFO	Effective Address	32/64	T{
+TMP_SECINFO	Effective Address	32/64	T{
 Effective address of an SECINFO structure which contains security attributes of the page to be added.
 T}
-SCRATCH\_SECINFO	SECINFO	512	T{
-Scratch storage for holding the contents of DS:TMP
+SCRATCH_SECINFO	SECINFO	512	T{
+Scratch storage for holding the contents of DS:TMP_SECINFO.
 T}
-\_
-SECINFO.
-TMP\_LINADDR	Unsigned Integer	64	T{
-Holds the linear address to be stored in the EPCM and used to calculate TMP
+TMP_LINADDR	Unsigned Integer	64	T{
+Holds the linear address to be stored in the EPCM and used to calculate TMP_ENCLAVEOFFSET.
 T}
-\_
-ENCLAVEOFFSET.
-TMP\_ENCLAVEOFFSET	Enclave Offset	64	T{
+TMP_ENCLAVEOFFSET	Enclave Offset	64	T{
 The page displacement from the enclave base address.
 T}
 TMPUPDATEFIELD	SHA256 Buffer	512	T{
-Buffer used to hold data being added to TMP
+Buffer used to hold data being added to TMP_SECS.MRENCLAVE.
 T}
-\_
-SECS.MRENCLAVE.
 .TE
 
 .PP
@@ -263,46 +140,67 @@ IF (DS:RCX does not resolve within an EPC)
 THEN #PF(DS:RCX); FI;
 
 .PP
-TMP\_SRCPGE ← DS:RBX.SRCPGE;
+TMP_SRCPGE := DS:RBX.SRCPGE;
 
 .PP
-TMP\_SECS ← DS:RBX.SECS;
+TMP_SECS := DS:RBX.SECS;
 
 .PP
-TMP\_SECINFO ← DS:RBX.SECINFO;
+TMP_SECINFO := DS:RBX.SECINFO;
 
 .PP
-TMP\_LINADDR ← DS:RBX.LINADDR;
+TMP_LINADDR := DS:RBX.LINADDR;
 
 .PP
-IF (DS:TMP\_SRCPGE is not 4KByte aligned or DS:TMP\_SECS is not 4KByte
+IF (DS:TMP_SRCPGE is not 4KByte aligned or DS:TMP_SECS is not 4KByte
 aligned or
 
 .PP
-DS:TMP\_SECINFO is not 64Byte aligned or TMP\_LINADDR is not 4KByte
+DS:TMP_SECINFO is not 64Byte aligned or TMP_LINADDR is not 4KByte
 aligned)
 
 .PP
 THEN #GP(0); FI;
 
 .PP
-IF (DS:TMP\_SECS does not resolve within an EPC)
+IF (DS:TMP_SECS does not resolve within an EPC)
 
 .PP
-THEN #PF(DS:TMP\_SECS); FI;
+THEN #PF(DS:TMP_SECS); FI;
 
 .PP
-SCRATCH\_SECINFO ← DS:TMP\_SECINFO;
+SCRATCH_SECINFO := DS:TMP_SECINFO;
 
 .PP
 (* Check for misconfigured SECINFO flags*)
 
 .PP
-IF (SCRATCH\_SECINFO reserved fields are not zero or
+IF (SCRATCH_SECINFO reserved fields are not zero or
 
 .PP
-! (SCRATCH\_SECINFO.FLAGS.PT is PT\_REG or SCRATCH\_SECINFO.FLAGS.PT is
-PT\_TCS) )
+! (SCRATCH_SECINFO.FLAGS.PT is PT_REG or SCRATCH_SECINFO.FLAGS.PT is
+PT_TCS or
+
+.PP
+(SCRATCH_SECINFO.FLAGS.PT is PT_SS_FIRST and CPUID.(EAX=12H,
+ECX=1):EAX[6] = 1) or
+
+.PP
+(SCRATCH_SECINFO.FLAGS.PT is PT_SS_REST and CPUID.(EAX=12H,
+ECX=1):EAX[6] = 1)) )
+
+.PP
+THEN #GP(0); FI;
+
+.PP
+(* If PT_SS_FIRST/PT_SS_REST page types are requested then CR4.CET
+must be 1 *)
+
+.PP
+IF ( (SCRATCH_SECINFO.FLAGS.PT is PT_SS_FIRST OR
+
+.PP
+SCRATCH_SECINFO.FLAGS.PT is PT_SS_REST) AND CR4.CET == 0)
 
 .PP
 THEN #GP(0); FI;
@@ -317,27 +215,27 @@ IF (EPC page is not available for EADD)
 THEN
 
 .PP
-IF (\&lt;\&lt;VMX non\-root operation\&gt;\&gt; AND
-\&lt;\&lt;ENABLE\_EPC\_VIRTUALIZATION\_EXTENSIONS\&gt;\&gt;)
+IF (&lt;&lt;VMX non-root operation&gt;&gt; AND
+&lt;&lt;ENABLE_EPC_VIRTUALIZATION_EXTENSIONS&gt;&gt;)
 
 .PP
 THEN
 
 .PP
-VMCS.Exit\_reason ← SGX\_CONFLICT;
+VMCS.Exit_reason := SGX_CONFLICT;
 
 .PP
-VMCS.Exit\_qualification.code ← EPC\_PAGE\_CONFLICT\_EXCEPTION;
+VMCS.Exit_qualification.code := EPC_PAGE_CONFLICT_EXCEPTION;
 
 .PP
-VMCS.Exit\_qualification.error ← 0;
+VMCS.Exit_qualification.error := 0;
 
 .PP
-VMCS.Guest\-physical\_address←\&lt;\&lt; translation of DS:RCX produced by
-paging \&gt;\&gt;;
+VMCS.Guest-physical_address := &lt;&lt; translation of DS:RCX produced
+by paging &gt;&gt;;
 
 .PP
-VMCS.Guest\-linear\_address ← DS:RCX;
+VMCS.Guest-linear_address := DS:RCX;
 
 .PP
 Deliver VMEXIT;
@@ -370,42 +268,102 @@ IF (SECS is not available for EADD)
 THEN #GP(0); FI;
 
 .PP
-IF (EPCM(DS:TMP\_SECS).VALID = 0 or EPCM(DS:TMP\_SECS).PT ≠ PT\_SECS)
+IF (EPCM(DS:TMP_SECS).VALID = 0 or EPCM(DS:TMP_SECS).PT ≠ PT_SECS)
 
 .PP
-THEN #PF(DS:TMP\_SECS); FI;
+THEN #PF(DS:TMP_SECS); FI;
 
 .PP
 (* Copy 4KBytes from source page to EPC page*)
 
 .PP
-DS:RCX[32767:0] ← DS:TMP\_SRCPGE[32767:0];
+DS:RCX[32767:0] := DS:TMP_SRCPGE[32767:0];
 
 .PP
-CASE (SCRATCH\_SECINFO.FLAGS.PT)
+CASE (SCRATCH_SECINFO.FLAGS.PT)
 
 .PP
-PT\_TCS:
+PT_TCS:
 
 .PP
 IF (DS:RCX.RESERVED ≠ 0) #GP(0); FI;
 
 .PP
-IF ( (DS:TMP\_SECS.ATTRIBUTES.MODE64BIT = 0) and
+IF ( (DS:TMP_SECS.ATTRIBUTES.MODE64BIT = 0) and
 
 .PP
-((DS:TCS.FSLIMIT \& 0FFFH ≠ 0FFFH) or (DS:TCS.GSLIMIT \& 0FFFH ≠ 0FFFH) ))
+((DS:TCS.FSLIMIT & 0FFFH ≠ 0FFFH) or (DS:TCS.GSLIMIT & 0FFFH ≠ 0FFFH) ))
+#GP(0); FI;
+
+.PP
+(* Ensure TCS.PREVSSP is zero *)
+
+.PP
+IF (CPUID.(EAX=07H, ECX=00h):ECX[CET_SS] = 1) and (DS:RCX.PREVSSP !=
+0) #GP(0); FI;
+
+.PP
+BREAK;
+
+.PP
+PT_REG:
+
+.PP
+IF (SCRATCH_SECINFO.FLAGS.W = 1 and SCRATCH_SECINFO.FLAGS.R = 0)
 #GP(0); FI;
 
 .PP
 BREAK;
 
 .PP
-PT\_REG:
+PT_SS_FIRST:
 
 .PP
-IF (SCRATCH\_SECINFO.FLAGS.W = 1 and SCRATCH\_SECINFO.FLAGS.R = 0)
-#GP(0); FI;
+PT_SS_REST:
+
+.PP
+(* SS pages cannot be created on first or last page of ELRANGE *)
+
+.PP
+IF ( TMP_LINADDR = DS:TMP_SECS.BASEADDR or TMP_LINADDR =
+(DS:TMP_SECS.BASEADDR + DS:TMP_SECS.SIZE - 0x1000) )
+
+.PP
+THEN #GP(0); FI;
+
+.PP
+IF ( DS:RCX[4087:0] != 0 ) #GP(0); FI;
+
+.PP
+IF (SCRATCH_SECINFO.FLAGS.PT == PT_SS_FIRST)
+
+.PP
+THEN
+
+.PP
+(* Check that valid RSTORSSP token exists *)
+
+.PP
+IF ( DS:RCX[4095:4088] != ((TMP_LINADDR + 0x1000) |
+DS:TMP_SECS.ATTRIBUTES.MODE64BIT) ) #GP(0); FI;
+
+.PP
+ELSE
+
+.PP
+(* Check the 8 bytes are zero *)
+
+.PP
+IF ( DS:RCX[4095:4088] != 0 ) #GP(0); FI;
+
+.PP
+FI;
+
+.PP
+IF (SCRATCH_SECINFO.FLAGS.W = 0 OR SCRATCH_SECINFO.FLAGS.R = 0 OR
+
+.PP
+SCRATCH_SECINFO.FLAGS.X = 1) #GP(0); FI;
 
 .PP
 BREAK;
@@ -415,8 +373,8 @@ ESAC;
 
 .PP
 (* Check the enclave offset is within the enclave linear address space
-*) IF (TMP\_LINADDR \&lt; DS:TMP\_SECS.BASEADDR or TMP\_LINADDR ≥
-DS:TMP\_SECS.BASEADDR + DS:TMP\_SECS.SIZE) THEN #GP(0); FI;
+*) IF (TMP_LINADDR &lt; DS:TMP_SECS.BASEADDR or TMP_LINADDR ≥
+DS:TMP_SECS.BASEADDR + DS:TMP_SECS.SIZE) THEN #GP(0); FI;
 
 .PP
 (* Check concurrency of measurement resource*)
@@ -432,7 +390,7 @@ THEN #GP(0); FI;
 Initialized state *)
 
 .PP
-IF (DS:TMP\_SECS already initialized)
+IF (DS:TMP_SECS already initialized)
 
 .PP
 THEN #GP(0); FI;
@@ -441,31 +399,31 @@ THEN #GP(0); FI;
 (* For TCS pages, force EPCM.rwx bits to 0 and no debug access *)
 
 .PP
-IF (SCRATCH\_SECINFO.FLAGS.PT = PT\_TCS)
+IF (SCRATCH_SECINFO.FLAGS.PT = PT_TCS)
 
 .PP
 THEN
 
 .PP
-SCRATCH\_SECINFO.FLAGS.R ← 0;
+SCRATCH_SECINFO.FLAGS.R := 0;
 
 .PP
-SCRATCH\_SECINFO.FLAGS.W ← 0;
+SCRATCH_SECINFO.FLAGS.W := 0;
 
 .PP
-SCRATCH\_SECINFO.FLAGS.X ← 0;
+SCRATCH_SECINFO.FLAGS.X := 0;
 
 .PP
-(DS:RCX).FLAGS.DBGOPTIN←0; // force TCS.FLAGS.DBGOPTIN off
+(DS:RCX).FLAGS.DBGOPTIN := 0; // force TCS.FLAGS.DBGOPTIN off
 
 .PP
-DS:RCX.CSSA ← 0;
+DS:RCX.CSSA := 0;
 
 .PP
-DS:RCX.AEP ← 0;
+DS:RCX.AEP := 0;
 
 .PP
-DS:RCX.STATE ← 0;
+DS:RCX.STATE := 0;
 
 .PP
 FI;
@@ -474,19 +432,19 @@ FI;
 (* Add enclave offset and security attributes to MRENCLAVE *)
 
 .PP
-TMP\_ENCLAVEOFFSET←TMP\_LINADDR \- DS:TMP\_SECS.BASEADDR;
+TMP_ENCLAVEOFFSET := TMP_LINADDR - DS:TMP_SECS.BASEADDR;
 
 .PP
-TMPUPDATEFIELD[63:0]←0000000044444145H; // “EADD”
+TMPUPDATEFIELD[63:0] := 0000000044444145H; // “EADD”
 
 .PP
-TMPUPDATEFIELD[127:64] ← TMP\_ENCLAVEOFFSET;
+TMPUPDATEFIELD[127:64] := TMP_ENCLAVEOFFSET;
 
 .PP
-TMPUPDATEFIELD[511:128]←SCRATCH\_SECINFO[375:0]; // 48 bytes
+TMPUPDATEFIELD[511:128] := SCRATCH_SECINFO[375:0]; // 48 bytes
 
 .PP
-DS:TMP\_SECS.MRENCLAVE←SHA256UPDATE(DS:TMP\_SECS.MRENCLAVE,
+DS:TMP_SECS.MRENCLAVE := SHA256UPDATE(DS:TMP_SECS.MRENCLAVE,
 TMPUPDATEFIELD)
 
 .PP
@@ -496,134 +454,129 @@ INC enclave’s MRENCLAVE update counter;
 (* Add enclave offset and security attributes to MRENCLAVE *)
 
 .PP
-EPCM(DS:RCX).R ← SCRATCH\_SECINFO.FLAGS.R;
+EPCM(DS:RCX).R := SCRATCH_SECINFO.FLAGS.R;
 
 .PP
-EPCM(DS:RCX).W ← SCRATCH\_SECINFO.FLAGS.W;
+EPCM(DS:RCX).W := SCRATCH_SECINFO.FLAGS.W;
 
 .PP
-EPCM(DS:RCX).X ← SCRATCH\_SECINFO.FLAGS.X;
+EPCM(DS:RCX).X := SCRATCH_SECINFO.FLAGS.X;
 
 .PP
-EPCM(DS:RCX).PT ← SCRATCH\_SECINFO.FLAGS.PT;
+EPCM(DS:RCX).PT := SCRATCH_SECINFO.FLAGS.PT;
 
 .PP
-EPCM(DS:RCX).ENCLAVEADDRESS ← TMP\_LINADDR;
+EPCM(DS:RCX).ENCLAVEADDRESS := TMP_LINADDR;
 
 .PP
 (* associate the EPCPAGE with the SECS by storing the SECS identifier
-of DS:TMP\_SECS *)
+of DS:TMP_SECS *)
 
 .PP
-Update EPCM(DS:RCX) SECS identifier to reference DS:TMP\_SECS
+Update EPCM(DS:RCX) SECS identifier to reference DS:TMP_SECS
 identifier;
 
 .PP
 (* Set EPCM entry fields *)
 
 .PP
-EPCM(DS:RCX).BLOCKED ← 0;
+EPCM(DS:RCX).BLOCKED := 0;
 
 .PP
-EPCM(DS:RCX).PENDING ← 0;
+EPCM(DS:RCX).PENDING := 0;
 
 .PP
-EPCM(DS:RCX).MODIFIED ← 0;
+EPCM(DS:RCX).MODIFIED := 0;
 
 .PP
-EPCM(DS:RCX).VALID ← 1;
+EPCM(DS:RCX).VALID := 1;
 
-.SS Flags Affected
-.PP
+.SS FLAGS AFFECTED
 None
 
-.SS Protected Mode Exceptions
-.PP
-#GP(0)
-
-.PP
+.SS PROTECTED MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
 If a memory operand effective address is outside the DS segment limit.
-
-.PP
+T}
+	T{
 If a memory operand is not properly aligned.
-
-.PP
+T}
+	T{
 If an enclave memory operand is outside of the EPC.
-
-.PP
+T}
+	T{
 If an enclave memory operand is the wrong type.
-
-.PP
-If a memory operand is locked.
-
-.PP
-If the enclave is initialized.
-
-.PP
+T}
+	If a memory operand is locked.
+	If the enclave is initialized.
+	T{
 If the enclave's MRENCLAVE is locked.
-
-.PP
+T}
+	T{
 If the TCS page reserved bits are set.
-
-.PP
-#PF(error
-
-.PP
+T}
+	T{
+If the TCS page PREVSSP field is not zero.
+T}
+	If the PT_SS_REST or PT_SS_REST page is the first or last page in the enclave.
+	If the PT_SS_FIRST or PT_SS_REST page is not initialized correctly.
+#PF(error	T{
 code) If a page fault occurs in accessing memory operands.
+T}
+	If the EPC page is valid.
+.TE
 
-.PP
-If the EPC page is valid.
-
-.SS 64\-Bit Mode Exceptions
-.PP
-#GP(0)
-
-.PP
-If a memory operand is non\-canonical form.
-
-.PP
+.SS 64-BIT MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
+If a memory operand is non-canonical form.
+T}
+	T{
 If a memory operand is not properly aligned.
-
-.PP
+T}
+	T{
 If an enclave memory operand is outside of the EPC.
-
-.PP
+T}
+	T{
 If an enclave memory operand is the wrong type.
-
-.PP
-If a memory operand is locked.
-
-.PP
-If the enclave is initialized.
-
-.PP
+T}
+	If a memory operand is locked.
+	If the enclave is initialized.
+	T{
 If the enclave's MRENCLAVE is locked.
-
-.PP
+T}
+	T{
 If the TCS page reserved bits are set.
-
-.PP
-#PF(error
-
-.PP
+T}
+	T{
+If the TCS page PREVSSP field is not zero.
+T}
+	If the PT_SS_REST or PT_SS_REST page is the first or last page in the enclave.
+	If the PT_SS_FIRST or PT_SS_REST page is not initialized correctly.
+#PF(error	T{
 code) If a page fault occurs in accessing memory operands.
-
-.PP
-If the EPC page is valid.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+T}
+	If the EPC page is valid.
+.TE
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

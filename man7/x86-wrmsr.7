@@ -1,12 +1,13 @@
+'\" t
 .nh
-.TH "X86-WRMSR" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-WRMSR" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 WRMSR - WRITE TO MODEL SPECIFIC REGISTER
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
 0F 30	WRMSR	ZO	Valid	Valid	T{
 Write the value in EDX:EAX to MSR specified by ECX.
 T}
@@ -17,25 +18,24 @@ T}
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-ZO	NA	NA	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+ZO	N/A	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
-Writes the contents of registers EDX:EAX into the 64\-bit model specific
+Writes the contents of registers EDX:EAX into the 64-bit model specific
 register (MSR) specified in the ECX register. (On processors that
-support the Intel 64 architecture, the high\-order 32 bits of RCX are
-ignored.) The contents of the EDX register are copied to high\-order 32
+support the Intel 64 architecture, the high-order 32 bits of RCX are
+ignored.) The contents of the EDX register are copied to high-order 32
 bits of the selected MSR and the contents of the EAX register are copied
-to low\-order 32 bits of the MSR. (On processors that support the Intel
-64 architecture, the high\-order 32 bits of each of RAX and RDX are
+to low-order 32 bits of the MSR. (On processors that support the Intel
+64 architecture, the high-order 32 bits of each of RAX and RDX are
 ignored.) Undefined or reserved bits in an MSR should be set to values
 previously read.
 
 .PP
 This instruction must be executed at privilege level 0 or in
-real\-address mode; otherwise, a general protection exception #GP(0) is
+real-address mode; otherwise, a general protection exception #GP(0) is
 generated. Specifying a reserved or unimplemented MSR address in ECX
 will also cause a general protection exception. The processor will also
 generate a general protection exception if software attempts to write to
@@ -44,47 +44,43 @@ bits in a reserved MSR.
 .PP
 When the WRMSR instruction is used to write to an MTRR, the TLBs are
 invalidated. This includes global entries (see “Translation Lookaside
-Buffers (TLBs)” in Chapter 3 of the Intel® 64 and IA\-32 Architectures
-Software Developer’s Manual, Volume 3A).
+Buffers (TLBs)” in Chapter 3 of the Intel® 64 and IA-32
+Architectures Software Developer’s Manual, Volume 3A).
 
 .PP
 MSRs control functions for testability, execution tracing,
-performance\-monitoring and machine check errors. Chapter 2,
-“Model\-Specific Registers (MSRs)” of the Intel® 64 and IA\-32
+performance-monitoring and machine check errors. Chapter 2,
+“Model-Specific Registers (MSRs),” of the Intel® 64 and IA-32
 Architectures Software Developer’s Manual, Volume 4, lists all MSRs that
 can be written with this instruction and their addresses. Note that each
 processor family has its own set of MSRs.
 
 .PP
 The WRMSR instruction is a serializing instruction (see “Serializing
-Instructions” in Chapter 8 of the Intel® 64 and IA\-32 Architectures
-Software Developer’s Manual, Volume 3A). Note that WRMSR to the
-IA32\_TSC\_DEADLINE MSR (MSR index 6E0H) and the X2APIC MSRs (MSR
+Instructions” in Chapter 9 of the Intel® 64 and IA-32
+Architectures Software Developer’s Manual, Volume 3A). Note that WRMSR
+to the IA32_TSC_DEADLINE MSR (MSR index 6E0H) and the X2APIC MSRs (MSR
 indices 802H to 83FH) are not serializing.
 
 .PP
 The CPUID instruction should be used to determine whether MSRs are
 supported (CPUID.01H:EDX[5] = 1) before using this instruction.
 
-.SH IA\-32 ARCHITECTURE COMPATIBILITY
+.SH IA-32 ARCHITECTURE COMPATIBILITY  href="wrmsr.html#ia-32-architecture-compatibility"
+class="anchor">¶
+
 .PP
 The MSRs and the ability to read them with the WRMSR instruction were
-introduced into the IA\-32 architecture with the Pentium processor.
-Execution of this instruction by an IA\-32 processor earlier than the
+introduced into the IA-32 architecture with the Pentium processor.
+Execution of this instruction by an IA-32 processor earlier than the
 Pentium processor results in an invalid opcode exception #UD.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
-MSR[ECX] ← EDX:EAX;
-
-.fi
-.RE
+.EX
+MSR[ECX] := EDX:EAX;
+.EE
 
 .SH FLAGS AFFECTED
-.PP
 None.
 
 .SH PROTECTED MODE EXCEPTIONS
@@ -92,6 +88,7 @@ None.
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If the current privilege level is not 0.
 T}
@@ -102,44 +99,17 @@ T}
 If the value in EDX:EAX sets bits that are reserved in the MSR specified by ECX.
 T}
 	T{
-If the source register contains a non\-canonical address and ECX specifies one of the following MSRs: IA32
+If the source register contains a non-canonical address and ECX specifies one of the following MSRs: IA32_DS_AREA, IA32_FS_BASE, IA32_GS_BASE, IA32_KERNEL_GS_BASE, IA32_L-STAR, IA32_SYSENTER_EIP, IA32_SYSENTER_ESP.
 T}
-\_
-DS
-\_
-AREA, IA32
-\_
-FS
-\_
-BASE, IA32
-\_
-GS
-\_
-BASE, IA32
-\_
-KERNEL
-\_
-GS
-\_
-BASE, IA32
-\_
-LSTAR, IA32
-\_
-SYSENTER
-\_
-EIP, IA32
-\_
-SYSENTER
-\_
-ESP.
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP	T{
 If the value in ECX specifies a reserved or unimplemented MSR address.
 T}
@@ -147,70 +117,37 @@ T}
 If the value in EDX:EAX sets bits that are reserved in the MSR specified by ECX.
 T}
 	T{
-If the source register contains a non\-canonical address and ECX specifies one of the following MSRs: IA32
+If the source register contains a non-canonical address and ECX specifies one of the following MSRs: IA32_DS_AREA, IA32_FS_BASE, IA32_GS_BASE, IA32_KERNEL_GS_BASE, IA32_L-STAR, IA32_SYSENTER_EIP, IA32_SYSENTER_ESP.
 T}
-\_
-DS
-\_
-AREA, IA32
-\_
-FS
-\_
-BASE, IA32
-\_
-GS
-\_
-BASE, IA32
-\_
-KERNEL
-\_
-GS
-\_
-BASE, IA32
-\_
-LSTAR, IA32
-\_
-SYSENTER
-\_
-EIP, IA32
-\_
-SYSENTER
-\_
-ESP.
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
-The WRMSR instruction is not recognized in virtual\-8086 mode.
+The WRMSR instruction is not recognized in virtual-8086 mode.
 T}
 .TE
 
 .SH COMPATIBILITY MODE EXCEPTIONS
-.PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
-.PP
+.SH 64-BIT MODE EXCEPTIONS
 Same exceptions as in protected mode.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

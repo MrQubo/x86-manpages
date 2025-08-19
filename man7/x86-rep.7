@@ -1,849 +1,113 @@
+'\" t
 .nh
-.TH "X86-REP-REPE-REPZ-REPNE-REPNZ" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-REP-REPE-REPZ-REPNE-REPNZ" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 REP-REPE-REPZ-REPNE-REPNZ - REPEAT STRING OPERATION PREFIX
-.PP
-Opcode
-
-.PP
-Instruction
-
-.PP
-Op/En
-
-.PP
-64\-Bit Mode
-
-.PP
-Compat/Leg Mode
-
-.PP
-Description
-
-.PP
-F3 6C
-
-.PP
-REP INS m8, DX
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
+.TS
+allbox;
+l l l l l l 
+l l l l l l .
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
+F3 6C	REP INS m8, DX	ZO	Valid	Valid	T{
 Input (E)CX bytes from port DX into ES:[(E)DI]\&.
-
-.PP
-F3 6C
-
-.PP
-REP INS m8, DX
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
+T}
+F3 6C	REP INS m8, DX	ZO	Valid	N.E.	T{
 Input RCX bytes from port DX into [RDI]\&.
-
-.PP
-F3 6D
-
-.PP
-REP INS m16, DX
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
+T}
+F3 6D	REP INS m16, DX	ZO	Valid	Valid	T{
 Input (E)CX words from port DX into ES:[(E)DI.]
-
-.PP
-F3 6D
-
-.PP
-REP INS m32, DX
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
+T}
+F3 6D	REP INS m32, DX	ZO	Valid	Valid	T{
 Input (E)CX doublewords from port DX into ES:[(E)DI]\&.
-
-.PP
-F3 6D
-
-.PP
-REP INS r/m32, DX
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
+T}
+F3 6D	REP INS r/m32, DX	ZO	Valid	N.E.	T{
 Input RCX default size from port DX into [RDI]\&.
-
-.PP
-F3 A4
-
-.PP
-REP MOVS m8, m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Move (E)CX bytes from DS:[(E)SI] to ES:[(E)DI]\&.
-
-.PP
-F3 REX.W A4
-
-.PP
-REP MOVS m8, m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Move RCX bytes from [RSI] to [RDI]\&.
-
-.PP
-F3 A5
-
-.PP
-REP MOVS m16, m16
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Move (E)CX words from DS:[(E)SI] to ES:[(E)DI]\&.
-
-.PP
-F3 A5
-
-.PP
-REP MOVS m32, m32
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
+T}
+F3 A4	REP MOVS m8, m8	ZO	Valid	Valid	Move (E)CX bytes from DS:[(E)SI] to ES:[(E)DI]\&.
+F3 REX.W A4	REP MOVS m8, m8	ZO	Valid	N.E.	Move RCX bytes from [RSI] to [RDI]\&.
+F3 A5	REP MOVS m16, m16	ZO	Valid	Valid	Move (E)CX words from DS:[(E)SI] to ES:[(E)DI]\&.
+F3 A5	REP MOVS m32, m32	ZO	Valid	Valid	T{
 Move (E)CX doublewords from DS:[(E)SI] to ES:[(E)DI]\&.
-
-.PP
-F3 REX.W A5
-
-.PP
-REP MOVS m64, m64
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Move RCX quadwords from [RSI] to [RDI]\&.
-
-.PP
-F3 6E
-
-.PP
-REP OUTS DX, r/m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Output (E)CX bytes from DS:[(E)SI] to port DX.
-
-.PP
-F3 REX.W 6E
-
-.PP
-REP OUTS DX, r/m8*
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Output RCX bytes from [RSI] to port DX.
-
-.PP
-F3 6F
-
-.PP
-REP OUTS DX, r/m16
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Output (E)CX words from DS:[(E)SI] to port DX.
-
-.PP
-F3 6F
-
-.PP
-REP OUTS DX, r/m32
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
+T}
+F3 REX.W A5	REP MOVS m64, m64	ZO	Valid	N.E.	Move RCX quadwords from [RSI] to [RDI]\&.
+F3 6E	REP OUTS DX, r/m8	ZO	Valid	Valid	Output (E)CX bytes from DS:[(E)SI] to port DX.
+F3 REX.W 6E	REP OUTS DX, r/m81	ZO	Valid	N.E.	Output RCX bytes from [RSI] to port DX.
+F3 6F	REP OUTS DX, r/m16	ZO	Valid	Valid	Output (E)CX words from DS:[(E)SI] to port DX.
+F3 6F	REP OUTS DX, r/m32	ZO	Valid	Valid	T{
 Output (E)CX doublewords from DS:[(E)SI] to port DX.
-
-.PP
-F3 REX.W 6F
-
-.PP
-REP OUTS DX, r/m32
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Output RCX default size from [RSI] to port DX.
-
-.PP
-F3 AC
-
-.PP
-REP LODS AL
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Load (E)CX bytes from DS:[(E)SI] to AL.
-
-.PP
-F3 REX.W AC
-
-.PP
-REP LODS AL
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Load RCX bytes from [RSI] to AL.
-
-.PP
-F3 AD
-
-.PP
-REP LODS AX
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Load (E)CX words from DS:[(E)SI] to AX.
-
-.PP
-F3 AD
-
-.PP
-REP LODS EAX
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
+T}
+F3 REX.W 6F	REP OUTS DX, r/m32	ZO	Valid	N.E.	Output RCX default size from [RSI] to port DX.
+F3 AC	REP LODS AL	ZO	Valid	Valid	Load (E)CX bytes from DS:[(E)SI] to AL.
+F3 REX.W AC	REP LODS AL	ZO	Valid	N.E.	Load RCX bytes from [RSI] to AL.
+F3 AD	REP LODS AX	ZO	Valid	Valid	Load (E)CX words from DS:[(E)SI] to AX.
+F3 AD	REP LODS EAX	ZO	Valid	Valid	T{
 Load (E)CX doublewords from DS:[(E)SI] to EAX.
-
-.PP
-F3 REX.W AD
-
-.PP
-REP LODS RAX
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Load RCX quadwords from [RSI] to RAX.
-
-.PP
-F3 AA
-
-.PP
-REP STOS m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Fill (E)CX bytes at ES:[(E)DI] with AL.
-
-.PP
-F3 REX.W AA
-
-.PP
-REP STOS m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Fill RCX bytes at [RDI] with AL.
-
-.PP
-F3 AB
-
-.PP
-REP STOS m16
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Fill (E)CX words at ES:[(E)DI] with AX.
-
-.PP
-F3 AB
-
-.PP
-REP STOS m32
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Fill (E)CX doublewords at ES:[(E)DI] with EAX.
-
-.PP
-F3 REX.W AB
-
-.PP
-REP STOS m64
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Fill RCX quadwords at [RDI] with RAX.
-
-.PP
-F3 A6
-
-.PP
-REPE CMPS m8, m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Find nonmatching bytes in ES:[(E)DI] and DS:[(E)SI]\&.
-
-.PP
-F3 REX.W A6
-
-.PP
-REPE CMPS m8, m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Find non\-matching bytes in [RDI] and [RSI]\&.
-
-.PP
-F3 A7
-
-.PP
-REPE CMPS m16, m16
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Find nonmatching words in ES:[(E)DI] and DS:[(E)SI]\&.
-
-.PP
-F3 A7
-
-.PP
-REPE CMPS m32, m32
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
+T}
+F3 REX.W AD	REP LODS RAX	ZO	Valid	N.E.	Load RCX quadwords from [RSI] to RAX.
+F3 AA	REP STOS m8	ZO	Valid	Valid	Fill (E)CX bytes at ES:[(E)DI] with AL.
+F3 REX.W AA	REP STOS m8	ZO	Valid	N.E.	Fill RCX bytes at [RDI] with AL.
+F3 AB	REP STOS m16	ZO	Valid	Valid	Fill (E)CX words at ES:[(E)DI] with AX.
+F3 AB	REP STOS m32	ZO	Valid	Valid	Fill (E)CX doublewords at ES:[(E)DI] with EAX.
+F3 REX.W AB	REP STOS m64	ZO	Valid	N.E.	Fill RCX quadwords at [RDI] with RAX.
+F3 A6	REPE CMPS m8, m8	ZO	Valid	Valid	Find nonmatching bytes in ES:[(E)DI] and DS:[(E)SI]\&.
+F3 REX.W A6	REPE CMPS m8, m8	ZO	Valid	N.E.	Find non-matching bytes in [RDI] and [RSI]\&.
+F3 A7	REPE CMPS m16, m16	ZO	Valid	Valid	Find nonmatching words in ES:[(E)DI] and DS:[(E)SI]\&.
+F3 A7	REPE CMPS m32, m32	ZO	Valid	Valid	T{
 Find nonmatching doublewords in ES:[(E)DI] and DS:[(E)SI]\&.
-
-.PP
-F3 REX.W A7
-
-.PP
-REPE CMPS m64, m64
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Find non\-matching quadwords in [RDI] and [RSI]\&.
-
-.PP
-F3 AE
-
-.PP
-REPE SCAS m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Find non\-AL byte starting at ES:[(E)DI]\&.
-
-.PP
-F3 REX.W AE
-
-.PP
-REPE SCAS m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Find non\-AL byte starting at [RDI]\&.
-
-.PP
-F3 AF
-
-.PP
-REPE SCAS m16
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Find non\-AX word starting at ES:[(E)DI]\&.
-
-.PP
-F3 AF
-
-.PP
-REPE SCAS m32
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Find non\-EAX doubleword starting at ES:[(E)DI]\&.
-
-.PP
-F3 REX.W AF
-
-.PP
-REPE SCAS m64
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Find non\-RAX quadword starting at [RDI]\&.
-
-.PP
-F2 A6
-
-.PP
-REPNE CMPS m8, m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Find matching bytes in ES:[(E)DI] and DS:[(E)SI]\&.
-
-.PP
-F2 REX.W A6
-
-.PP
-REPNE CMPS m8, m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Find matching bytes in [RDI] and [RSI]\&.
-
-.PP
-F2 A7
-
-.PP
-REPNE CMPS m16, m16
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Find matching words in ES:[(E)DI] and DS:[(E)SI]\&.
-
-.PP
-F2 A7
-
-.PP
-REPNE CMPS m32, m32
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
+T}
+F3 REX.W A7	REPE CMPS m64, m64	ZO	Valid	N.E.	T{
+Find non-matching quadwords in [RDI] and [RSI]\&.
+T}
+F3 AE	REPE SCAS m8	ZO	Valid	Valid	T{
+Find non-AL byte starting at ES:[(E)DI]\&.
+T}
+F3 REX.W AE	REPE SCAS m8	ZO	Valid	N.E.	Find non-AL byte starting at [RDI]\&.
+F3 AF	REPE SCAS m16	ZO	Valid	Valid	T{
+Find non-AX word starting at ES:[(E)DI]\&.
+T}
+F3 AF	REPE SCAS m32	ZO	Valid	Valid	T{
+Find non-EAX doubleword starting at ES:[(E)DI]\&.
+T}
+F3 REX.W AF	REPE SCAS m64	ZO	Valid	N.E.	T{
+Find non-RAX quadword starting at [RDI]\&.
+T}
+F2 A6	REPNE CMPS m8, m8	ZO	Valid	Valid	Find matching bytes in ES:[(E)DI] and DS:[(E)SI]\&.
+F2 REX.W A6	REPNE CMPS m8, m8	ZO	Valid	N.E.	Find matching bytes in [RDI] and [RSI]\&.
+F2 A7	REPNE CMPS m16, m16	ZO	Valid	Valid	Find matching words in ES:[(E)DI] and DS:[(E)SI]\&.
+F2 A7	REPNE CMPS m32, m32	ZO	Valid	Valid	T{
 Find matching doublewords in ES:[(E)DI] and DS:[(E)SI]\&.
+T}
+F2 REX.W A7	REPNE CMPS m64, m64	ZO	Valid	N.E.	Find matching doublewords in [RDI] and [RSI]\&.
+F2 AE	REPNE SCAS m8	ZO	Valid	Valid	Find AL, starting at ES:[(E)DI]\&.
+F2 REX.W AE	REPNE SCAS m8	ZO	Valid	N.E.	Find AL, starting at [RDI]\&.
+F2 AF	REPNE SCAS m16	ZO	Valid	Valid	Find AX, starting at ES:[(E)DI]\&.
+F2 AF	REPNE SCAS m32	ZO	Valid	Valid	Find EAX, starting at ES:[(E)DI]\&.
+F2 REX.W AF	REPNE SCAS m64	ZO	Valid	N.E.	Find RAX, starting at [RDI]\&.
+.TE
 
 .PP
-F2 REX.W A7
+.RS
 
 .PP
-REPNE CMPS m64, m64
+1\&. In 64-bit mode, r/m8 can not be encoded to access the following
+byte registers if a REX prefix is used: AH, BH, CH, DH.
 
-.PP
-ZO
+.RE
 
-.PP
-Valid
+.SH INSTRUCTION OPERAND ENCODING  href="./rep:repe:repz:repne:repnz.html#instruction-operand-encoding"
+class="anchor">¶
 
-.PP
-N.E.
-
-.PP
-Find matching doublewords in [RDI] and [RSI]\&.
-
-.PP
-F2 AE
-
-.PP
-REPNE SCAS m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Find AL, starting at ES:[(E)DI]\&.
-
-.PP
-F2 REX.W AE
-
-.PP
-REPNE SCAS m8
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Find AL, starting at [RDI]\&.
-
-.PP
-F2 AF
-
-.PP
-REPNE SCAS m16
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Find AX, starting at ES:[(E)DI]\&.
-
-.PP
-F2 AF
-
-.PP
-REPNE SCAS m32
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-Valid
-
-.PP
-Find EAX, starting at ES:[(E)DI]\&.
-
-.PP
-F2 REX.W AF
-
-.PP
-REPNE SCAS m64
-
-.PP
-ZO
-
-.PP
-Valid
-
-.PP
-N.E.
-
-.PP
-Find RAX, starting at [RDI]\&.
-
-.PP
-NOTES: *
-In64\-bitmode,r/m8cannotbeencodedtoaccessthefollowingbyteregistersifaREXprefixisused:AH,BH,CH,DH.
-
-.SH INSTRUCTION OPERAND ENCODING
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-ZO	NA	NA	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+ZO	N/A	N/A	N/A	N/A
 .TE
 
-.SH DESCRIPTION
+.SH DESCRIPTION  href="./rep:repe:repz:repne:repnz.html#description"
+class="anchor">¶
+
 .PP
 Repeats a string instruction the number of times specified in the count
 register or until the indicated condition of the ZF flag is no longer
@@ -856,34 +120,18 @@ be added to the CMPS and SCAS instructions. (The REPZ and REPNZ prefixes
 are synonymous forms of the REPE and REPNE prefixes, respectively.) The
 F3H prefix is defined for the following instructions and undefined for
 the rest:
-
-.RS
 .IP \(bu 2
 F3H as REP/REPE/REPZ for string and input/output instruction.
 .IP \(bu 2
 F3H is a mandatory prefix for POPCNT, LZCNT, and ADOX.
-
-.RE
 
 .PP
 The REP prefixes apply only to one string instruction at a time. To
 repeat a block of instructions, use the LOOP instruction or another
 looping construct. All of these repeat prefixes cause the associated
 instruction to be repeated until the count in register is decremented to
-0. See Table 4\-16.
-
-.TS
-allbox;
-l l l 
-l l l .
-\fB\fCRepeat Prefix\fR	\fB\fCTermination Condition 1*\fR	\fB\fCTermination Condition 2\fR
-REP	RCX or (E)CX = 0	None
-REPE/REPZ	RCX or (E)CX = 0	ZF = 0
-REPNE/REPNZ	RCX or (E)CX = 0	ZF = 1
-.TE
-
-.PP
-Table 4\-16. Repeat Prefixes
+0. See Table 4-17
+\[la]./rep:repe:repz:repne:repnz.html#tbl\-4\-17\[ra]\&.
 
 .PP
 .RS
@@ -933,26 +181,25 @@ a REP STOS instruction is the fastest way to initialize a large block of
 memory.
 
 .PP
-In 64\-bit mode, the operand size of the count register is associated
+In 64-bit mode, the operand size of the count register is associated
 with the address size attribute. Thus the default count register is RCX;
 REX.W has no effect on the address size and the count register. In
-64\-bit mode, if 67H is used to override address size attribute, the
+64-bit mode, if 67H is used to override address size attribute, the
 count register is ECX and any implicit source/destination operand will
-use the corresponding 32\-bit index register. See the summary chart at
+use the corresponding 32-bit index register. See the summary chart at
 the beginning of this section for encoding data and limits.
 
 .PP
 REP INS may read from the I/O port without writing to the memory
-location if an exception or VM exit occurs due to the write (e.g. #PF).
-If this would be problematic, for example because the I/O port read has
-side\-effects, software should ensure the write to the memory location
-does not cause an exception or VM exit.
+location if an exception or VM exit occurs due to the write (e.g.,
+#PF). If this would be problematic, for example because the I/O port
+read has side-effects, software should ensure the write to the memory
+location does not cause an exception or VM exit.
 
-.SH OPERATION
-.PP
-.RS
+.SH OPERATION  href="./rep:repe:repz:repne:repnz.html#operation"
+class="anchor">¶
 
-.nf
+.EX
 IF AddressSize = 16
     THEN
             Use CX for CountReg;
@@ -968,50 +215,52 @@ WHILE CountReg ≠ 0
         DO
                 Service pending interrupts (if any);
                 Execute associated string instruction;
-                CountReg ← (CountReg – 1);
+                CountReg := (CountReg – 1);
                 IF CountReg = 0
                     THEN exit WHILE loop; FI;
                 IF (Repeat prefix is REPZ or REPE) and (ZF = 0)
                 or (Repeat prefix is REPNZ or REPNE) and (ZF = 1)
                     THEN exit WHILE loop; FI;
         OD;
+.EE
 
-.fi
-.RE
+.SH FLAGS AFFECTED  href="./rep:repe:repz:repne:repnz.html#flags-affected"
+class="anchor">¶
 
-.SH FLAGS AFFECTED
 .PP
 None; however, the CMPS and SCAS instructions do set the status flags in
 the EFLAGS register.
 
-.SH EXCEPTIONS (ALL OPERATING MODES)
+.SH EXCEPTIONS (ALL OPERATING MODES) <a
+href="./rep:repe:repz:repne:repnz.html#exceptions--all-operating-modes-"
+class="anchor">¶
+
 .PP
 Exceptions may be generated by an instruction associated with the
 prefix.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS  href="./rep:repe:repz:repne:repnz.html#64-bit-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
-If the memory address is in a non\-canonical form.
+If the memory address is in a non-canonical form.
 T}
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

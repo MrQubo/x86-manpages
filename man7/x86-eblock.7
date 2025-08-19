@@ -1,41 +1,31 @@
+'\" t
 .nh
-.TH "X86-EBLOCK" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-EBLOCK" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 EBLOCK - MARK A PAGE IN EPC AS BLOCKED
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 EAX = 09H ENCLS[EBLOCK]	IR	V/V	SGX1	T{
 This leaf function marks a page in the EPC as blocked.
 T}
 .TE
 
 .SH INSTRUCTION OPERAND ENCODING
-.PP
-Op/En
-
-.PP
-EAX
-
-.PP
-RCX
-
-.PP
-IR
-
-.PP
-EBLOCK (In)
-
-.PP
-Return error code (Out)
-
-.PP
+.TS
+allbox;
+l l l l 
+l l l l .
+\fB\fP	\fB\fP	\fB\fP	\fB\fP
+Op/En	EAX		RCX
+IR	EBLOCK (In)	Return error code (Out)	T{
 Effective address of the EPC page (In)
+T}
+.TE
 
-.SS Description
-.PP
+.SS DESCRIPTION
 This leaf function causes an EPC page to be marked as BLOCKED. This
 instruction can only be executed when current privilege level is 0.
 
@@ -51,11 +41,14 @@ An error code is returned in RAX.
 The table below provides additional information on the memory parameter
 of EBLOCK leaf function.
 
-.SH EBLOCK MEMORY PARAMETER SEMANTICS
+.SH EBLOCK MEMORY PARAMETER SEMANTICS  href="eblock.html#eblock-memory-parameter-semantics"
+class="anchor">¶
+
 .TS
 allbox;
 l 
 l .
+\fB\fP
 EPCPAGE
 T{
 Read/Write access permitted by Enclave
@@ -65,131 +58,18 @@ T}
 .PP
 The error codes are:
 
-.TS
-allbox;
-l l 
-l l .
-\fB\fCError Code (see Table 40\-4)\fR	\fB\fCDescription\fR
-No Error	EBLOCK successful.
-SGX\_BLKSTATE	T{
-Page already blocked. This value is used to indicate to a VMM that the page was already in BLOCKED state as a result of EBLOCK and thus will need to be restored to this state when it is eventually reloaded (using ELDB).
-T}
-SGX\_ENTRYEPOCH\_LOCKED	T{
-SECS locked for Entry Epoch update. This value indicates that an ETRACK is currently executing on the SECS. The EBLOCK should be reattempted.
-T}
-SGX\_NOTBLOCKABLE	T{
-Page type is not one which can be blocked.
-T}
-SGX\_PG\_INVLD	T{
-Page is not valid and cannot be blocked.
-T}
-SGX\_EPC\_PAGE\_CONFLICT	T{
-Page is being written by EADD, EAUG, ECREATE, ELDU/B, EMODT, or EWB.
-T}
-.TE
+.SS CONCURRENCY RESTRICTIONS
+.SS OPERATION
+.SH TEMP VARIABLES IN EBLOCK OPERATIONAL FLOW  href="eblock.html#temp-variables-in-eblock-operational-flow"
+class="anchor">¶
 
-.PP
-Table 40\-12\&. EBLOCK Return Value in
-RAX
-
-.SS Concurrency Restrictions
-.PP
-Leaf
-
-.PP
-Parameter
-
-.PP
-Base Concurrency Restrictions
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-SGX\_CONFLICT VM Exit Qualification
-
-.PP
-EBLOCK
-
-.PP
-Target [DS:RCX]
-
-.PP
-Shared
-
-.PP
-SGX\_EPC\_PAGE\_ CONFLICT
-
-.PP
-Table 40\-13\&. Base Concurrency
-Restrictions of EBLOCK
-
-.PP
-Leaf
-
-.PP
-Parameter
-
-.PP
-Additional Concurrency Restrictions
-
-.PP
-vs. EACCEPT, EACCEPTCOPY, EMODPE, EMODPR, EMODT
-
-.PP
-vs. EADD, EEXTEND, EINIT
-
-.PP
-vs. ETRACK, ETRACKC
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-EBLOCK
-
-.PP
-Target [DS:RCX]
-
-.PP
-Concurrent
-
-.PP
-Concurrent
-
-.PP
-Concurrent
-
-.PP
-Table 40\-14\&. Additional Concurrency
-Restrictions of EBLOCK
-
-.SS Operation
-.SH TEMP VARIABLES IN EBLOCK OPERATIONAL FLOW
 .TS
 allbox;
 l l l l 
 l l l l .
+\fB\fP	\fB\fP	\fB\fP	\fB\fP
 Name	Type	Size (Bits)	Description
-TMP\_BLKSTATE	Integer	64	Page is already blocked.
+TMP_BLKSTATE	Integer	64	Page is already blocked.
 .TE
 
 .PP
@@ -205,10 +85,10 @@ IF (DS:RCX does not resolve within an EPC)
 THEN #PF(DS:RCX); FI;
 
 .PP
-RFLAGS.ZF,CF,PF,AF,OF,SF ← 0;
+RFLAGS.ZF,CF,PF,AF,OF,SF := 0;
 
 .PP
-RAX← 0;
+RAX := 0;
 
 .PP
 (* Check the EPC page for concurrency*)
@@ -220,10 +100,10 @@ IF (EPC page in use)
 THEN
 
 .PP
-RFLAGS.ZF ← 1;
+RFLAGS.ZF := 1;
 
 .PP
-RAX← SGX\_EPC\_PAGE\_CONFLICT;
+RAX := SGX_EPC_PAGE_CONFLICT;
 
 .PP
 GOTO DONE;
@@ -238,10 +118,10 @@ IF (EPCM(DS:RCX). VALID = 0)
 THEN
 
 .PP
-RFLAGS.ZF ← 1;
+RFLAGS.ZF := 1;
 
 .PP
-RAX← SGX\_PG\_INVLD;
+RAX := SGX_PG_INVLD;
 
 .PP
 GOTO DONE;
@@ -250,23 +130,27 @@ GOTO DONE;
 FI;
 
 .PP
-IF ( (EPCM(DS:RCX).PT ≠ PT\_REG) and (EPCM(DS:RCX).PT ≠ PT\_TCS) and
-(EPCM(DS:RCX).PT ≠ PT\_TRIM) )
+IF ( (EPCM(DS:RCX).PT ≠ PT_REG) and (EPCM(DS:RCX).PT ≠ PT_TCS) and
+(EPCM(DS:RCX).PT ≠ PT_TRIM)
+
+.PP
+and EPCM(DS:RCX).PT ≠ PT_SS_FIRST) and (EPCM(DS:RCX).PT ≠
+PT_SS_REST))
 
 .PP
 THEN
 
 .PP
-RFLAGS.CF ← 1;
+RFLAGS.CF := 1;
 
 .PP
-IF (EPCM(DS:RCX).PT = PT\_SECS)
+IF (EPCM(DS:RCX).PT = PT_SECS)
 
 .PP
-THEN RAX←SGX\_PG\_IS\_SECS;
+THEN RAX := SGX_PG_IS_SECS;
 
 .PP
-ELSE RAX←SGX\_NOTBLOCKABLE;
+ELSE RAX := SGX_NOTBLOCKABLE;
 
 .PP
 FI;
@@ -281,29 +165,29 @@ FI;
 (* Check if the page is already blocked and report blocked state *)
 
 .PP
-TMP\_BLKSTATE ← EPCM(DS:RCX).BLOCKED;
+TMP_BLKSTATE := EPCM(DS:RCX).BLOCKED;
 
 .PP
-(* at this point, the page must be valid and PT\_TCS or PT\_REG or
-PT\_TRIM*)
+(* at this point, the page must be valid and PT_TCS or PT_REG or
+PT_TRIM*)
 
 .PP
-IF (TMP\_BLKSTATE = 1)
+IF (TMP_BLKSTATE = 1)
 
 .PP
 THEN
 
 .PP
-RFLAGS.CF ← 1;
+RFLAGS.CF := 1;
 
 .PP
-RAX← SGX\_BLKSTATE;
+RAX := SGX_BLKSTATE;
 
 .PP
 ELSE
 
 .PP
-EPCM(DS:RCX).BLOCKED ← 1
+EPCM(DS:RCX).BLOCKED := 1
 
 .PP
 FI;
@@ -311,68 +195,65 @@ FI;
 .PP
 DONE:
 
-.SS Flags Affected
-.PP
+.SS FLAGS AFFECTED
 Sets ZF if SECS is in use or invalid, otherwise cleared. Sets CF if page
 is BLOCKED or not blockable, otherwise cleared. Clears PF, AF, OF, SF.
 
-.SS Protected Mode Exceptions
-.PP
-#GP(0)
-
-.PP
+.SS PROTECTED MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
 If a memory operand effective address is outside the DS segment limit.
-
-.PP
+T}
+	T{
 If a memory operand is not properly aligned.
-
-.PP
+T}
+	T{
 If the specified EPC resource is in use.
-
-.PP
-#PF(error
-
-.PP
+T}
+#PF(error	T{
 code) If a page fault occurs in accessing memory operands.
-
-.PP
+T}
+	T{
 If a memory operand is not an EPC page.
+T}
+.TE
 
-.SS 64\-Bit Mode Exceptions
-.PP
-#GP(0)
-
-.PP
-If a memory operand is non\-canonical form.
-
-.PP
+.SS 64-BIT MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
+If a memory operand is non-canonical form.
+T}
+	T{
 If a memory operand is not properly aligned.
-
-.PP
+T}
+	T{
 If the specified EPC resource is in use.
-
-.PP
-#PF(error
-
-.PP
+T}
+#PF(error	T{
 code) If a page fault occurs in accessing memory operands.
-
-.PP
+T}
+	T{
 If a memory operand is not an EPC page.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+T}
+.TE
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

@@ -1,0 +1,409 @@
+'\" t
+.nh
+.TH "X86-EDECCSSA" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
+.SH NAME
+EDECCSSA - DECREMENTS TCS.CSSA
+.TS
+allbox;
+l l l l l 
+l l l l l .
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
+EAX = 09H ENCLU[EDECCSSA]	IR	V/V	EDECCSSA	T{
+This leaf function decrements TCS.CSSA.
+T}
+.TE
+
+.SH INSTRUCTION OPERAND ENCODING  href="edeccssa.html#instruction-operand-encoding"
+class="anchor">¶
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+Op/En	EAX
+IR	EDECCSSA (In)
+.TE
+
+.SS DESCRIPTION
+This leaf function changes the current SSA frame by decrementing
+TCS.CSSA for the current enclave thread. If the enclave has enabled CET
+shadow stacks or indirect branch tracking, then EDECCSSA also changes
+the current CET state save frame. This instruction leaf can only be
+executed inside an enclave.
+
+.SH EDECCSSA MEMORY PARAMETER SEMANTICS  href="edeccssa.html#edeccssa-memory-parameter-semantics"
+class="anchor">¶
+
+.TS
+allbox;
+l 
+l .
+\fB\fP
+TCS
+Read/Write access by Enclave
+.TE
+
+.PP
+The instruction faults if any of the following:
+
+.SH EDECCSSA FAULTING CONDITIONS  href="edeccssa.html#edeccssa-faulting-conditions"
+class="anchor">¶
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+TCS.CSSA is 0.	T{
+TCS is not valid or available or locked.
+T}
+T{
+The SSA frame is not valid or in use.
+T}	
+.TE
+
+.SS CONCURRENCY RESTRICTIONS
+.SS OPERATION
+.SH TEMP VARIABLES IN EDECCSSA OPERATIONAL FLOW  href="edeccssa.html#temp-variables-in-edeccssa-operational-flow"
+class="anchor">¶
+
+.TS
+allbox;
+l l l l 
+l l l l .
+\fBName\fP	\fBType\fP	\fBSize (bits)\fP	\fBDescription\fP
+TMP_SSA	Effective Address	32/64	Address of current SSA frame.
+TMP_XSIZE	Integer	64	T{
+Size of XSAVE area based on SECS.ATTRIBUTES.XFRM.
+T}
+TMP_SSA_PAGE	Effective Address	32/64	T{
+Pointer used to iterate over the SSA pages in the target frame.
+T}
+TMP_GPR	Effective Address	32/64	T{
+Address of the GPR area within the target SSA frame.
+T}
+TMP_XSAVE_PAGE_PA_n	Physical Address	32/64	T{
+Physical address of the nth page within the target SSA frame.
+T}
+TMP_CET_SAVE_AREA	Effective Address	32/64	T{
+Address of the current CET save area.
+T}
+TMP_CET_SAVE_PAGE	Effective Address	32/64	T{
+Address of the current CET save area page.
+T}
+.TE
+
+.PP
+IF (CR_TCS_PA.CSSA = 0)
+
+.PP
+THEN #GP(0); FI;
+
+.PP
+(* Compute linear address of SSA frame *)
+
+.PP
+TMP_SSA := CR_TCS_PA.OSSA + CR_ACTIVE_SECS.BASEADDR + 4096 *
+CR_ACTIVE_SECS.SSAFRAMESIZE * (CR_TCS_PA.CSSA - 1);
+
+.PP
+TMP_XSIZE :=
+compute_XSAVE_frame_size(CR_ACTIVE_SECS.ATTRIBUTES.XFRM);
+
+.PP
+FOR EACH TMP_SSA_PAGE = TMP_SSA to TMP_SSA + TMP_XSIZE
+
+.PP
+(* Check page is read/write accessible *)
+
+.PP
+Check that DS:TMP_SSA_PAGE is read/write accessible;
+
+.PP
+If a fault occurs, release locks, abort and deliver that fault;
+
+.PP
+IF (DS:TMP_SSA_PAGE does not resolve to EPC page)
+
+.PP
+THEN #PF(DS:TMP_SSA_PAGE); FI;
+
+.PP
+IF (EPCM(DS:TMP_SSA_PAGE).VALID = 0)
+
+.PP
+THEN #PF(DS:TMP_SSA_PAGE); FI;
+
+.PP
+IF (EPCM(DS:TMP_SSA_PAGE).BLOCKED = 1)
+
+.PP
+THEN #PF(DS:TMP_SSA_PAGE); FI;
+
+.PP
+IF ((EPCM(DS:TMP_SSA_PAGE).PENDING = 1) or
+(EPCM(DS:TMP_SSA_PAGE_\&.MODIFIED = 1))
+
+.PP
+THEN #PF(DS:TMP_SSA_PAGE); FI;
+
+.PP
+IF ( ( EPCM(DS:TMP_SSA_PAGE).ENCLAVEADDRESS ≠ DS:TMPSSA_PAGE) or
+
+.PP
+(EPCM(DS:TMP_SSA_PAGE).PT ≠ PT_REG) or
+
+.PP
+(EPCM(DS:TMP_SSA_PAGE).ENCLAVESECS ≠ EPCM(CR_TCS_PA).ENCLAVESECS) or
+
+.PP
+(EPCM(DS:TMP_SSA_PAGE).R = 0) or (EPCM(DS:TMP_SSA_PAGE).W = 0))
+
+.PP
+THEN #PF(DS:TMP_SSA_PAGE); FI;
+
+.PP
+TMP_XSAVE_PAGE_PA_n := Physical_Address(DS:TMP_SSA_PAGE);
+
+.PP
+ENDFOR
+
+.PP
+(* Compute address of GPR area*)
+
+.PP
+TMP_GPR := TMP_SSA + 4096 * CR_ACTIVE_SECS.SSAFRAMESIZE -
+sizeof(GPRSGX_AREA);
+
+.PP
+Check that DS:TMP_SSA_PAGE is read/write accessible;
+
+.PP
+If a fault occurs, release locks, abort and deliver that fault;
+
+.PP
+IF (DS:TMP_GPR does not resolve to EPC page)
+
+.PP
+THEN #PF(DS:TMP_GPR); FI;
+
+.PP
+IF (EPCM(DS:TMP_GPR).VALID = 0)
+
+.PP
+THEN #PF(DS:TMP_GPR); FI;
+
+.PP
+IF (EPCM(DS:TMP_GPR).BLOCKED = 1)
+
+.PP
+THEN #PF(DS:TMP_GPR); FI;
+
+.PP
+IF ((EPCM(DS:TMP_GPR).PENDING = 1) or (EPCM(DS:TMP_GPR).MODIFIED = 1))
+
+.PP
+THEN #PF(DS:TMP_GPR); FI;
+
+.PP
+IF ( ( EPCM(DS:TMP_GPR).ENCLAVEADDRESS ≠ DS:TMP_GPR) or
+
+.PP
+(EPCM(DS:TMP_GPR).PT ≠ PT_REG) or
+
+.PP
+(EPCM(DS:TMP_GPR).ENCLAVESECS ≠ EPCM(CR_TCS_PA).ENCLAVESECS) or
+
+.PP
+(EPCM(DS:TMP_GPR).R = 0) or (EPCM(DS:TMP_GPR).W = 0) )
+
+.PP
+THEN #PF(DS:TMP_GPR); FI;
+
+.PP
+IF (TMP_MODE64 = 0)
+
+.PP
+THEN
+
+.PP
+IF (TMP_GPR + (sizeof(GPRSGX_AREA) -1) is not in DS segment)
+
+.PP
+THEN #GP(0); FI;
+
+.PP
+FI;
+
+.PP
+IF (CPUID.(EAX=12H, ECX=1):EAX[6] = 1)
+
+.PP
+THEN
+
+.PP
+IF ((CR_ACTIVE_SECS.CET_ATTRIBUTES.SH_STK_EN == 1) OR
+(CR_ACTIVE_SECS.CET_ATTRIBUTES.ENDBR_EN == 1))
+
+.PP
+THEN
+
+.PP
+(* Compute linear address of what will become new CET state save area
+and cache its PA *)
+
+.PP
+TMP_CET_SAVE_AREA := CR_TCS_PA.OCETSSA +
+CR_ACTIVE_SECS.BASEADDR + (CR_TCS_PA.CSSA - 1) * 16;
+
+.PP
+TMP_CET_SAVE_PAGE := TMP_CET_SAVE_AREA & ~0xFFF;
+
+.PP
+Check the TMP_CET_SAVE_PAGE page is read/write accessible
+
+.PP
+If fault occurs release locks, abort and deliver fault
+
+.PP
+(* read the EPCM VALID, PENDING, MODIFIED, BLOCKED and PT fields
+atomically *)
+
+.PP
+IF ((DS:TMP_CET_SAVE_PAGE Does NOT RESOLVE TO EPC PAGE) OR
+
+.PP
+(EPCM(DS:TMP_CET_SAVE_PAGE).VALID = 0) OR
+
+.PP
+(EPCM(DS:TMP_CET_SAVE_PAGE).PENDING = 1) OR
+
+.PP
+(EPCM(DS:TMP_CET_SAVE_PAGE).MODIFIED = 1) OR
+
+.PP
+(EPCM(DS:TMP_CET_SAVE_PAGE).BLOCKED = 1) OR
+
+.PP
+(EPCM(DS:TMP_CET_SAVE_PAGE).R = 0) OR
+
+.PP
+(EPCM(DS:TMP_CET_SAVE_PAGE).W = 0) OR
+
+.PP
+(EPCM(DS:TMP_CET_SAVE_PAGE).ENCLAVEADDRESS ≠ DS:TMP_CET_SAVE_PAGE)
+OR
+
+.PP
+(EPCM(DS:TMP_CET_SAVE_PAGE).PT ≠ PT_SS_REST) OR
+
+.PP
+(EPCM(DS:TMP_CET_SAVE_PAGE).ENCLAVESECS ≠
+EPCM(CR_TCS_PA).ENCLAVESECS))
+
+.PP
+THEN #PF(DS:TMP_CET_SAVE_PAGE); FI;
+
+.PP
+FI;
+
+.PP
+FI;
+
+.PP
+(* At this point, the instruction is guaranteed to complete *)
+
+.PP
+CR_TCS_PA.CSSA := CR_TCS_PA.CSSA - 1;
+
+.PP
+CR_GPR_PA := Physical_Address(DS:TMP_GPR);
+
+.PP
+FOR EACH TMP_XSAVE_PAGE_n
+
+.PP
+CR_XSAVE_PAGE_n := TMP_XSAVE_PAGE_PA_n;
+
+.PP
+ENDFOR
+
+.PP
+IF (CPUID.(EAX=12H, ECX=1):EAX[6] = 1)
+
+.PP
+IF ((TMP_SECS.CET_ATTRIBUTES.SH_STK_EN == 1) OR
+
+.PP
+(TMP_SECS.CET_ATTRIBUTES.ENDBR_EN == 1))
+
+.PP
+THEN
+
+.PP
+CR_CET_SAVE_AREA_PA := Physical_Address(DS:TMP_CET_SAVE_AREA);
+
+.PP
+FI;
+
+.PP
+FI;
+
+.SS FLAGS AFFECTED
+None
+
+.SS PROTECTED MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
+If executed outside an enclave.
+T}
+	If CR_TCS_PA.CSSA = 0.
+#PF(error	T{
+code) If a page fault occurs in accessing memory.
+T}
+	T{
+If one or more pages of the target SSA frame are not readable/writable, or do not resolve to a valid PT_REG EPC page.
+T}
+	T{
+If CET is enabled for the enclave and the target CET SSA frame is not readable/writable, or does not resolve to a valid PT_REG EPC page.
+T}
+.TE
+
+.SS 64-BIT MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
+If executed outside an enclave.
+T}
+	If CR_TCS_PA.CSSA = 0.
+#PF(error	T{
+code) If a page fault occurs in accessing memory.
+T}
+	T{
+If one or more pages of the target SSA frame are not readable/writable, or do not resolve to a valid PT_REG EPC page.
+T}
+	T{
+If CET is enabled for the enclave and the target CET SSA frame is not readable/writable, or does not resolve to a valid PT_REG EPC page.
+T}
+.TE
+
+.SH COLOPHON
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
+
+.br
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

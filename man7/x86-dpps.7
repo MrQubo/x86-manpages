@@ -1,29 +1,27 @@
+'\" t
 .nh
-.TH "X86-DPPS" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-DPPS" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 DPPS - DOT PRODUCT OF PACKED SINGLE PRECISION FLOATING-POINT VALUES
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32\-bit Mode\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32-bit Mode\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 66 0F 3A 40 /r ib DPPS xmm1, xmm2/m128, imm8
-T}
-	RMI	V/V	SSE4\_1	T{
-Selectively multiply packed SP floating\-point values from xmm1.
+T}	RMI	V/V	SSE4_1	T{
+Selectively multiply packed single precision floating-point values from xmm1 with packed single precision floating-point values from xmm2, add and selectively store the packed single precision floating-point values or zero values to xmm1.
 T}
 T{
 VEX.128.66.0F3A.WIG 40 /r ib VDPPS xmm1,xmm2, xmm3/m128, imm8
-T}
-	RVMI	V/V	AVX	T{
-Multiply packed SP floating point values from xmm1 with packed SP floating point values from xmm2/mem selectively add and store to xmm1.
+T}	RVMI	V/V	AVX	T{
+Multiply packed single precision floating-point values from xmm1 with packed single precision floating-point values from xmm2/mem selectively add and store to xmm1.
 T}
 T{
 VEX.256.66.0F3A.WIG 40 /r ib VDPPS ymm1, ymm2, ymm3/m256, imm8
-T}
-	RVMI	V/V	AVX	T{
-Multiply packed single\-precision floating\-point values from ymm2 with packed SP floating point values from ymm3/mem, selectively add pairs of elements and store to ymm1.
+T}	RVMI	V/V	AVX	T{
+Multiply packed single precision floating-point values from ymm2 with packed single precision floating-point values from ymm3/mem, selectively add pairs of elements and store to ymm1.
 T}
 .TE
 
@@ -32,24 +30,23 @@ T}
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-RMI	ModRM:reg (r, w)	ModRM:r/m (r)	imm8	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+RMI	ModRM:reg (r, w)	ModRM:r/m (r)	imm8	N/A
 RVMI	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	imm8
 .TE
 
 .SH DESCRIPTION
-.PP
-Conditionally multiplies the packed single precision floating\-point
-values in the destination operand (first operand) with the packed
-single\-precision floats in the source (second operand) depending on a
-mask extracted from the high 4 bits of the immediate byte (third
-operand). If a condition mask bit in Imm8[7:4] is zero, the
-corresponding multiplication is replaced by a value of 0.0 in the manner
-described by Section 12.8.4 of Intel® 64 and IA\-32 Architectures
-Software Developer’s Manual, Volume 1.
+Conditionally multiplies the packed single precision floating-point
+values in the destination operand (first operand) with the packed single
+precision floats in the source (second operand) depending on a mask
+extracted from the high 4 bits of the immediate byte (third operand). If
+a condition mask bit in imm8[7:4] is zero, the corresponding
+multiplication is replaced by a value of 0.0 in the manner described by
+Section 12.8.4 of Intel® 64 and IA-32 Architectures Software
+Developer’s Manual, Volume 1.
 
 .PP
-The four resulting single\-precision values are summed into an
+The four resulting single precision values are summed into an
 intermediate result. The intermediate result is conditionally
 broadcasted to the destination using a broadcast mask specified by bits
 [3:0] of the immediate byte.
@@ -62,7 +59,7 @@ zero.
 
 .PP
 DPPS follows the NaN forwarding rules stated in the Software Developer’s
-Manual, vol. 1, table 4\-7\&. These rules
+Manual, vol. 1, table 4-7\&. These rules
 do not cover horizontal prioritization of NaNs. Horizontal propagation
 of NaNs to the destination and the positioning of those NaNs in the
 destination is implementation dependent. NaNs on the input sources or
@@ -70,114 +67,91 @@ computationally generated NaNs will have at least one NaN propagated to
 the destination.
 
 .PP
-128\-bit Legacy SSE version: The second source can be an XMM register or
-an 128\-bit memory location. The destination is not distinct from the
-first source XMM register and the upper bits (MAXVL\-1:128) of the
+128-bit Legacy SSE version: The second source can be an XMM register or
+an 128-bit memory location. The destination is not distinct from the
+first source XMM register and the upper bits (MAXVL-1:128) of the
 corresponding YMM register destination are unmodified.
 
 .PP
 VEX.128 encoded version: the first source operand is an XMM register or
-128\-bit memory location. The destination operand is an XMM register. The
-upper bits (MAXVL\-1:128) of the corresponding YMM register destination
+128-bit memory location. The destination operand is an XMM register. The
+upper bits (MAXVL-1:128) of the corresponding YMM register destination
 are zeroed.
 
 .PP
 VEX.256 encoded version: The first source operand is a YMM register. The
-second source operand can be a YMM register or a 256\-bit memory
+second source operand can be a YMM register or a 256-bit memory
 location. The destination operand is a YMM register.
 
 .SH OPERATION
-.SS DP\_primitive (SRC1, SRC2)
-.PP
-.RS
-
-.nf
+.SS DP_PRIMITIVE (SRC1, SRC2)
+.EX
 IF (imm8[4] = 1)
-    THEN Temp1[31:0]←DEST[31:0] * SRC[31:0]; // update SIMD exception flags
-    ELSE Temp1[31:0]←+0.0; FI;
+    THEN Temp1[31:0] := DEST[31:0] * SRC[31:0]; // update SIMD exception flags
+    ELSE Temp1[31:0] := +0.0; FI;
 IF (imm8[5] = 1)
-    THEN Temp1[63:32]←DEST[63:32] * SRC[63:32]; // update SIMD exception flags
-    ELSE Temp1[63:32]←+0.0; FI;
+    THEN Temp1[63:32] := DEST[63:32] * SRC[63:32]; // update SIMD exception flags
+    ELSE Temp1[63:32] := +0.0; FI;
 IF (imm8[6] = 1)
-    THEN Temp1[95:64]←DEST[95:64] * SRC[95:64]; // update SIMD exception flags
-    ELSE Temp1[95:64]←+0.0; FI;
+    THEN Temp1[95:64] := DEST[95:64] * SRC[95:64]; // update SIMD exception flags
+    ELSE Temp1[95:64] := +0.0; FI;
 IF (imm8[7] = 1)
-    THEN Temp1[127:96]←DEST[127:96] * SRC[127:96]; // update SIMD exception flags
-    ELSE Temp1[127:96]←+0.0; FI;
-Temp2[31:0]←Temp1[31:0] + Temp1[63:32]; // update SIMD exception flags
+    THEN Temp1[127:96] := DEST[127:96] * SRC[127:96]; // update SIMD exception flags
+    ELSE Temp1[127:96] := +0.0; FI;
+Temp2[31:0] := Temp1[31:0] + Temp1[63:32]; // update SIMD exception flags
 /* if unmasked exception reported, execute exception handler*/
-Temp3[31:0]←Temp1[95:64] + Temp1[127:96]; // update SIMD exception flags
+Temp3[31:0] := Temp1[95:64] + Temp1[127:96]; // update SIMD exception flags
 /* if unmasked exception reported, execute exception handler*/
-Temp4[31:0]←Temp2[31:0] + Temp3[31:0]; // update SIMD exception flags
+Temp4[31:0] := Temp2[31:0] + Temp3[31:0]; // update SIMD exception flags
 /* if unmasked exception reported, execute exception handler*/
 IF (imm8[0] = 1)
-    THEN DEST[31:0]←Temp4[31:0];
-    ELSE DEST[31:0]←+0.0; FI;
+    THEN DEST[31:0] := Temp4[31:0];
+    ELSE DEST[31:0] := +0.0; FI;
 IF (imm8[1] = 1)
-    THEN DEST[63:32]←Temp4[31:0];
-    ELSE DEST[63:32]←+0.0; FI;
+    THEN DEST[63:32] := Temp4[31:0];
+    ELSE DEST[63:32] := +0.0; FI;
 IF (imm8[2] = 1)
-    THEN DEST[95:64]←Temp4[31:0];
-    ELSE DEST[95:64]←+0.0; FI;
+    THEN DEST[95:64] := Temp4[31:0];
+    ELSE DEST[95:64] := +0.0; FI;
 IF (imm8[3] = 1)
-    THEN DEST[127:96]←Temp4[31:0];
-    ELSE DEST[127:96]←+0.0; FI;
+    THEN DEST[127:96] := Temp4[31:0];
+    ELSE DEST[127:96] := +0.0; FI;
+.EE
 
-.fi
-.RE
+.SS DPPS (128-BIT LEGACY SSE VERSION)  href="dpps.html#dpps--128-bit-legacy-sse-version-"
+class="anchor">¶
 
-.SS DPPS (128\-bit Legacy SSE version)
-.PP
-.RS
+.EX
+DEST[127:0] := DP_Primitive(SRC1[127:0], SRC2[127:0]);
+DEST[MAXVL-1:128] (Unmodified)
+.EE
 
-.nf
-DEST[127:0]←DP\_Primitive(SRC1[127:0], SRC2[127:0]);
-DEST[MAXVL\-1:128] (Unmodified)
+.SS VDPPS (VEX.128 ENCODED VERSION)
+.EX
+DEST[127:0] := DP_Primitive(SRC1[127:0], SRC2[127:0]);
+DEST[MAXVL-1:128] := 0
+.EE
 
-.fi
-.RE
-
-.SS VDPPS (VEX.128 encoded version)
-.PP
-.RS
-
-.nf
-DEST[127:0]←DP\_Primitive(SRC1[127:0], SRC2[127:0]);
-DEST[MAXVL\-1:128] ← 0
-
-.fi
-.RE
-
-.SS VDPPS (VEX.256 encoded version)
-.PP
-.RS
-
-.nf
-DEST[127:0]←DP\_Primitive(SRC1[127:0], SRC2[127:0]);
-DEST[255:128]←DP\_Primitive(SRC1[255:128], SRC2[255:128]);
-
-.fi
-.RE
+.SS VDPPS (VEX.256 ENCODED VERSION)
+.EX
+DEST[127:0] := DP_Primitive(SRC1[127:0], SRC2[127:0]);
+DEST[255:128] := DP_Primitive(SRC1[255:128], SRC2[255:128]);
+.EE
 
 .SH FLAGS AFFECTED
-.PP
-None
+None.
 
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="dpps.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.nf
-(V)DPPS: \_\_m128 \_mm\_dp\_ps ( \_\_m128 a, \_\_m128 b, const int mask);
+.EX
+(V)DPPS __m128 _mm_dp_ps ( __m128 a, __m128 b, const int mask);
 
-VDPPS: \_\_m256 \_mm256\_dp\_ps ( \_\_m256 a, \_\_m256 b, const int mask);
+VDPPS __m256 _mm256_dp_ps ( __m256 a, __m256 b, const int mask);
+.EE
 
-.fi
-.RE
-
-.SH SIMD FLOATING\-POINT EXCEPTIONS
-.PP
-Overflow, Underflow, Invalid, Precision, Denormal
+.SH SIMD FLOATING-POINT EXCEPTIONS
+Overflow, Underflow, Invalid, Precision, Denormal.
 
 .PP
 Exceptions are determined separately for each add and multiply
@@ -185,22 +159,18 @@ operation, in the order of their execution. Unmasked exceptions will
 leave the destination operands unchanged.
 
 .SH OTHER EXCEPTIONS
-.PP
-See Exceptions Type 2.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+See Table 2-19, “Type 2 Class
+Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

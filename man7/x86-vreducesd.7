@@ -1,61 +1,55 @@
+'\" t
 .nh
-.TH "X86-VREDUCESD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VREDUCESD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VREDUCESD - PERFORM A REDUCTION TRANSFORMATION ON A SCALAR FLOAT64 VALUE
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp / En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
-EVEX.LIG.66.0F3A.W1 57 VREDUCESD xmm1 {k1}{z}, xmm2, xmm3/m64{sae}, imm8/r
-T}
-	A	V/V	AVX512D Q	T{
-Perform a reduction transformation on a scalar double\-precision floating point value in xmm3/m64 by subtracting a number of fraction bits specified by the imm8 field. Also, upper double precision floating\-point value (bits
-T}
-[
-127:64
-]
-) from xmm2 are copied to xmm1
-[
-127:64
-]
-T{
-\&. Stores the result in xmm1 register.
+EVEX.LLIG.66.0F3A.W1 57 VREDUCESD xmm1 {k1}{z}, xmm2, xmm3/m64{sae}, imm8/r
+T}	A	V/V	AVX512D Q	T{
+Perform a reduction transformation on a scalar double precision floating-point value in xmm3/m64 by subtracting a number of fraction bits specified by the imm8 field. Also, upper double precision floating-point value (bits[127:64]) from xmm2 are copied to xmm1[127:64]\&. Stores the result in xmm1 register.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="vreducesd.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	N/A
 .TE
 
-.SS Description
-.PP
-Perform a reduction transformation of the binary encoded
-double\-precision FP value in the low qword element of the second source
-operand (the third operand) and store the reduced result in binary FP
-format to the low qword element of the destination operand (the first
-operand) under the writemask k1. Bits 127:64 of the destination operand
-are copied from respective qword elements of the first source operand
-(the second operand).
+.SS DESCRIPTION
+Perform a reduction transformation of the binary encoded double
+precision floating-point value in the low qword element of the second
+source operand (the third operand) and store the reduced result in
+binary floating-point format to the low qword element of the destination
+operand (the first operand) under the writemask k1. Bits 127:64 of the
+destination operand are copied from respective qword elements of the
+first source operand (the second operand).
 
 .PP
 The reduction transformation subtracts the integer part and the leading
-M fractional bits from the binary FP source value, where M is a unsigned
-integer specified by imm8[7:4], see Figure 5\-28. Specifically, the
-reduction transformation can be expressed as:
+M fractional bits from the binary floating-point source value, where M
+is a unsigned integer specified by imm8[7:4], see Figure
+5-28
+\[la]vreducepd.html#fig\-5\-28\[ra]\&. Specifically, the reduction
+transformation can be expressed as:
 
 .PP
-dest = src – (ROUND(2\-M;
+dest = src – (ROUND(2M*src))*2-M;
 
 .PP
-where “Round()” treats “src”, “2M”, and their product as binary FP
-numbers with normalized significand and biased exponents.
+where “Round()” treats “src”, “2M”, and their product as
+binary floating-point numbers with normalized significand and biased
+exponents.
 
 .PP
 The magnitude of the reduced result can be expressed by considering src=
@@ -66,103 +60,90 @@ where ‘man2’ is the normalized significand and ‘p’ is the unbiased
 exponent
 
 .PP
-Then if RC = RNE: 0\&lt;=|Reduced Result|\&lt;=2p\-M\-1
+Then if RC = RNE: 0&lt;=|Reduced Result|&lt;=2p-M-1
 
 .PP
-Then if RC ≠ RNE: 0\&lt;=|Reduced Result|\&lt;2p\-M
+Then if RC ≠ RNE: 0&lt;=|Reduced Result|&lt;2p-M
 
 .PP
 This instruction might end up with a precision exception set. However,
-in case of SPE set (i.e. Suppress Precision Exception, which is
+in case of SPE set (i.e., Suppress Precision Exception, which is
 imm8[3]=1), no precision exception is reported.
 
 .PP
 The operation is write masked.
 
 .PP
-Handling of special case of input values are listed in Table 5\-24.
+Handling of special case of input values are listed in Table
+5-29
+\[la]vreducepd.html#tbl\-5\-29\[ra]\&.
 
-.SS Operation
-.PP
-.RS
-
-.nf
+.SS OPERATION
+.EX
 ReduceArgumentDP(SRC[63:0], imm8[7:0])
 {
     // Check for NaN
     IF (SRC [63:0] = NAN) THEN
         RETURN (Convert SRC[63:0] to QNaN); FI;
-    M ← imm8[7:4]; // Number of fraction bits of the normalized significand to be subtracted
-    RC←imm8[1:0];// Round Control for ROUND() operation
-    RC source←imm[2];
-    SPE←0;// Suppress Precision Exception
-    TMP[63:0] ← 2M as standard binary FP values
-    TMP[63:0]←SRC[63:0] – TMP[63:0]; // subtraction under the same RC,SPE controls
+    M := imm8[7:4]; // Number of fraction bits of the normalized significand to be subtracted
+    RC := imm8[1:0];// Round Control for ROUND() operation
+    RC source := imm[2];
+    SPE := imm[3];// Suppress Precision Exception
+    TMP[63:0] := 2-M *{ROUND(2M*SRC[63:0], SPE, RC_source, RC)}; // ROUND() treats SRC and 2M as standard binary FP values
+    TMP[63:0] := SRC[63:0] – TMP[63:0]; // subtraction under the same RC,SPE controls
     RETURN TMP[63:0]; // binary encoded FP with biased exponent and normalized significand
 }
-
-.fi
-.RE
+.EE
 
 .SS VREDUCESD
-.PP
-.RS
-
-.nf
+.EX
 IF k1[0] or *no writemask*
-    THEN DEST[63:0]←ReduceArgumentDP(SRC2[63:0], imm8[7:0])
+    THEN DEST[63:0] := ReduceArgumentDP(SRC2[63:0], imm8[7:0])
     ELSE
-        IF *merging\-masking* ; merging\-masking
+        IF *merging-masking* ; merging-masking
             THEN *DEST[63:0] remains unchanged*
-            ELSE ; zeroing\-masking
+            ELSE ; zeroing-masking
                 THEN DEST[63:0] = 0
         FI;
 FI;
-DEST[127:64] ← SRC1[127:64]
-DEST[MAXVL\-1:128] ← 0
+DEST[127:64] := SRC1[127:64]
+DEST[MAXVL-1:128] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vreducesd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
+.EX
+VREDUCESD __m128d _mm_mask_reduce_sd( __m128d a, __m128d b, int imm, int sae)
+
+VREDUCESD __m128d _mm_mask_reduce_sd(__m128d s, __mmask16 k, __m128d a, __m128d b, int imm, int sae)
+
+VREDUCESD __m128d _mm_maskz_reduce_sd(__mmask16 k, __m128d a, __m128d b, int imm, int sae)
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vreducesd.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
-
-.nf
-VREDUCESD \_\_m128d \_mm\_mask\_reduce\_sd( \_\_m128d a, \_\_m128d b, int imm, int sae)
-
-VREDUCESD \_\_m128d \_mm\_mask\_reduce\_sd(\_\_m128d s, \_\_mmask16 k, \_\_m128d a, \_\_m128d b, int imm, int sae)
-
-VREDUCESD \_\_m128d \_mm\_maskz\_reduce\_sd(\_\_mmask16 k, \_\_m128d a, \_\_m128d b, int imm, int sae)
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-Invalid, Precision
+Invalid, Precision.
 
 .PP
 If SPE is enabled, precision exception is not reported (regardless of
 MXCSR exception mask).
 
-.SS Other Exceptions
-.PP
-See Exceptions Type E3.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+.SS OTHER EXCEPTIONS
+See Table 2-47, “Type E3 Class
+Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

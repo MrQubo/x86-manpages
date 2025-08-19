@@ -1,51 +1,48 @@
+'\" t
 .nh
-.TH "X86-MOVNTDQA" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-MOVNTDQA" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 MOVNTDQA - LOAD DOUBLE QUADWORD NON-TEMPORAL ALIGNED HINT
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp / En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 66 0F 38 2A /r MOVNTDQA xmm1, m128
-T}
-	A	V/V	SSE4\_1	T{
-Move double quadword from m128 to xmm1 using non\-temporal hint if WC memory type.
+T}	A	V/V	SSE4_1	T{
+Move double quadword from m128 to xmm1 using non-temporal hint if WC memory type.
 T}
 T{
 VEX.128.66.0F38.WIG 2A /r VMOVNTDQA xmm1, m128
-T}
-	A	V/V	AVX	T{
-Move double quadword from m128 to xmm using non\-temporal hint if WC memory type.
+T}	A	V/V	AVX	T{
+Move double quadword from m128 to xmm using non-temporal hint if WC memory type.
 T}
 T{
 VEX.256.66.0F38.WIG 2A /r VMOVNTDQA ymm1, m256
-T}
-	A	V/V	AVX2	T{
-Move 256\-bit data from m256 to ymm using non\-temporal hint if WC memory type.
+T}	A	V/V	AVX2	T{
+Move 256-bit data from m256 to ymm using non-temporal hint if WC memory type.
 T}
 T{
 EVEX.128.66.0F38.W0 2A /r VMOVNTDQA xmm1, m128
-T}
-	B	V/V	AVX512VL AVX512F	T{
-Move 128\-bit data from m128 to xmm using non\-temporal hint if WC memory type.
+T}	B	V/V	AVX512VL AVX512F	T{
+Move 128-bit data from m128 to xmm using non-temporal hint if WC memory type.
 T}
 T{
 EVEX.256.66.0F38.W0 2A /r VMOVNTDQA ymm1, m256
-T}
-	B	V/V	AVX512VL AVX512F	T{
-Move 256\-bit data from m256 to ymm using non\-temporal hint if WC memory type.
+T}	B	V/V	AVX512VL AVX512F	T{
+Move 256-bit data from m256 to ymm using non-temporal hint if WC memory type.
 T}
 T{
 EVEX.512.66.0F38.W0 2A /r VMOVNTDQA zmm1, m512
-T}
-	B	V/V	AVX512F	T{
-Move 512\-bit data from m512 to zmm using non\-temporal hint if WC memory type.
+T}	B	V/V	AVX512F	T{
+Move 512-bit data from m512 to zmm using non-temporal hint if WC memory type.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING1
+.SH INSTRUCTION OPERAND ENCODING1  href="movntdqa.html#instruction-operand-encoding"
+class="anchor">¶
+
 .PP
 .RS
 
@@ -58,70 +55,63 @@ T}
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	NA	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
-B	Full Mem	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
+B	Full Mem	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
-.SS Description
-.PP
+.SH DESCRIPTION
 MOVNTDQA loads a double quadword from the source operand (second
-operand) to the destination operand (first operand) using a non\-temporal
+operand) to the destination operand (first operand) using a non-temporal
 hint if the memory source is WC (write combining) memory type. For WC
 memory type, the nontemporal hint may be implemented by loading a
 temporary internal buffer with the equivalent of an aligned cache line
-without filling this data to the cache. Any memory\-type aliased lines in
+without filling this data to the cache. Any memory-type aliased lines in
 the cache will be snooped and flushed. Subsequent MOVNTDQA reads to
 unread portions of the WC cache line will receive data from the
 temporary internal buffer if data is available. The temporary internal
 buffer may be flushed by the processor at any time for any reason, for
 example:
-
-.RS
 .IP \(bu 2
 A load operation other than a MOVNTDQA which references memory
 already resident in a temporary internal buffer.
 .IP \(bu 2
-A non\-WC reference to memory already resident in a temporary
+A non-WC reference to memory already resident in a temporary
 internal buffer.
 .IP \(bu 2
 Interleaving of reads and writes to a single temporary internal
 buffer.
 .IP \(bu 2
-Repeated (V)MOVNTDQA loads of a particular 16\-byte item in a
+Repeated (V)MOVNTDQA loads of a particular 16-byte item in a
 streaming line.
 .IP \(bu 2
-Certain micro\-architectural conditions including resource shortages,
+Certain micro-architectural conditions including resource shortages,
 detection of
 
-.RE
+.PP
+a mis-speculation condition, and various fault conditions
 
 .PP
-a mis\-speculation condition, and various fault conditions
-
-.PP
-The non\-temporal hint is implemented by using a write combining (WC)
+The non-temporal hint is implemented by using a write combining (WC)
 memory type protocol when reading the data from memory. Using this
-protocol, the processor
+protocol, the processor does not read the data into the cache hierarchy,
+nor does it fetch the corresponding cache line from memory into the
+cache hierarchy. The memory type of the region being read can override
+the non-temporal hint, if the memory address specified for the
+non-temporal read is not a WC memory region. Information on non-temporal
+reads and writes can be found in “Caching of Temporal vs. NonTemporal
+Data” in Chapter 10 in the Intel® 64 and IA-32 Architecture Software
+Developer’s Manual, Volume 3A.
 
 .PP
-does not read the data into the cache hierarchy, nor does it fetch the
-corresponding cache line from memory into the cache hierarchy. The
-memory type of the region being read can override the non\-temporal hint,
-if the memory address specified for the non\-temporal read is not a WC
-memory region. Information on non\-temporal reads and writes can be found
-in “Caching of Temporal vs. Non\-Temporal Data” in Chapter 10 in the
-Intel® 64 and IA\-32 Architecture Software Developer’s Manual, Volume 3A.
-
-.PP
-Because the WC protocol uses a weakly\-ordered memory consistency model,
+Because the WC protocol uses a weakly-ordered memory consistency model,
 a fencing operation implemented with a MFENCE instruction should be used
 in conjunction with MOVNTDQA instructions if multiple processors might
 use different memory types for the referenced memory locations or to
 synchronize reads of a processor with writes by other agents in the
 system. A processor’s implementation of the streaming load hint does not
 override the effective memory type, but the implementation of the hint
-is processor dependent. For example, a processor implementa\-
+is processor dependent. For example, a processor implementa-
 
 .PP
 tion may choose to ignore the hint and process the instruction as a
@@ -130,109 +120,97 @@ may optimize cache reads generated by MOVNTDQA on WB memory type to
 reduce cache evictions.
 
 .PP
-The 128\-bit (V)MOVNTDQA addresses must be 16\-byte aligned or the
+The 128-bit (V)MOVNTDQA addresses must be 16-byte aligned or the
 instruction will cause a #GP.
 
 .PP
-The 256\-bit VMOVNTDQA addresses must be 32\-byte aligned or the
+The 256-bit VMOVNTDQA addresses must be 32-byte aligned or the
 instruction will cause a #GP.
 
 .PP
-The 512\-bit VMOVNTDQA addresses must be 64\-byte aligned or the
+The 512-bit VMOVNTDQA addresses must be 64-byte aligned or the
 instruction will cause a #GP.
 
-.SS Operation
-.SS MOVNTDQA (128bit\- Legacy SSE form)
-.PP
-.RS
+.SH OPERATION
+.SS MOVNTDQA (128BIT- LEGACY SSE FORM)  href="movntdqa.html#movntdqa--128bit--legacy-sse-form-"
+class="anchor">¶
 
-.nf
-DEST ←SRC
-DEST[MAXVL\-1:128] (Unmodified)
+.EX
+DEST := SRC
+DEST[MAXVL-1:128] (Unmodified)
+.EE
 
-.fi
-.RE
+.SS VMOVNTDQA (VEX.128 AND EVEX.128 ENCODED FORM)  href="movntdqa.html#vmovntdqa--vex-128-and-evex-128-encoded-form-"
+class="anchor">¶
 
-.SS VMOVNTDQA (VEX.128 and EVEX.128 encoded form)
-.PP
-.RS
+.EX
+DEST := SRC
+DEST[MAXVL-1:128] := 0
+.EE
 
-.nf
-DEST ← SRC
-DEST[MAXVL\-1:128] ← 0
+.SS VMOVNTDQA (VEX.256 AND EVEX.256 ENCODED FORMS)  href="movntdqa.html#vmovntdqa--vex-256-and-evex-256-encoded-forms-"
+class="anchor">¶
 
-.fi
-.RE
+.EX
+DEST[255:0] := SRC[255:0]
+DEST[MAXVL-1:256] := 0
+.EE
 
-.SS VMOVNTDQA (VEX.256 and EVEX.256 encoded forms)
-.PP
-.RS
+.SS VMOVNTDQA (EVEX.512 ENCODED FORM)  href="movntdqa.html#vmovntdqa--evex-512-encoded-form-"
+class="anchor">¶
 
-.nf
-DEST[255:0] ← SRC[255:0]
-DEST[MAXVL\-1:256] ← 0
+.EX
+DEST[511:0] := SRC[511:0]
+DEST[MAXVL-1:512] := 0
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="movntdqa.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS VMOVNTDQA (EVEX.512 encoded form)
-.PP
-.RS
+.EX
+VMOVNTDQA __m512i _mm512_stream_load_si512(__m512i const* p);
 
-.nf
-DEST[511:0] ← SRC[511:0]
-DEST[MAXVL\-1:512] ← 0
+MOVNTDQA __m128i _mm_stream_load_si128 (const __m128i *p);
 
-.fi
-.RE
+VMOVNTDQA __m256i _mm256_stream_load_si256 (__m256i const* p);
+.EE
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
-
-.nf
-VMOVNTDQA \_\_m512i \_mm512\_stream\_load\_si512(\_\_m512i const* p);
-
-MOVNTDQA \_\_m128i \_mm\_stream\_load\_si128 (const \_\_m128i *p);
-
-VMOVNTDQA \_\_m256i \_mm256\_stream\_load\_si256 (\_\_m256i const* p);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-None
-
-.SS Other Exceptions
-.PP
-Non\-EVEX\-encoded instruction, see Exceptions Type1;
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="movntdqa.html#simd-floating-point-exceptions"
+class="anchor">¶
 
 .PP
-EVEX\-encoded instruction, see Exceptions Type E1NF.
+None.
+
+.SH OTHER EXCEPTIONS
+Non-EVEX-encoded instruction, see Table
+2-18, “Type 1 Class Exception Conditions.”
+
+.PP
+EVEX-encoded instruction, see Table
+2-45, “Type E1NF Class Exception Conditions.”
+
+.PP
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	T{
 If VEX.vvvv != 1111B or EVEX.vvvv != 1111B.
 T}
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

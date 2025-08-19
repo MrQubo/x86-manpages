@@ -1,12 +1,13 @@
+'\" t
 .nh
-.TH "X86-XGETBV" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-XGETBV" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 XGETBV - GET VALUE OF EXTENDED CONTROL REGISTER
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
 NP 0F 01 D0	XGETBV	ZO	Valid	Valid	T{
 Reads an XCR specified by ECX into EDX:EAX.
 T}
@@ -17,18 +18,17 @@ T}
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-ZO	NA	NA	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+ZO	N/A	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Reads the contents of the extended control register (XCR) specified in
 the ECX register into registers EDX:EAX. (On processors that support the
-Intel 64 architecture, the high\-order 32 bits of RCX are ignored.) The
-EDX register is loaded with the high\-order 32 bits of the XCR and the
-EAX register is loaded with the low\-order 32 bits. (On processors that
-support the Intel 64 architecture, the high\-order 32 bits of each of RAX
+Intel 64 architecture, the high-order 32 bits of RCX are ignored.) The
+EDX register is loaded with the high-order 32 bits of the XCR and the
+EAX register is loaded with the low-order 32 bits. (On processors that
+support the Intel 64 architecture, the high-order 32 bits of each of RAX
 and RDX are cleared.) If fewer than 64 bits are implemented in the XCR
 being read, the values returned to EDX:EAX in unimplemented bit
 locations are undefined.
@@ -37,114 +37,76 @@ locations are undefined.
 XCR0 is supported on any processor that supports the XGETBV instruction.
 If CPUID.(EAX=0DH,ECX=1):EAX.XG1[bit 2] = 1, executing XGETBV with ECX
 = 1 returns in EDX:EAX the logicalAND of XCR0 and the current value of
-the XINUSE state\-component bitmap. This allows software to discover the
+the XINUSE state-component bitmap. This allows software to discover the
 state of the init optimization used by XSAVEOPT and XSAVES. See Chapter
-13, “Managing State Using the XSAVE Feature Set‚” in Intel® 64 and IA\-32
-Architectures Software Developer’s Manual, Volume 1.
+13, “Managing State Using the XSAVE Feature Set‚” in Intel®
+64 and IA-32 Architectures Software Developer’s Manual, Volume 1.
 
 .PP
-Use of any other value for ECX results in a general\-protection (#GP)
+Use of any other value for ECX results in a general-protection (#GP)
 exception.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
-EDX:EAX ← XCR[ECX];
-
-.fi
-.RE
+.EX
+EDX:EAX := XCR[ECX];
+.EE
 
 .SH FLAGS AFFECTED
-.PP
 None.
 
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="xgetbv.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.nf
-XGETBV: unsigned \_\_int64 \_xgetbv( unsigned int);
-
-.fi
-.RE
+.EX
+XGETBV unsigned __int64 _xgetbv( unsigned int);
+.EE
 
 .SH PROTECTED MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
-If an invalid XCR is specified in ECX (includes ECX = 1 if CPUID.(EAX=0DH,ECX=1):EAX.XG1
+If an invalid XCR is specified in ECX (includes ECX = 1 if CPUID.(EAX=0DH,ECX=1):EAX.XG1[bit 2] = 0).
 T}
-[
-bit 2
-]
- = 0).
-#UD	If CPUID.01H:ECX.XSAVE
-[
-bit 26
-]
- = 0.
-	If CR4.OSXSAVE
-[
-bit 18
-]
- = 0.
+#UD	If CPUID.01H:ECX.XSAVE[bit 26] = 0.
+	If CR4.OSXSAVE[bit 18] = 0.
 	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
-If an invalid XCR is specified in ECX (includes ECX = 1 if CPUID.(EAX=0DH,ECX=1):EAX.XG1
+If an invalid XCR is specified in ECX (includes ECX = 1 if CPUID.(EAX=0DH,ECX=1):EAX.XG1[bit 2] = 0).
 T}
-[
-bit 2
-]
- = 0).
-#UD	If CPUID.01H:ECX.XSAVE
-[
-bit 26
-]
- = 0.
-	If CR4.OSXSAVE
-[
-bit 18
-]
- = 0.
+#UD	If CPUID.01H:ECX.XSAVE[bit 26] = 0.
+	If CR4.OSXSAVE[bit 18] = 0.
 	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
-.PP
+.SH VIRTUAL-8086 MODE EXCEPTIONS
 Same exceptions as in protected mode.
 
 .SH COMPATIBILITY MODE EXCEPTIONS
-.PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
-.PP
+.SH 64-BIT MODE EXCEPTIONS
 Same exceptions as in protected mode.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

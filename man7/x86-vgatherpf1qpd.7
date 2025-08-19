@@ -1,66 +1,64 @@
+'\" t
 .nh
-.TH "X86-VGATHERPF1DPS-VGATHERPF1QPS-VGATHERPF1DPD-VGATHERPF1QPD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VGATHERPF1DPS-VGATHERPF1QPS-VGATHERPF1DPD-VGATHERPF1QPD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-VGATHERPF1DPS-VGATHERPF1QPS-VGATHERPF1DPD-VGATHERPF1QPD - SPARSE PREFETCH PACKED SP-DP DATA VALUES WITH SIGNED DWORD, SIGNED QWORD INDICES USING T1 HINT
+VGATHERPF1DPS-VGATHERPF1QPS-VGATHERPF1DPD-VGATHERPF1QPD - SPARSE PREFETCHPACKED SP-DP DATA VALUES WITH SIGNED DWORD, SIGNED QWORD INDICES USING T1 HINT
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 EVEX.512.66.0F38.W0 C6 /2 /vsib VGATHERPF1DPS vm32z {k1}
-T}
-	A	V/V	AVX512PF	T{
-Using signed dword indices, prefetch sparse byte memory locations containing single\-precision data using opmask k1 and T1 hint.
+T}	A	V/V	AVX512PF	T{
+Using signed dword indices, prefetch sparse byte memory locations containing single-precision data using opmask k1 and T1 hint.
 T}
 T{
 EVEX.512.66.0F38.W0 C7 /2 /vsib VGATHERPF1QPS vm64z {k1}
-T}
-	A	V/V	AVX512PF	T{
-Using signed qword indices, prefetch sparse byte memory locations containing single\-precision data using opmask k1 and T1 hint.
+T}	A	V/V	AVX512PF	T{
+Using signed qword indices, prefetch sparse byte memory locations containing single-precision data using opmask k1 and T1 hint.
 T}
 T{
 EVEX.512.66.0F38.W1 C6 /2 /vsib VGATHERPF1DPD vm32y {k1}
-T}
-	A	V/V	AVX512PF	T{
-Using signed dword indices, prefetch sparse byte memory locations containing double\-precision data using opmask k1 and T1 hint.
+T}	A	V/V	AVX512PF	T{
+Using signed dword indices, prefetch sparse byte memory locations containing double precision data using opmask k1 and T1 hint.
 T}
 T{
 EVEX.512.66.0F38.W1 C7 /2 /vsib VGATHERPF1QPD vm64z {k1}
-T}
-	A	V/V	AVX512PF	T{
-Using signed qword indices, prefetch sparse byte memory locations containing double\-precision data using opmask k1 and T1 hint.
+T}	A	V/V	AVX512PF	T{
+Using signed qword indices, prefetch sparse byte memory locations containing double precision data using opmask k1 and T1 hint.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING <a
+href="./vgatherpf1dps:vgatherpf1qps:vgatherpf1dpd:vgatherpf1qpd.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
 A	Tuple1 Scalar	T{
 BaseReg (R): VSIB:base, VectorReg(R): VSIB:index
-T}
-	NA	NA	NA
+T}	N/A	N/A	N/A
 .TE
 
-.SS Description
+.SS DESCRIPTION <a
+href="./vgatherpf1dps:vgatherpf1qps:vgatherpf1dpd:vgatherpf1qpd.html#description"
+class="anchor">¶
+
 .PP
-The instruction conditionally prefetches up to sixteen 32\-bit or eight
-64\-bit integer byte data elements. The elements are specified via the
+The instruction conditionally prefetches up to sixteen 32-bit or eight
+64-bit integer byte data elements. The elements are specified via the
 VSIB (i.e., the index register is an zmm, holding packed indices).
 Elements will only be prefetched if their corresponding mask bit is one.
 
 .PP
 Lines prefetched are loaded into to a location in the cache hierarchy
 specified by a locality hint (T1):
-
-.RS
 .IP \(bu 2
 T1 (temporal data)—prefetch data into the second level cache.
-
-.RE
 
 .PP
 [PS data] For dword indices, the instruction will prefetch sixteen
@@ -82,7 +80,7 @@ instruction is a hint.
 (2) The mask is left unchanged.
 
 .PP
-(3) Not valid with 16\-bit effective addresses. Will deliver a #UD
+(3) Not valid with 16-bit effective addresses. Will deliver a #UD
 fault.
 
 .PP
@@ -95,125 +93,116 @@ fault.
 (6) A #UD is signaled if the memory operand is encoded without the
 SIB byte.
 
-.SS Operation
-.PP
-.RS
+.SS OPERATION <a
+href="./vgatherpf1dps:vgatherpf1qps:vgatherpf1dpd:vgatherpf1qpd.html#operation"
+class="anchor">¶
 
-.nf
-BASE\_ADDR stands for the memory operand base address (a GPR); may not exist
-VINDEX stands for the memory operand vector of indices (a vector register)
-SCALE stands for the memory operand scalar (1, 2, 4 or 8)
-DISP is the optional 1, 2 or 4 byte displacement
+.EX
+BASE_ADDR stands for the memory operand base address (a GPR); may not exist.
+VINDEX stands for the memory operand vector of indices (a vector register).
+SCALE stands for the memory operand scalar (1, 2, 4 or 8).
+DISP is the optional 1, 2 or 4 byte displacement.
 PREFETCH(mem, Level, State) Prefetches a byte memory location pointed by ‘mem’ into the cache level specified by ‘Level’; a request
 for exclusive/ownership is done if ‘State’ is 1. Note that the memory location ignore cache line splits. This operation is considered a
 hint for the processor and may be skipped depending on implementation.
+.EE
 
-.fi
-.RE
+.SS VGATHERPF1DPS (EVEX ENCODED VERSION) <a
+href="./vgatherpf1dps:vgatherpf1qps:vgatherpf1dpd:vgatherpf1qpd.html#vgatherpf1dps--evex-encoded-version-"
+class="anchor">¶
 
-.SS VGATHERPF1DPS (EVEX encoded version)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (16, 512)
-FOR j←0 TO KL\-1
-    i←j * 32
+FOR j := 0 TO KL-1
+    i := j * 32
     IF k1[j]
-        Prefetch( [BASE\_ADDR + SignExtend(VINDEX[i+31:i]) * SCALE + DISP], Level=1, RFO = 0)
+        Prefetch( [BASE_ADDR + SignExtend(VINDEX[i+31:i]) * SCALE + DISP], Level=1, RFO = 0)
     FI;
 ENDFOR
+.EE
 
-.fi
-.RE
+.SS VGATHERPF1DPD (EVEX ENCODED VERSION) <a
+href="./vgatherpf1dps:vgatherpf1qps:vgatherpf1dpd:vgatherpf1qpd.html#vgatherpf1dpd--evex-encoded-version-"
+class="anchor">¶
 
-.SS VGATHERPF1DPD (EVEX encoded version)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (8, 512)
-FOR j←0 TO KL\-1
-    i←j * 64
-    k←j * 32
+FOR j := 0 TO KL-1
+    i := j * 64
+    k := j * 32
     IF k1[j]
-        Prefetch( [BASE\_ADDR + SignExtend(VINDEX[k+31:k]) * SCALE + DISP], Level=1, RFO = 0)
+        Prefetch( [BASE_ADDR + SignExtend(VINDEX[k+31:k]) * SCALE + DISP], Level=1, RFO = 0)
     FI;
 ENDFOR
+.EE
 
-.fi
-.RE
+.SS VGATHERPF1QPS (EVEX ENCODED VERSION) <a
+href="./vgatherpf1dps:vgatherpf1qps:vgatherpf1dpd:vgatherpf1qpd.html#vgatherpf1qps--evex-encoded-version-"
+class="anchor">¶
 
-.SS VGATHERPF1QPS (EVEX encoded version)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (8, 256)
-FOR j←0 TO KL\-1
-    i←j * 64
+FOR j := 0 TO KL-1
+    i := j * 64
     IF k1[j]
-        Prefetch( [BASE\_ADDR + SignExtend(VINDEX[i+63:i]) * SCALE + DISP], Level=1, RFO = 0)
+        Prefetch( [BASE_ADDR + SignExtend(VINDEX[i+63:i]) * SCALE + DISP], Level=1, RFO = 0)
     FI;
 ENDFOR
+.EE
 
-.fi
-.RE
+.SS VGATHERPF1QPD (EVEX ENCODED VERSION) <a
+href="./vgatherpf1dps:vgatherpf1qps:vgatherpf1dpd:vgatherpf1qpd.html#vgatherpf1qpd--evex-encoded-version-"
+class="anchor">¶
 
-.SS VGATHERPF1QPD (EVEX encoded version)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (8, 512)
-FOR j←0 TO KL\-1
-    i←j * 64
-    k←j * 64
+FOR j := 0 TO KL-1
+    i := j * 64
+    k := j * 64
     IF k1[j]
-        Prefetch( [BASE\_ADDR + SignExtend(VINDEX[k+63:k]) * SCALE + DISP], Level=1, RFO = 0)
+        Prefetch( [BASE_ADDR + SignExtend(VINDEX[k+63:k]) * SCALE + DISP], Level=1, RFO = 0)
     FI;
 ENDFOR
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT <a
+href="./vgatherpf1dps:vgatherpf1qps:vgatherpf1dpd:vgatherpf1qpd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
+.EX
+VGATHERPF1DPD void _mm512_mask_prefetch_i32gather_pd(__m256i vdx, __mmask8 m, void * base, int scale, int hint);
+
+VGATHERPF1DPS void _mm512_mask_prefetch_i32gather_ps(__m512i vdx, __mmask16 m, void * base, int scale, int hint);
+
+VGATHERPF1QPD void _mm512_mask_prefetch_i64gather_pd(__m512i vdx, __mmask8 m, void * base, int scale, int hint);
+
+VGATHERPF1QPS void _mm512_mask_prefetch_i64gather_ps(__m512i vdx, __mmask8 m, void * base, int scale, int hint);
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS <a
+href="./vgatherpf1dps:vgatherpf1qps:vgatherpf1dpd:vgatherpf1qpd.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
+None.
 
-.nf
-VGATHERPF1DPD void \_mm512\_mask\_prefetch\_i32gather\_pd(\_\_m256i vdx, \_\_mmask8 m, void * base, int scale, int hint);
+.SS OTHER EXCEPTIONS <a
+href="./vgatherpf1dps:vgatherpf1qps:vgatherpf1dpd:vgatherpf1qpd.html#other-exceptions"
+class="anchor">¶
 
-VGATHERPF1DPS void \_mm512\_mask\_prefetch\_i32gather\_ps(\_\_m512i vdx, \_\_mmask16 m, void * base, int scale, int hint);
-
-VGATHERPF1QPD void \_mm512\_mask\_prefetch\_i64gather\_pd(\_\_m512i vdx, \_\_mmask8 m, void * base, int scale, int hint);
-
-VGATHERPF1QPS void \_mm512\_mask\_prefetch\_i64gather\_ps(\_\_m512i vdx, \_\_mmask8 m, void * base, int scale, int hint);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
-None
-
-.SS Other Exceptions
-.PP
-See Exceptions Type E12NP.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+See Table 2-62, “Type E12NP Class
+Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

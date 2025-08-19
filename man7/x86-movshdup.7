@@ -1,245 +1,226 @@
+'\" t
 .nh
-.TH "X86-MOVSHDUP" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-MOVSHDUP" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-MOVSHDUP - REPLICATE SINGLE FP VALUES
+MOVSHDUP - REPLICATE SINGLE PRECISION FLOATING-POINT VALUES
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 F3 0F 16 /r MOVSHDUP xmm1, xmm2/m128
-T}
-	A	V/V	SSE3	T{
-Move odd index single\-precision floating\-point values from xmm2/mem and duplicate each element into xmm1.
+T}	A	V/V	SSE3	T{
+Move odd index single precision floating-point values from xmm2/mem and duplicate each element into xmm1.
 T}
 T{
 VEX.128.F3.0F.WIG 16 /r VMOVSHDUP xmm1, xmm2/m128
-T}
-	A	V/V	AVX	T{
-Move odd index single\-precision floating\-point values from xmm2/mem and duplicate each element into xmm1.
+T}	A	V/V	AVX	T{
+Move odd index single precision floating-point values from xmm2/mem and duplicate each element into xmm1.
 T}
 T{
 VEX.256.F3.0F.WIG 16 /r VMOVSHDUP ymm1, ymm2/m256
-T}
-	A	V/V	AVX	T{
-Move odd index single\-precision floating\-point values from ymm2/mem and duplicate each element into ymm1.
+T}	A	V/V	AVX	T{
+Move odd index single precision floating-point values from ymm2/mem and duplicate each element into ymm1.
 T}
 T{
 EVEX.128.F3.0F.W0 16 /r VMOVSHDUP xmm1 {k1}{z}, xmm2/m128
-T}
-	B	V/V	AVX512VL AVX512F	T{
-Move odd index single\-precision floating\-point values from xmm2/m128 and duplicate each element into xmm1 under writemask.
+T}	B	V/V	AVX512VL AVX512F	T{
+Move odd index single precision floating-point values from xmm2/m128 and duplicate each element into xmm1 under writemask.
 T}
 T{
 EVEX.256.F3.0F.W0 16 /r VMOVSHDUP ymm1 {k1}{z}, ymm2/m256
-T}
-	B	V/V	AVX512VL AVX512F	T{
-Move odd index single\-precision floating\-point values from ymm2/m256 and duplicate each element into ymm1 under writemask.
+T}	B	V/V	AVX512VL AVX512F	T{
+Move odd index single precision floating-point values from ymm2/m256 and duplicate each element into ymm1 under writemask.
 T}
 T{
 EVEX.512.F3.0F.W0 16 /r VMOVSHDUP zmm1 {k1}{z}, zmm2/m512
-T}
-	B	V/V	AVX512F	T{
-Move odd index single\-precision floating\-point values from zmm2/m512 and duplicate each element into zmm1 under writemask.
+T}	B	V/V	AVX512F	T{
+Move odd index single precision floating-point values from zmm2/m512 and duplicate each element into zmm1 under writemask.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="movshdup.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	NA	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
-B	Full Mem	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
+B	Full Mem	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
-.SS Description
-.PP
-Duplicates odd\-indexed single\-precision floating\-point values from the
+.SH DESCRIPTION
+Duplicates odd-indexed single precision floating-point values from the
 source operand (the second operand) to adjacent element pair in the
-destination operand (the first operand). See Figure 4\-3. The source
-operand is an XMM, YMM or ZMM register or 128, 256 or 512\-bit memory
-location and the destination operand is an XMM, YMM or ZMM register.
+destination operand (the first operand). See Figure
+4-3
+\[la]movshdup.html#fig\-4\-3\[ra]\&. The source operand is an XMM, YMM or ZMM
+register or 128, 256 or 512-bit memory location and the destination
+operand is an XMM, YMM or ZMM register.
 
 .PP
-128\-bit Legacy SSE version: Bits (MAXVL\-1:128) of the corresponding
+128-bit Legacy SSE version: Bits (MAXVL-1:128) of the corresponding
 destination register remain unchanged.
 
 .PP
-VEX.128 encoded version: Bits (MAXVL\-1:128) of the destination register
+VEX.128 encoded version: Bits (MAXVL-1:128) of the destination register
 are zeroed.
 
 .PP
-VEX.256 encoded version: Bits (MAXVL\-1:256) of the destination register
+VEX.256 encoded version: Bits (MAXVL-1:256) of the destination register
 are zeroed.
 
 .PP
-EVEX encoded version: The destination operand is updated at 32\-bit
+EVEX encoded version: The destination operand is updated at 32-bit
 granularity according to the writemask.
 
 .PP
 Note: VEX.vvvv and EVEX.vvvv are reserved and must be 1111b otherwise
 instructions will #UD.
 
-.PP
-X7X6X5X4X3X2X1X0SRCDESTX7X7X5X5X3X3X1X1
+.SH OPERATION
+.SS VMOVSHDUP (EVEX ENCODED VERSIONS)  href="movshdup.html#vmovshdup--evex-encoded-versions-"
+class="anchor">¶
 
-.PP
-Figure 4\-3. MOVSHDUP Operation
-
-.SS Operation
-.SS VMOVSHDUP (EVEX encoded versions)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (4, 128), (8, 256), (16, 512)
-TMP\_SRC[31:0] ← SRC[63:32]
-TMP\_SRC[63:32] ← SRC[63:32]
-TMP\_SRC[95:64] ← SRC[127:96]
-TMP\_SRC[127:96] ← SRC[127:96]
+TMP_SRC[31:0] := SRC[63:32]
+TMP_SRC[63:32] := SRC[63:32]
+TMP_SRC[95:64] := SRC[127:96]
+TMP_SRC[127:96] := SRC[127:96]
 IF VL >= 256
-    TMP\_SRC[159:128] ← SRC[191:160]
-    TMP\_SRC[191:160] ← SRC[191:160]
-    TMP\_SRC[223:192] ← SRC[255:224]
-    TMP\_SRC[255:224] ← SRC[255:224]
+    TMP_SRC[159:128] := SRC[191:160]
+    TMP_SRC[191:160] := SRC[191:160]
+    TMP_SRC[223:192] := SRC[255:224]
+    TMP_SRC[255:224] := SRC[255:224]
 FI;
 IF VL >= 512
-    TMP\_SRC[287:256] ← SRC[319:288]
-    TMP\_SRC[319:288] ← SRC[319:288]
-    TMP\_SRC[351:320] ← SRC[383:352]
-    TMP\_SRC[383:352] ← SRC[383:352]
-    TMP\_SRC[415:384] ← SRC[447:416]
-    TMP\_SRC[447:416] ← SRC[447:416]
-    TMP\_SRC[479:448] ← SRC[511:480]
-    TMP\_SRC[511:480] ← SRC[511:480]
+    TMP_SRC[287:256] := SRC[319:288]
+    TMP_SRC[319:288] := SRC[319:288]
+    TMP_SRC[351:320] := SRC[383:352]
+    TMP_SRC[383:352] := SRC[383:352]
+    TMP_SRC[415:384] := SRC[447:416]
+    TMP_SRC[447:416] := SRC[447:416]
+    TMP_SRC[479:448] := SRC[511:480]
+    TMP_SRC[511:480] := SRC[511:480]
 FI;
-FOR j←0 TO KL\-1
-    i←j * 32
+FOR j := 0 TO KL-1
+    i := j * 32
     IF k1[j] OR *no writemask*
-        THEN DEST[i+31:i]←TMP\_SRC[i+31:i]
+        THEN DEST[i+31:i] := TMP_SRC[i+31:i]
         ELSE
-            IF *merging\-masking*
-                        ; merging\-masking
+            IF *merging-masking*
+                        ; merging-masking
                 THEN *DEST[i+31:i] remains unchanged*
                 ELSE
-                        ; zeroing\-masking
-                    DEST[i+31:i] ← 0
+                        ; zeroing-masking
+                    DEST[i+31:i] := 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS VMOVSHDUP (VEX.256 ENCODED VERSION)  href="movshdup.html#vmovshdup--vex-256-encoded-version-"
+class="anchor">¶
 
-.SS VMOVSHDUP (VEX.256 encoded version)
-.PP
-.RS
+.EX
+DEST[31:0] := SRC[63:32]
+DEST[63:32] := SRC[63:32]
+DEST[95:64] := SRC[127:96]
+DEST[127:96] := SRC[127:96]
+DEST[159:128] := SRC[191:160]
+DEST[191:160] := SRC[191:160]
+DEST[223:192] := SRC[255:224]
+DEST[255:224] := SRC[255:224]
+DEST[MAXVL-1:256] := 0
+.EE
 
-.nf
-DEST[31:0] ← SRC[63:32]
-DEST[63:32] ← SRC[63:32]
-DEST[95:64] ← SRC[127:96]
-DEST[127:96] ← SRC[127:96]
-DEST[159:128] ← SRC[191:160]
-DEST[191:160] ← SRC[191:160]
-DEST[223:192] ← SRC[255:224]
-DEST[255:224] ← SRC[255:224]
-DEST[MAXVL\-1:256] ← 0
+.SS VMOVSHDUP (VEX.128 ENCODED VERSION)  href="movshdup.html#vmovshdup--vex-128-encoded-version-"
+class="anchor">¶
 
-.fi
-.RE
+.EX
+DEST[31:0] := SRC[63:32]
+DEST[63:32] := SRC[63:32]
+DEST[95:64] := SRC[127:96]
+DEST[127:96] := SRC[127:96]
+DEST[MAXVL-1:128] := 0
+.EE
 
-.SS VMOVSHDUP (VEX.128 encoded version)
-.PP
-.RS
+.SS MOVSHDUP (128-BIT LEGACY SSE VERSION)  href="movshdup.html#movshdup--128-bit-legacy-sse-version-"
+class="anchor">¶
 
-.nf
-DEST[31:0] ← SRC[63:32]
-DEST[63:32] ← SRC[63:32]
-DEST[95:64] ← SRC[127:96]
-DEST[127:96] ← SRC[127:96]
-DEST[MAXVL\-1:128] ← 0
+.EX
+DEST[31:0] := SRC[63:32]
+DEST[63:32] := SRC[63:32]
+DEST[95:64] := SRC[127:96]
+DEST[127:96] := SRC[127:96]
+DEST[MAXVL-1:128] (Unmodified)
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="movshdup.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS MOVSHDUP (128\-bit Legacy SSE version)
-.PP
-.RS
+.EX
+VMOVSHDUP __m512 _mm512_movehdup_ps( __m512 a);
 
-.nf
-DEST[31:0] ←SRC[63:32]
-DEST[63:32] ←SRC[63:32]
-DEST[95:64] ←SRC[127:96]
-DEST[127:96] ←SRC[127:96]
-DEST[MAXVL\-1:128] (Unmodified)
+VMOVSHDUP __m512 _mm512_mask_movehdup_ps(__m512 s, __mmask16 k, __m512 a);
 
-.fi
-.RE
+VMOVSHDUP __m512 _mm512_maskz_movehdup_ps( __mmask16 k, __m512 a);
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+VMOVSHDUP __m256 _mm256_mask_movehdup_ps(__m256 s, __mmask8 k, __m256 a);
 
-.nf
-VMOVSHDUP \_\_m512 \_mm512\_movehdup\_ps( \_\_m512 a);
+VMOVSHDUP __m256 _mm256_maskz_movehdup_ps( __mmask8 k, __m256 a);
 
-VMOVSHDUP \_\_m512 \_mm512\_mask\_movehdup\_ps(\_\_m512 s, \_\_mmask16 k, \_\_m512 a);
+VMOVSHDUP __m128 _mm_mask_movehdup_ps(__m128 s, __mmask8 k, __m128 a);
 
-VMOVSHDUP \_\_m512 \_mm512\_maskz\_movehdup\_ps( \_\_mmask16 k, \_\_m512 a);
+VMOVSHDUP __m128 _mm_maskz_movehdup_ps( __mmask8 k, __m128 a);
 
-VMOVSHDUP \_\_m256 \_mm256\_mask\_movehdup\_ps(\_\_m256 s, \_\_mmask8 k, \_\_m256 a);
+VMOVSHDUP __m256 _mm256_movehdup_ps (__m256 a);
 
-VMOVSHDUP \_\_m256 \_mm256\_maskz\_movehdup\_ps( \_\_mmask8 k, \_\_m256 a);
+VMOVSHDUP __m128 _mm_movehdup_ps (__m128 a);
+.EE
 
-VMOVSHDUP \_\_m128 \_mm\_mask\_movehdup\_ps(\_\_m128 s, \_\_mmask8 k, \_\_m128 a);
-
-VMOVSHDUP \_\_m128 \_mm\_maskz\_movehdup\_ps( \_\_mmask8 k, \_\_m128 a);
-
-VMOVSHDUP \_\_m256 \_mm256\_movehdup\_ps (\_\_m256 a);
-
-VMOVSHDUP \_\_m128 \_mm\_movehdup\_ps (\_\_m128 a);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-None
-
-.SS Other Exceptions
-.PP
-Non\-EVEX\-encoded instruction, see Exceptions Type 4;
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="movshdup.html#simd-floating-point-exceptions"
+class="anchor">¶
 
 .PP
-EVEX\-encoded instruction, see Exceptions Type E4NF.nb.
+None.
+
+.SH OTHER EXCEPTIONS
+Non-EVEX-encoded instruction, see Table
+2-21, “Type 4 Class Exception Conditions.”
+
+.PP
+EVEX-encoded instruction, see Exceptions Type E4NF.nb in
+Table 2-50, “Type E4NF Class Exception
+Conditions.”
+
+.PP
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	T{
 If EVEX.vvvv != 1111B or VEX.vvvv != 1111B.
 T}
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

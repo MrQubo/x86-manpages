@@ -1,41 +1,42 @@
+'\" t
 .nh
-.TH "X86-VSCALEFSD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VSCALEFSD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VSCALEFSD - SCALE SCALAR FLOAT64 VALUES WITH FLOAT64 VALUES
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
-EVEX.LIG.66.0F38.W1 2D /r VSCALEFSD xmm1 {k1}{z}, xmm2, xmm3/m64{er}
-T}
-	A	V/V	AVX512F	T{
-Scale the scalar double\-precision floating\-point values in xmm2 using the value from xmm3/m64. Under writemask k1.
+EVEX.LLIG.66.0F38.W1 2D /r VSCALEFSD xmm1 {k1}{z}, xmm2, xmm3/m64{er}
+T}	A	V/V	AVX512F	T{
+Scale the scalar double precision floating-point values in xmm2 using the value from xmm3/m64. Under writemask k1.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="vscalefsd.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	N/A
 .TE
 
-.SS Description
-.PP
-Performs a floating\-point scale of the packed double\-precision
-floating\-point value in the first source operand by multiplying it by 2
-power of the double\-precision floating\-point value in second source
-operand.
+.SS DESCRIPTION
+Performs a floating-point scale of the scalar double precision
+floating-point value in the first source operand by multiplying it by 2
+to the power of the double precision floating-point value in second
+source operand.
 
 .PP
 The equation of this operation is given by:
 
 .PP
-xmm1 := xmm2*2floor(xmm3).
+xmm1 := xmm2*2floor(xmm3)\&.
 
 .PP
 Floor(xmm3) means maximum integer value ≤ xmm3.
@@ -45,7 +46,7 @@ If the result cannot be represented in double precision, then the proper
 overflow response (for positive scaling operand), or the proper
 underflow response (for negative scaling operand) is issued. The
 overflow and underflow responses are dependent on the rounding mode (for
-IEEE\-compliant rounding), as well as on other settings in MXCSR
+IEEE-compliant rounding), as well as on other settings in MXCSR
 (exception mask bits, FTZ bit), and on the SAE bit.
 
 .PP
@@ -55,91 +56,82 @@ destination operand is an XMM register conditionally updated with
 writemask k1.
 
 .PP
-Handling of special\-case input values are listed in Table 5\-31.
+Handling of special-case input values are listed in Table
+5-39
+\[la]vscalefpd.html#tbl\-5\-39\[ra] and Table
+5-40
+\[la]vscalefpd.html#tbl\-5\-40\[ra]\&.
 
-.SS Operation
-.PP
-.RS
-
-.nf
+.SS OPERATION
+.EX
 SCALE(SRC1, SRC2)
 {
     ; Check for denormal operands
-TMP\_SRC2 ← SRC2
-TMP\_SRC1 ← SRC1
-IF (SRC2 is denormal AND MXCSR.DAZ) THEN TMP\_SRC2=0
-IF (SRC1 is denormal AND MXCSR.DAZ) THEN TMP\_SRC1=0
-/* SRC2 is a 64 bits floating\-point value */
-DEST[63:0]←TMP\_SRC1[63:0] * POW(2, Floor(TMP\_SRC2[63:0]))
+TMP_SRC2 := SRC2
+TMP_SRC1 := SRC1
+IF (SRC2 is denormal AND MXCSR.DAZ) THEN TMP_SRC2=0
+IF (SRC1 is denormal AND MXCSR.DAZ) THEN TMP_SRC1=0
+/* SRC2 is a 64 bits floating-point value */
+DEST[63:0] := TMP_SRC1[63:0] * POW(2, Floor(TMP_SRC2[63:0]))
 }
+.EE
 
-.fi
-.RE
+.SS VSCALEFSD (EVEX ENCODED VERSION)  href="vscalefsd.html#vscalefsd--evex-encoded-version-"
+class="anchor">¶
 
-.SS VSCALEFSD (EVEX encoded version)
-.PP
-.RS
-
-.nf
+.EX
 IF (EVEX.b= 1) and SRC2 *is a register*
     THEN
-        SET\_RM(EVEX.RC);
+        SET_ROUNDING_MODE_FOR_THIS_INSTRUCTION(EVEX.RC);
     ELSE
-        SET\_RM(MXCSR.RM);
+        SET_ROUNDING_MODE_FOR_THIS_INSTRUCTION(MXCSR.RC);
 FI;
 IF k1[0] OR *no writemask*
-    THEN DEST[63:0]←SCALE(SRC1[63:0], SRC2[63:0])
+    THEN DEST[63:0] := SCALE(SRC1[63:0], SRC2[63:0])
     ELSE
-        IF *merging\-masking* ; merging\-masking
+        IF *merging-masking* ; merging-masking
             THEN *DEST[63:0] remains unchanged*
-            ELSE ; zeroing\-masking
-                DEST[63:0] ← 0
+            ELSE ; zeroing-masking
+                DEST[63:0] := 0
         FI
 FI;
-DEST[127:64] ← SRC1[127:64]
-DEST[MAXVL\-1:128] ← 0
+DEST[127:64] := SRC1[127:64]
+DEST[MAXVL-1:128] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vscalefsd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+.EX
+VSCALEFSD __m128d _mm_scalef_round_sd(__m128d a, __m128d b, int);
 
-.nf
-VSCALEFSD \_\_m128d \_mm\_scalef\_round\_sd(\_\_m128d a, \_\_m128d b, int);
+VSCALEFSD __m128d _mm_mask_scalef_round_sd(__m128d s, __mmask8 k, __m128d a, __m128d b, int);
 
-VSCALEFSD \_\_m128d \_mm\_mask\_scalef\_round\_sd(\_\_m128d s, \_\_mmask8 k, \_\_m128d a, \_\_m128d b, int);
+VSCALEFSD __m128d _mm_maskz_scalef_round_sd(__mmask8 k, __m128d a, __m128d b, int);
+.EE
 
-VSCALEFSD \_\_m128d \_mm\_maskz\_scalef\_round\_sd(\_\_mmask8 k, \_\_m128d a, \_\_m128d b, int);
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vscalefsd.html#simd-floating-point-exceptions"
+class="anchor">¶
 
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
 Overflow, Underflow, Invalid, Precision, Denormal (for Src1).
 
 .PP
 Denormal is not reported for Src2.
 
-.SS Other Exceptions
-.PP
-See Exceptions Type E3.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+.SS OTHER EXCEPTIONS
+See Table 2-47, “Type E3 Class
+Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

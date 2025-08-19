@@ -1,31 +1,33 @@
+'\" t
 .nh
-.TH "X86-PUSHF-PUSHFD-PUSHFQ" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-PUSHF-PUSHFD-PUSHFQ" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 PUSHF-PUSHFD-PUSHFQ - PUSH EFLAGS REGISTER ONTO THE STACK
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode*\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
 9C	PUSHF	ZO	Valid	Valid	Push lower 16 bits of EFLAGS.
 9C	PUSHFD	ZO	N.E.	Valid	Push EFLAGS.
 9C	PUSHFQ	ZO	Valid	N.E.	Push RFLAGS.
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./pushf:pushfd:pushfq.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-ZO	NA	NA	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+ZO	N/A	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
-Decrements the stack pointer by 4 (if the current operand\-size attribute
+Decrements the stack pointer by 4 (if the current operand-size attribute
 is 32) and pushes the entire contents of the EFLAGS register onto the
-stack, or decrements the stack pointer by 2 (if the operand\-size
+stack, or decrements the stack pointer by 2 (if the operand-size
 attribute is 16) and pushes the lower 16 bits of the EFLAGS register
 (that is, the FLAGS register) onto the stack. These instructions reverse
 the operation of the POPF/POPFD instructions.
@@ -34,57 +36,54 @@ the operation of the POPF/POPFD instructions.
 When copying the entire EFLAGS register to the stack, the VM and RF
 flags (bits 16 and 17) are not copied; instead, the values for these
 flags are cleared in the EFLAGS image stored on the stack. See Chapter 3
-of the Intel® 64 and IA\-32 Architectures Software Developer’s Manual,
-Volume 1, for more information about the EFLAGS register.
+of the Intel® 64 and IA-32 Architectures Software Developer’s
+Manual, Volume 1, for more information about the EFLAGS register.
 
 .PP
 The PUSHF (push flags) and PUSHFD (push flags double) mnemonics
 reference the same opcode. The PUSHF instruction is intended for use
-when the operand\-size attribute is 16 and the PUSHFD instruction for
-when the operand\-size attribute is 32. Some assemblers may force the
+when the operand-size attribute is 16 and the PUSHFD instruction for
+when the operand-size attribute is 32. Some assemblers may force the
 operand size to 16 when PUSHF is used and to 32 when PUSHFD is used.
 Others may treat these mnemonics as synonyms (PUSHF/PUSHFD) and use the
-current setting of the operand\-size attribute to determine the size of
+current setting of the operand-size attribute to determine the size of
 values to be pushed from the stack, regardless of the mnemonic used.
 
 .PP
-In 64\-bit mode, the instruction’s default operation is to decrement the
-stack pointer (RSP) by 8 and pushes RFLAGS on the stack. 16\-bit
+In 64-bit mode, the instruction’s default operation is to decrement the
+stack pointer (RSP) by 8 and pushes RFLAGS on the stack. 16-bit
 operation is supported using the operand size override prefix 66H.
-32\-bit operand size cannot be encoded in this mode. When copying RFLAGS
+32-bit operand size cannot be encoded in this mode. When copying RFLAGS
 to the stack, the VM and RF flags (bits 16 and 17) are not copied;
 instead, values for these flags are cleared in the RFLAGS image stored
 on the stack.
 
 .PP
-When operating in virtual\-8086 mode (EFLAGS.VM = 1) without the
-virtual\-8086 mode extensions (CR4.VME = 0), the PUSHF/PUSHFD
+When operating in virtual-8086 mode (EFLAGS.VM = 1) without the
+virtual-8086 mode extensions (CR4.VME = 0), the PUSHF/PUSHFD
 instructions can be used only if IOPL = 3; otherwise, a
-general\-protection exception (#GP) occurs. If the virtual\-8086 mode
+general-protection exception (#GP) occurs. If the virtual-8086 mode
 extensions are enabled (CR4.VME = 1), PUSHF (but not PUSHFD) can be
-executed in virtual\-8086 mode with IOPL \&lt; 3.
+executed in virtual-8086 mode with IOPL &lt; 3.
 
 .PP
-(The protected\-mode virtual\-interrupt feature — enabled by setting
+(The protected-mode virtual-interrupt feature — enabled by setting
 CR4.PVI — affects the CLI and STI instructions in the same manner as the
-virtual\-8086 mode extensions. PUSHF, however, is not affected by
+virtual-8086 mode extensions. PUSHF, however, is not affected by
 CR4.PVI.)
 
 .PP
-In the real\-address mode, if the ESP or SP register is 1 when
+In the real-address mode, if the ESP or SP register is 1 when
 PUSHF/PUSHFD instruction executes: an #SS exception is generated but
 not delivered (the stack error reported prevents #SS delivery). Next,
 the processor generates a #DF exception and enters a shutdown state as
-described in the #DF discussion in Chapter 6 of the Intel® 64 and IA\-32
-Architectures Software Developer’s Manual, Volume 3A.
+described in the #DF discussion in Chapter 6 of the Intel®
+64 and IA-32 Architectures Software Developer’s Manual, Volume 3A.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
+.EX
 IF (PE = 0) or (PE = 1 and ((VM = 0) or (VM = 1 and IOPL = 3)))
-(* Real\-Address Mode, Protected mode, or Virtual\-8086 mode with IOPL equal to 3 *)
+(* Real-Address Mode, Protected mode, or Virtual-8086 mode with IOPL equal to 3 *)
     THEN
         IF OperandSize = 32
             THEN
@@ -93,17 +92,17 @@ IF (PE = 0) or (PE = 1 and ((VM = 0) or (VM = 1 and IOPL = 3)))
             ELSE
                 push (EFLAGS); (* Lower 16 bits only *)
         FI;
-    ELSE IF 64\-bit MODE (* In 64\-bit Mode *)
+    ELSE IF 64-bit MODE (* In 64-bit Mode *)
         IF OperandSize = 64
             THEN
-                push (RFLAGS AND 00000000\_00FCFFFFH);
+                push (RFLAGS AND 00000000_00FCFFFFH);
                 (* VM and RF bits are cleared in image stored on the stack; *)
             ELSE
                 push (EFLAGS); (* Lower 16 bits only *)
         FI;
-    ELSE (* In Virtual\-8086 Mode with IOPL less than 3 *)
+    ELSE (* In Virtual-8086 Mode with IOPL less than 3 *)
         IF (CR4.VME = 0) OR (OperandSize = 32)
-            THEN #GP(0); (* Trap to virtual\-8086 monitor *)
+            THEN #GP(0); (* Trap to virtual-8086 monitor *)
             ELSE
                 tempFLAGS = EFLAGS[15:0];
                 tempFLAGS[9] = tempFLAGS[19]; (* VIF replaces IF *)
@@ -111,87 +110,91 @@ IF (PE = 0) or (PE = 1 and ((VM = 0) or (VM = 1 and IOPL = 3)))
                 push (tempFLAGS);
         FI;
 FI;
-
-.fi
-.RE
+.EE
 
 .SH FLAGS AFFECTED
-.PP
 None.
 
-.SH PROTECTED MODE EXCEPTIONS
+.SH PROTECTED MODE EXCEPTIONS  href="./pushf:pushfd:pushfq.html#protected-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
 If the new value of the ESP register is outside the stack segment boundary.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If an unaligned memory reference is made while CPL = 3 and alignment checking is enabled.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS  href="./pushf:pushfd:pushfq.html#real-address-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS  href="./pushf:pushfd:pushfq.html#virtual-8086-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If the I/O privilege level is less than 3.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If an unaligned memory reference is made while alignment checking is enabled.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH COMPATIBILITY MODE EXCEPTIONS
+.SH COMPATIBILITY MODE EXCEPTIONS  href="./pushf:pushfd:pushfq.html#compatibility-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS  href="./pushf:pushfd:pushfq.html#64-bit-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
-#GP(0)	T{
-If the memory address is in a non\-canonical form.
-T}
+\fB\fP	\fB\fP
 #SS(0)	T{
-If the stack address is in a non\-canonical form.
+If the stack address is in a non-canonical form.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If an unaligned memory reference is made while CPL = 3 and alignment checking is enabled.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

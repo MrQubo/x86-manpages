@@ -1,16 +1,16 @@
+'\" t
 .nh
-.TH "X86-INS-INSB-INSW-INSD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-INS-INSB-INSW-INSD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 INS-INSB-INSW-INSD - INPUT FROM PORT TO STRING
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
 6C	INS m8, DX	ZO	Valid	Valid	T{
-Input byte from I/O port specified in DX into memory location specified in ES:(E)DI or RDI.
+Input byte from I/O port specified in DX into memory location specified in ES:(E)DI or RDI.1
 T}
-*
 6D	INS m16, DX	ZO	Valid	Valid	T{
 Input word from I/O port specified in DX into memory location specified in ES:(E)DI or RDI.1
 T}
@@ -32,51 +32,53 @@ T}
 .RS
 
 .PP
-*
-In64\-bitmode,only64\-bit(RDI)and32\-bit(EDI)addresssizesaresupported.Innon\-64\-bitmode,only32\-bit(EDI)and16\-bit(DI)
+1\&. In 64-bit mode, only 64-bit (RDI) and 32-bit (EDI) address sizes
+are supported. In non-64-bit mode, only 32-bit (EDI) and 16-bit (DI)
 address sizes are supported.
 
 .RE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./ins:insb:insw:insd.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-ZO	NA	NA	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+ZO	N/A	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Copies the data from the I/O port specified with the source operand
 (second operand) to the destination operand (first operand). The source
 operand is an I/O port address (from 0 to 65,535) that is read from the
 DX register. The destination operand is a memory location, the address
 of which is read from either the ES:DI, ES:EDI or the RDI registers
-(depending on the address\-size attribute of the instruction, 16, 32 or
+(depending on the address-size attribute of the instruction, 16, 32 or
 64, respectively). (The ES segment cannot be overridden with a segment
 override prefix.) The size of the I/O port being accessed (that is, the
 size of the source and destination operands) is determined by the opcode
-for an 8\-bit I/O port or by the operand\-size attribute of the
-instruction for a 16\- or 32\-bit I/O port.
+for an 8-bit I/O port or by the operand-size attribute of the
+instruction for a 16- or 32-bit I/O port.
 
 .PP
-At the assembly\-code level, two forms of this instruction are allowed:
-the “explicit\-operands” form and the “no\-operands” form. The
-explicit\-operands form (specified with the INS mnemonic) allows the
+At the assembly-code level, two forms of this instruction are allowed:
+the “explicit-operands” form and the “no-operands” form. The
+explicit-operands form (specified with the INS mnemonic) allows the
 source and destination operands to be specified explicitly. Here, the
 source operand must be “DX,” and the destination operand should be a
 symbol that indicates the size of the I/O port and the destination
-address. This explicit\-operands form is provided to allow documentation;
+address. This explicit-operands form is provided to allow documentation;
 however, note that the documentation provided by this form can be
 misleading. That is, the destination operand symbol must specify the
-correct location. The location is always specified by the ES:(E)DI
-registers, which must be loaded correctly before the INS instruction is
-executed.
+correct \fBtype\fP (size) of the operand (byte, word, or doubleword), but
+it does not have to specify the correct \fBlocation\fP\&. The location is
+always specified by the ES:(E)DI registers, which must be loaded
+correctly before the INS instruction is executed.
 
 .PP
-The no\-operands form provides “short forms” of the byte, word, and
+The no-operands form provides “short forms” of the byte, word, and
 doubleword versions of the INS instructions. Here also DX is assumed by
 the processor to be the source operand and ES:(E)DI is assumed to be the
 destination operand. The size of the I/O port is specified with the
@@ -95,109 +97,109 @@ operations, or by 4 for doubleword operations.
 The INS, INSB, INSW, and INSD instructions can be preceded by the REP
 prefix for block input of ECX bytes, words, or doublewords. See
 “REP/REPE/REPZ /REPNE/REPNZ—Repeat String Operation Prefix” in Chapter 4
-of the Intel® 64 and IA\-32 Architectures Software Developer’s Manual,
-Volume 2B, for a description of the REP prefix.
+of the Intel® 64 and IA-32 Architectures Software Developer’s
+Manual, Volume 2B, for a description of the REP prefix.
 
 .PP
 These instructions are only useful for accessing I/O ports located in
-the processor’s I/O address space. See Chapter 18, “Input/Output,” in
-the Intel® 64 and IA\-32 Architectures Software Developer’s Manual,
-Volume 1, for more information on accessing I/O ports in the I/O address
-space.
+the processor’s I/O address space. See Chapter 19, “Input/Output,” in
+the Intel® 64 and IA-32 Architectures Software Developer’s
+Manual, Volume 1, for more information on accessing I/O ports in the I/O
+address space.
 
 .PP
-In 64\-bit mode, default address size is 64 bits, 32 bit address size is
+In 64-bit mode, default address size is 64 bits, 32 bit address size is
 supported using the prefix 67H. The address of the memory destination is
-specified by RDI or EDI. 16\-bit address size is not supported in 64\-bit
+specified by RDI or EDI. 16-bit address size is not supported in 64-bit
 mode. The operand size is not promoted.
 
 .PP
 These instructions may read from the I/O port without writing to the
 memory location if an exception or VM exit occurs due to the write (e.g.
 #PF). If this would be problematic, for example because the I/O port
-read has side\-effects, software should ensure the write to the memory
+read has side-effects, software should ensure the write to the memory
 location does not cause an exception or VM exit.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
+.EX
 IF ((PE = 1) and ((CPL > IOPL) or (VM = 1)))
-    THEN (* Protected mode with CPL > IOPL or virtual\-8086 mode *)
+    THEN (* Protected mode with CPL > IOPL or virtual-8086 mode *)
         IF (Any I/O Permission Bit for I/O port being accessed = 1)
             THEN (* I/O operation is not allowed *)
                 #GP(0);
             ELSE (* I/O operation is allowed *)
-                DEST ← SRC; (* Read from I/O port *)
+                DEST := SRC; (* Read from I/O port *)
         FI;
     ELSE (Real Mode or Protected Mode with CPL IOPL *)
-        DEST ← SRC; (* Read from I/O port *)
+        DEST := SRC; (* Read from I/O port *)
 FI;
-Non\-64\-bit Mode:
+Non-64-bit Mode:
 IF (Byte transfer)
     THEN IF DF = 0
-        THEN (E)DI ← (E)DI + 1;
-        ELSE (E)DI ← (E)DI – 1; FI;
+        THEN (E)DI := (E)DI + 1;
+        ELSE (E)DI := (E)DI – 1; FI;
     ELSE IF (Word transfer)
         THENIFDF =0
-            THEN (E)DI ← (E)DI + 2;
-            ELSE (E)DI ← (E)DI – 2; FI;
+            THEN (E)DI := (E)DI + 2;
+            ELSE (E)DI := (E)DI – 2; FI;
         ELSE (* Doubleword transfer *)
             THEN IF DF = 0
-                THEN (E)DI ← (E)DI + 4;
-                ELSE (E)DI ← (E)DI – 4; FI;
+                THEN (E)DI := (E)DI + 4;
+                ELSE (E)DI := (E)DI – 4; FI;
         FI;
 FI;
-FI64\-bit Mode:
+FI64-bit Mode:
 IF (Byte transfer)
     THEN IF DF = 0
-        THEN (E|R)DI ← (E|R)DI + 1;
-        ELSE (E|R)DI ← (E|R)DI – 1; FI;
+        THEN (E|R)DI := (E|R)DI + 1;
+        ELSE (E|R)DI := (E|R)DI – 1; FI;
     ELSE IF (Word transfer)
         THENIFDF =0
-            THEN (E)DI ← (E)DI + 2;
-            ELSE (E)DI ← (E)DI – 2; FI;
+            THEN (E)DI := (E)DI + 2;
+            ELSE (E)DI := (E)DI – 2; FI;
         ELSE (* Doubleword transfer *)
             THEN IF DF = 0
-                THEN (E|R)DI ← (E|R)DI + 4;
-                ELSE (E|R)DI ← (E|R)DI – 4; FI;
+                THEN (E|R)DI := (E|R)DI + 4;
+                ELSE (E|R)DI := (E|R)DI – 4; FI;
         FI;
 FI;
-
-.fi
-.RE
+.EE
 
 .SH FLAGS AFFECTED
-.PP
-None
+None.
 
-.SH PROTECTED MODE EXCEPTIONS
+.SH PROTECTED MODE EXCEPTIONS  href="./ins:insb:insw:insd.html#protected-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If the CPL is greater than (has less privilege) the I/O privilege level (IOPL) and any of the corresponding I/O permission bits in TSS for the I/O port being accessed is 1.
 T}
 	T{
-If the destination is located in a non\-writable segment.
+If the destination is located in a non-writable segment.
 T}
 	T{
 If an illegal memory operand effective address in the ES segments is given.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS  href="./ins:insb:insw:insd.html#real-address-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
@@ -207,59 +209,63 @@ T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS  href="./ins:insb:insw:insd.html#virtual-8086-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If any of the I/O permission bits in the TSS for the I/O port being accessed is 1.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH COMPATIBILITY MODE EXCEPTIONS
+.SH COMPATIBILITY MODE EXCEPTIONS  href="./ins:insb:insw:insd.html#compatibility-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS  href="./ins:insb:insw:insd.html#64-bit-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
-If a memory address referencing the SS segment is in a non\-canonical form.
+If a memory address referencing the SS segment is in a non-canonical form.
 T}
 #GP(0)	T{
 If the CPL is greater than (has less privilege) the I/O privilege level (IOPL) and any of the corresponding I/O permission bits in TSS for the I/O port being accessed is 1.
 T}
 	T{
-If the memory address is in a non\-canonical form.
+If the memory address is in a non-canonical form.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

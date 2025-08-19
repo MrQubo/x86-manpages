@@ -1,64 +1,56 @@
+'\" t
 .nh
-.TH "X86-PINSRB-PINSRD-PINSRQ" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-PINSRB-PINSRD-PINSRQ" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 PINSRB-PINSRD-PINSRQ - INSERT BYTE-DWORD-QWORD
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/ En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/ En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 66 0F 3A 20 /r ib PINSRB xmm1, r32/m8, imm8
-T}
-	A	V/V	SSE4\_1	T{
-Insert a byte integer value from imm8.
+T}	A	V/V	SSE4_1	T{
+Insert a byte integer value from r32/m8 into xmm1 at the destination element in xmm1 specified by imm8.
 T}
 T{
 66 0F 3A 22 /r ib PINSRD xmm1, r/m32, imm8
-T}
-	A	V/V	SSE4\_1	T{
-Insert a dword integer value from imm8.
+T}	A	V/V	SSE4_1	T{
+Insert a dword integer value from r/m32 into the xmm1 at the destination element specified by imm8.
 T}
 T{
 66 REX.W 0F 3A 22 /r ib PINSRQ xmm1, r/m64, imm8
-T}
-	A	V/N. E.	SSE4\_1	T{
-Insert a qword integer value from imm8.
+T}	A	V/N. E.	SSE4_1	T{
+Insert a qword integer value from r/m64 into the xmm1 at the destination element specified by imm8.
 T}
 T{
 VEX.128.66.0F3A.W0 20 /r ib VPINSRB xmm1, xmm2, r32/m8, imm8
-T}
-	B	V1/V	AVX	T{
-Merge a byte integer value from imm8.
+T}	B	V1/V	AVX	T{
+Merge a byte integer value from r32/m8 and rest from xmm2 into xmm1 at the byte offset in imm8.
 T}
 T{
 VEX.128.66.0F3A.W0 22 /r ib VPINSRD xmm1, xmm2, r/m32, imm8
-T}
-	B	V/V	AVX	T{
-Insert a dword integer value from imm8.
+T}	B	V/V	AVX	T{
+Insert a dword integer value from r32/m32 and rest from xmm2 into xmm1 at the dword offset in imm8.
 T}
 T{
 VEX.128.66.0F3A.W1 22 /r ib VPINSRQ xmm1, xmm2, r/m64, imm8
-T}
-	B	V/I2	AVX	T{
-Insert a qword integer value from imm8.
+T}	B	V/I2	AVX	T{
+Insert a qword integer value from r64/m64 and rest from xmm2 into xmm1 at the qword offset in imm8.
 T}
 T{
 EVEX.128.66.0F3A.WIG 20 /r ib VPINSRB xmm1, xmm2, r32/m8, imm8
-T}
-	C	V/V	AVX512BW	T{
+T}	C	V/V	AVX512BW	T{
 Merge a byte integer value from r32/m8 and rest from xmm2 into xmm1 at the byte offset in imm8.
 T}
 T{
 EVEX.128.66.0F3A.W0 22 /r ib VPINSRD xmm1, xmm2, r32/m32, imm8
-T}
-	C	V/V	AVX512DQ	T{
+T}	C	V/V	AVX512DQ	T{
 Insert a dword integer value from r32/m32 and rest from xmm2 into xmm1 at the dword offset in imm8.
 T}
 T{
 EVEX.128.66.0F3A.W1 22 /r ib VPINSRQ xmm1, xmm2, r64/m64, imm8
-T}
-	C	V/N.E.2	AVX512DQ	T{
+T}	C	V/N.E.2	AVX512DQ	T{
 Insert a qword integer value from r64/m64 and rest from xmm2 into xmm1 at the qword offset in imm8.
 T}
 .TE
@@ -67,166 +59,157 @@ T}
 .RS
 
 .PP
-1\&. In 64\-bit mode, VEX.W1 is ignored for VPINSRB (similar to legacy
+1\&. In 64-bit mode, VEX.W1 is ignored for VPINSRB (similar to legacy
 REX.W=1 prefix with PINSRB).
 
 .PP
-2\&. VEX.W/EVEX.W in non\-64 bit is ignored; the instructions behaves as
+2\&. VEX.W/EVEX.W in non-64 bit is ignored; the instructions behaves as
 if the W0 version is used.
 
 .RE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./pinsrb:pinsrd:pinsrq.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	NA	ModRM:reg (w)	ModRM:r/m (r)	imm8	NA
-B	NA	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	imm8
-C	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	Imm8
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (w)	ModRM:r/m (r)	imm8	N/A
+B	N/A	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	imm8
+C	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	imm8
 .TE
 
 .SH DESCRIPTION
-.PP
 Copies a byte/dword/qword from the source operand (second operand) and
 inserts it in the destination operand (first operand) at the location
 specified with the count operand (third operand). (The other elements in
 the destination register are left untouched.) The source operand can be
-a general\-purpose register or a memory location. (When the source
-operand is a general\-purpose register, PINSRB copies the low byte of the
+a general-purpose register or a memory location. (When the source
+operand is a general-purpose register, PINSRB copies the low byte of the
 register.) The destination operand is an XMM register. The count operand
-is an 8\-bit immediate. When specifying a qword[dword, byte] location
-in an XMM register, the [2, 4] least\-significant bit(s) of the count
+is an 8-bit immediate. When specifying a qword[dword, byte] location
+in an XMM register, the [2, 4] least-significant bit(s) of the count
 operand specify the location.
 
 .PP
-In 64\-bit mode and not encoded with VEX/EVEX, using a REX prefix in the
+In 64-bit mode and not encoded with VEX/EVEX, using a REX prefix in the
 form of REX.R permits this instruction to access additional registers
-(XMM8\-XMM15, R8\-15). Use of REX.W permits the use of 64 bit general
+(XMM8-XMM15, R8-15). Use of REX.W permits the use of 64 bit general
 purpose registers.
 
 .PP
-128\-bit Legacy SSE version: Bits (MAXVL\-1:128) of the corresponding YMM
+128-bit Legacy SSE version: Bits (MAXVL-1:128) of the corresponding YMM
 destination register remain unchanged.
 
 .PP
-VEX.128 encoded version: Bits (MAXVL\-1:128) of the destination register
+VEX.128 encoded version: Bits (MAXVL-1:128) of the destination register
 are zeroed. VEX.L must be 0, otherwise the instruction will #UD.
-Attempt to execute VPINSRQ in non\-64\-bit mode will cause #UD.
+Attempt to execute VPINSRQ in non-64-bit mode will cause #UD.
 
 .PP
-EVEX.128 encoded version: Bits (MAXVL\-1:128) of the destination register
+EVEX.128 encoded version: Bits (MAXVL-1:128) of the destination register
 are zeroed. EVEX.L’L must be 0, otherwise the instruction will #UD.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
+.EX
 CASE OF
-    PINSRB: SEL←COUNT[3:0];
-            MASK←(0FFH << (SEL * 8));
-            TEMP←(((SRC[7:0] << (SEL *8)) AND MASK);
-    PINSRD: SEL←COUNT[1:0];
-            MASK←(0FFFFFFFFH << (SEL * 32));
-            TEMP←(((SRC << (SEL *32)) AND MASK) ;
-    PINSRQ: SEL←COUNT[0]
-            MASK←(0FFFFFFFFFFFFFFFFH << (SEL * 64));
-            TEMP←(((SRC << (SEL *64)) AND MASK) ;
+    PINSRB: SEL:=COUNT[3:0];
+            MASK := (0FFH << (SEL * 8));
+            TEMP := (((SRC[7:0] << (SEL *8)) AND MASK);
+    PINSRD: SEL := COUNT[1:0];
+            MASK := (0FFFFFFFFH << (SEL * 32));
+            TEMP := (((SRC << (SEL *32)) AND MASK) ;
+    PINSRQ: SEL:=COUNT[0]
+            MASK := (0FFFFFFFFFFFFFFFFH << (SEL * 64));
+            TEMP := (((SRC << (SEL *64)) AND MASK) ;
 ESAC;
-        DEST←((DEST AND NOT MASK) OR TEMP);
+        DEST := ((DEST AND NOT MASK) OR TEMP);
+.EE
 
-.fi
-.RE
+.SS VPINSRB (VEX/EVEX ENCODED VERSION)  href="./pinsrb:pinsrd:pinsrq.html#vpinsrb--vex-evex-encoded-version-"
+class="anchor">¶
 
-.SS VPINSRB (VEX/EVEX encoded version)
-.PP
-.RS
+.EX
+SEL := imm8[3:0]
+DEST[127:0] := write_b_element(SEL, SRC2, SRC1)
+DEST[MAXVL-1:128] := 0
+.EE
 
-.nf
-SEL ← imm8[3:0]
-DEST[127:0]←write\_b\_element(SEL, SRC2, SRC1)
-DEST[MAXVL\-1:128] ← 0
+.SS VPINSRD (VEX/EVEX ENCODED VERSION)  href="./pinsrb:pinsrd:pinsrq.html#vpinsrd--vex-evex-encoded-version-"
+class="anchor">¶
 
-.fi
-.RE
+.EX
+SEL := imm8[1:0]
+DEST[127:0] := write_d_element(SEL, SRC2, SRC1)
+DEST[MAXVL-1:128] := 0
+.EE
 
-.SS VPINSRD (VEX/EVEX encoded version)
-.PP
-.RS
+.SS VPINSRQ (VEX/EVEX ENCODED VERSION)  href="./pinsrb:pinsrd:pinsrq.html#vpinsrq--vex-evex-encoded-version-"
+class="anchor">¶
 
-.nf
-SEL ← imm8[1:0]
-DEST[127:0]←write\_d\_element(SEL, SRC2, SRC1)
-DEST[MAXVL\-1:128] ← 0
+.EX
+SEL := imm8[0]
+DEST[127:0] := write_q_element(SEL, SRC2, SRC1)
+DEST[MAXVL-1:128] := 0
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT <a
+href="./pinsrb:pinsrd:pinsrq.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS VPINSRQ (VEX/EVEX encoded version)
-.PP
-.RS
+.EX
+PINSRB __m128i _mm_insert_epi8 (__m128i s1, int s2, const int ndx);
 
-.nf
-SEL ← imm8[0]
-DEST[127:0]←write\_q\_element(SEL, SRC2, SRC1)
-DEST[MAXVL\-1:128] ← 0
+PINSRD __m128i _mm_insert_epi32 (__m128i s2, int s, const int ndx);
 
-.fi
-.RE
+PINSRQ __m128i _mm_insert_epi64(__m128i s2, __int64 s, const int ndx);
+.EE
 
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
+.SH FLAGS AFFECTED  href="./pinsrb:pinsrd:pinsrq.html#flags-affected"
+class="anchor">¶
 
-.nf
-PINSRB: \_\_m128i \_mm\_insert\_epi8 (\_\_m128i s1, int s2, const int ndx);
-
-PINSRD: \_\_m128i \_mm\_insert\_epi32 (\_\_m128i s2, int s, const int ndx);
-
-PINSRQ: \_\_m128i \_mm\_insert\_epi64(\_\_m128i s2, \_\_int64 s, const int ndx);
-
-.fi
-.RE
-
-.SH FLAGS AFFECTED
 .PP
 None.
 
-.SH SIMD FLOATING\-POINT EXCEPTIONS
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="./pinsrb:pinsrd:pinsrq.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
 None.
 
-.SH OTHER EXCEPTIONS
-.PP
-EVEX\-encoded instruction, see Exceptions Type 5;
+.SH OTHER EXCEPTIONS  href="./pinsrb:pinsrd:pinsrq.html#other-exceptions"
+class="anchor">¶
 
 .PP
-EVEX\-encoded instruction, see Exceptions Type E9NF.
+EVEX-encoded instruction, see Table
+2-22, “Type 5 Class Exception Conditions.”
+
+.PP
+EVEX-encoded instruction, see Table
+2-57, “Type E9NF Class Exception Conditions.”
+
+.PP
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
-#UD	If VEX.L = 1 or EVEX.L’L 
-\&gt;
- 0.
+\fB\fP	\fB\fP
+#UD	If VEX.L = 1 or EVEX.L’L &gt; 0.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

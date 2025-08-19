@@ -1,53 +1,52 @@
+'\" t
 .nh
-.TH "X86-VSCALEFPD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VSCALEFPD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VSCALEFPD - SCALE PACKED FLOAT64 VALUES WITH FLOAT64 VALUES
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 EVEX.128.66.0F38.W1 2C /r VSCALEFPD xmm1 {k1}{z}, xmm2, xmm3/m128/m64bcst
-T}
-	A	V/V	AVX512VL AVX512F	T{
-Scale the packed double\-precision floating\-point values in xmm2 using values from xmm3/m128/m64bcst. Under writemask k1.
+T}	A	V/V	AVX512VL AVX512F	T{
+Scale the packed double precision floating-point values in xmm2 using values from xmm3/m128/m64bcst. Under writemask k1.
 T}
 T{
 EVEX.256.66.0F38.W1 2C /r VSCALEFPD ymm1 {k1}{z}, ymm2, ymm3/m256/m64bcst
-T}
-	A	V/V	AVX512VL AVX512F	T{
-Scale the packed double\-precision floating\-point values in ymm2 using values from ymm3/m256/m64bcst. Under writemask k1.
+T}	A	V/V	AVX512VL AVX512F	T{
+Scale the packed double precision floating-point values in ymm2 using values from ymm3/m256/m64bcst. Under writemask k1.
 T}
 T{
 EVEX.512.66.0F38.W1 2C /r VSCALEFPD zmm1 {k1}{z}, zmm2, zmm3/m512/m64bcst{er}
-T}
-	A	V/V	AVX512F	T{
-Scale the packed double\-precision floating\-point values in zmm2 using values from zmm3/m512/m64bcst. Under writemask k1.
+T}	A	V/V	AVX512F	T{
+Scale the packed double precision floating-point values in zmm2 using values from zmm3/m512/m64bcst. Under writemask k1.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="vscalefpd.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Full	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Full	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	N/A
 .TE
 
-.SS Description
-.PP
-Performs a floating\-point scale of the packed double\-precision
-floating\-point values in the first source operand by multiplying it by 2
-power of the double\-precision floating\-point values in second source
-operand.
+.SS DESCRIPTION
+Performs a floating-point scale of the packed double precision
+floating-point values in the first source operand by multiplying them by
+2 to the power of the double precision floating-point values in second
+source operand.
 
 .PP
 The equation of this operation is given by:
 
 .PP
-zmm1 := zmm2*2floor(zmm3).
+zmm1 := zmm2*2floor(zmm3)\&.
 
 .PP
 Floor(zmm3) means maximum integer value ≤ zmm3.
@@ -57,258 +56,117 @@ If the result cannot be represented in double precision, then the proper
 overflow response (for positive scaling operand), or the proper
 underflow response (for negative scaling operand) is issued. The
 overflow and underflow responses are dependent on the rounding mode (for
-IEEE\-compliant rounding), as well as on other settings in MXCSR
+IEEE-compliant rounding), as well as on other settings in MXCSR
 (exception mask bits, FTZ bit), and on the SAE bit.
 
 .PP
 The first source operand is a ZMM/YMM/XMM register. The second source
-operand is a ZMM/YMM/XMM register, a 512/256/128\-bit memory location or
-a 512/256/128\-bit vector broadcasted from a 64\-bit memory location. The
+operand is a ZMM/YMM/XMM register, a 512/256/128-bit memory location or
+a 512/256/128-bit vector broadcasted from a 64-bit memory location. The
 destination operand is a ZMM/YMM/XMM register conditionally updated with
 writemask k1.
 
 .PP
-Handling of special\-case input values are listed in Table 5\-31.
+Handling of special-case input values are listed in Table
+5-39
+\[la]vscalefpd.html#tbl\-5\-39\[ra] and Table
+5-40
+\[la]vscalefpd.html#tbl\-5\-40\[ra]\&.
 
-.PP
-Src2
-
-.PP
-Set IE
-
-.PP
-±NaN
-
-.PP
-+Inf
-
-.PP
-\-Inf
-
-.PP
-0/Denorm/Norm
-
-.PP
-Src1
-
-.PP
-±QNaN
-
-.PP
-QNaN(Src1)
-
-.PP
-+INF
-
-.PP
-+0
-
-.PP
-QNaN(Src1)
-
-.PP
-IF either source is SNAN
-
-.PP
-±SNaN
-
-.PP
-QNaN(Src1)
-
-.PP
-QNaN(Src1)
-
-.PP
-QNaN(Src1)
-
-.PP
-QNaN(Src1)
-
-.PP
-YES
-
-.PP
-±Inf
-
-.PP
-QNaN(Src2)
-
-.PP
-Src1
-
-.PP
-QNaN\_Indefinite
-
-.PP
-Src1
-
-.PP
-IF Src2 is SNAN or \-INF
-
-.PP
-±0
-
-.PP
-QNaN(Src2)
-
-.PP
-QNaN\_Indefinite
-
-.PP
-Src1
-
-.PP
-Src1
-
-.PP
-IF Src2 is SNAN or +INF
-
-.PP
-Denorm/Norm
-
-.PP
-QNaN(Src2)
-
-.PP
-±INF (Src1 sign)
-
-.PP
-±0 (Src1 sign)
-
-.PP
-Compute Result
-
-.PP
-IF Src2 is SNAN
-
-.PP
-Table 5\-30. \\VSCALEFPD/SD/PS/SS Special Cases
-
-.TS
-allbox;
-l l l 
-l l l .
-\fB\fCSpecial Case\fR	\fB\fCReturned value\fR	\fB\fCFaults\fR
-|result| \&lt; 2\-1074	T{
-±0 or ±Min\-Denormal (Src1 sign)
-T}
-	Underflow
-|result| ≥ 21024	T{
-±INF (Src1 sign) or ±Max\-normal (Src1 sign)
-T}
-	Overflow
-.TE
-
-.PP
-Table 5\-31. Additional VSCALEFPD/SD Special Cases
-
-.SS Operation
-.PP
-.RS
-
-.nf
+.SS OPERATION
+.EX
 SCALE(SRC1, SRC2)
 {
-TMP\_SRC2 ← SRC2
-TMP\_SRC1 ← SRC1
-IF (SRC2 is denormal AND MXCSR.DAZ) THEN TMP\_SRC2=0
-IF (SRC1 is denormal AND MXCSR.DAZ) THEN TMP\_SRC1=0
-/* SRC2 is a 64 bits floating\-point value */
-DEST[63:0]←TMP\_SRC1[63:0] * POW(2, Floor(TMP\_SRC2[63:0]))
+TMP_SRC2 := SRC2
+TMP_SRC1 := SRC1
+IF (SRC2 is denormal AND MXCSR.DAZ) THEN TMP_SRC2=0
+IF (SRC1 is denormal AND MXCSR.DAZ) THEN TMP_SRC1=0
+/* SRC2 is a 64 bits floating-point value */
+DEST[63:0] := TMP_SRC1[63:0] * POW(2, Floor(TMP_SRC2[63:0]))
 }
+.EE
 
-.fi
-.RE
+.SS VSCALEFPD (EVEX ENCODED VERSIONS)  href="vscalefpd.html#vscalefpd--evex-encoded-versions-"
+class="anchor">¶
 
-.SS VSCALEFPD (EVEX encoded versions)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
 IF (VL = 512) AND (EVEX.b = 1) AND (SRC2 *is register*)
     THEN
-        SET\_RM(EVEX.RC);
+        SET_ROUNDING_MODE_FOR_THIS_INSTRUCTION(EVEX.RC);
     ELSE
-        SET\_RM(MXCSR.RM);
+        SET_ROUNDING_MODE_FOR_THIS_INSTRUCTION(MXCSR.RC);
 FI;
-FOR j←0 TO KL\-1
-    i←j * 64
+FOR j := 0 TO KL-1
+    i := j * 64
     IF k1[j] OR *no writemask* THEN
             IF (EVEX.b = 1) AND (SRC2 *is memory*)
-                THEN DEST[i+63:i]←SCALE(SRC1[i+63:i], SRC2[63:0]);
-                ELSE DEST[i+63:i]←SCALE(SRC1[i+63:i], SRC2[i+63:i]);
+                THEN DEST[i+63:i] := SCALE(SRC1[i+63:i], SRC2[63:0]);
+                ELSE DEST[i+63:i] := SCALE(SRC1[i+63:i], SRC2[i+63:i]);
             FI;
         ELSE
-            IF *merging\-masking* ; merging\-masking
+            IF *merging-masking* ; merging-masking
                 THEN *DEST[i+63:i] remains unchanged*
                 ELSE
-                        ; zeroing\-masking
-                    DEST[i+63:i] ← 0
+                        ; zeroing-masking
+                    DEST[i+63:i] := 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vscalefpd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+.EX
+VSCALEFPD __m512d _mm512_scalef_round_pd(__m512d a, __m512d b, int rounding);
 
-.nf
-VSCALEFPD \_\_m512d \_mm512\_scalef\_round\_pd(\_\_m512d a, \_\_m512d b, int rounding);
+VSCALEFPD __m512d _mm512_mask_scalef_round_pd(__m512d s, __mmask8 k, __m512d a, __m512d b, int rounding);
 
-VSCALEFPD \_\_m512d \_mm512\_mask\_scalef\_round\_pd(\_\_m512d s, \_\_mmask8 k, \_\_m512d a, \_\_m512d b, int rounding);
+VSCALEFPD __m512d _mm512_maskz_scalef_round_pd(__mmask8 k, __m512d a, __m512d b, int rounding);
 
-VSCALEFPD \_\_m512d \_mm512\_maskz\_scalef\_round\_pd(\_\_mmask8 k, \_\_m512d a, \_\_m512d b, int rounding);
+VSCALEFPD __m512d _mm512_scalef_pd(__m512d a, __m512d b);
 
-VSCALEFPD \_\_m512d \_mm512\_scalef\_pd(\_\_m512d a, \_\_m512d b);
+VSCALEFPD __m512d _mm512_mask_scalef_pd(__m512d s, __mmask8 k, __m512d a, __m512d b);
 
-VSCALEFPD \_\_m512d \_mm512\_mask\_scalef\_pd(\_\_m512d s, \_\_mmask8 k, \_\_m512d a, \_\_m512d b);
+VSCALEFPD __m512d _mm512_maskz_scalef_pd(__mmask8 k, __m512d a, __m512d b);
 
-VSCALEFPD \_\_m512d \_mm512\_maskz\_scalef\_pd(\_\_mmask8 k, \_\_m512d a, \_\_m512d b);
+VSCALEFPD __m256d _mm256_scalef_pd(__m256d a, __m256d b);
 
-VSCALEFPD \_\_m256d \_mm256\_scalef\_pd(\_\_m256d a, \_\_m256d b);
+VSCALEFPD __m256d _mm256_mask_scalef_pd(__m256d s, __mmask8 k, __m256d a, __m256d b);
 
-VSCALEFPD \_\_m256d \_mm256\_mask\_scalef\_pd(\_\_m256d s, \_\_mmask8 k, \_\_m256d a, \_\_m256d b);
+VSCALEFPD __m256d _mm256_maskz_scalef_pd(__mmask8 k, __m256d a, __m256d b);
 
-VSCALEFPD \_\_m256d \_mm256\_maskz\_scalef\_pd(\_\_mmask8 k, \_\_m256d a, \_\_m256d b);
+VSCALEFPD __m128d _mm_scalef_pd(__m128d a, __m128d b);
 
-VSCALEFPD \_\_m128d \_mm\_scalef\_pd(\_\_m128d a, \_\_m128d b);
+VSCALEFPD __m128d _mm_mask_scalef_pd(__m128d s, __mmask8 k, __m128d a, __m128d b);
 
-VSCALEFPD \_\_m128d \_mm\_mask\_scalef\_pd(\_\_m128d s, \_\_mmask8 k, \_\_m128d a, \_\_m128d b);
+VSCALEFPD __m128d _mm_maskz_scalef_pd(__mmask8 k, __m128d a, __m128d b);
+.EE
 
-VSCALEFPD \_\_m128d \_mm\_maskz\_scalef\_pd(\_\_mmask8 k, \_\_m128d a, \_\_m128d b);
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vscalefpd.html#simd-floating-point-exceptions"
+class="anchor">¶
 
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
 Overflow, Underflow, Invalid, Precision, Denormal (for Src1).
 
 .PP
 Denormal is not reported for Src2.
 
-.SS Other Exceptions
-.PP
-See Exceptions Type E2.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+.SS OTHER EXCEPTIONS
+See Table 2-46, “Type E2 Class
+Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

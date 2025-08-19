@@ -1,45 +1,31 @@
+'\" t
 .nh
-.TH "X86-BNDCU-BNDCN" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-BNDCU-BNDCN" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 BNDCU-BNDCN - CHECK UPPER BOUND
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
-F2 0F 1A /r BNDCU bnd, r/m32	RM	NE/V	MPX	Generate a 
-#
-T{
-BR if the address in r/m32 is higher than the upper bound in bnd.UB (bnb.UB in 1's complement form).
-T}
-F2 0F 1A /r BNDCU bnd, r/m64	RM	V/NE	MPX	Generate a 
-#
-T{
-BR if the address in r/m64 is higher than the upper bound in bnd.UB (bnb.UB in 1's complement form).
-T}
-F2 0F 1B /r BNDCN bnd, r/m32	RM	NE/V	MPX	Generate a 
-#
-T{
-BR if the address in r/m32 is higher than the upper bound in bnd.UB (bnb.UB not in 1's complement form).
-T}
-F2 0F 1B /r BNDCN bnd, r/m64	RM	V/NE	MPX	Generate a 
-#
-T{
-BR if the address in r/m64 is higher than the upper bound in bnd.UB (bnb.UB not in 1's complement form).
-T}
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
+F2 0F 1A /r BNDCU bnd, r/m32	RM	N.E./V	MPX	Generate a #BR if the address in r/m32 is higher than the upper bound in bnd.UB (bnb.UB in 1's complement form).
+F2 0F 1A /r BNDCU bnd, r/m64	RM	V/N.E.	MPX	Generate a #BR if the address in r/m64 is higher than the upper bound in bnd.UB (bnb.UB in 1's complement form).
+F2 0F 1B /r BNDCN bnd, r/m32	RM	N.E./V	MPX	Generate a #BR if the address in r/m32 is higher than the upper bound in bnd.UB (bnb.UB not in 1's complement form).
+F2 0F 1B /r BNDCN bnd, r/m64	RM	V/N.E.	MPX	Generate a #BR if the address in r/m64 is higher than the upper bound in bnd.UB (bnb.UB not in 1's complement form).
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./bndcu:bndcn.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l 
 l l l l .
-Op/En	Operand 1	Operand 2	Operand 3
-RM	ModRM:reg (w)	ModRM:r/m (r)	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP
+RM	ModRM:reg (w)	ModRM:r/m (r)	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Compare the address in the second operand with the upper bound in bnd.
 The second operand can be either a register or a memory operand. If the
 address is higher than the upper bound in bnd.UB, it will set BNDSTATUS
@@ -59,83 +45,62 @@ write any flags.
 Effective address computation of m32/64 has identical behavior to LEA
 
 .SH OPERATION
-.SS BNDCU BND, reg
-.PP
-.RS
-
-.nf
+.SS BNDCU BND, REG
+.EX
 IF reg > NOT(BND.UB) Then
-    BNDSTATUS ← 01H;
+    BNDSTATUS := 01H;
     #BR;
 FI;
+.EE
 
-.fi
-.RE
-
-.SS BNDCU BND, mem
-.PP
-.RS
-
-.nf
-TEMP ← LEA(mem);
+.SS BNDCU BND, MEM
+.EX
+TEMP := LEA(mem);
 IF TEMP > NOT(BND.UB) Then
-    BNDSTATUS ← 01H;
+    BNDSTATUS := 01H;
     #BR;
 FI;
+.EE
 
-.fi
-.RE
-
-.SS BNDCN BND, reg
-.PP
-.RS
-
-.nf
+.SS BNDCN BND, REG
+.EX
 IF reg > BND.UB Then
-    BNDSTATUS ← 01H;
+    BNDSTATUS := 01H;
     #BR;
 FI;
+.EE
 
-.fi
-.RE
-
-.SS BNDCN BND, mem
-.PP
-.RS
-
-.nf
-TEMP ← LEA(mem);
+.SS BNDCN BND, MEM
+.EX
+TEMP := LEA(mem);
 IF TEMP > BND.UB Then
-    BNDSTATUS ← 01H;
+    BNDSTATUS := 01H;
     #BR;
 FI;
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="./bndcu:bndcn.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
-
-.nf
-BNDCU .void \_bnd\_chk\_ptr\_ubounds(const void *q)
-
-.fi
-.RE
+.EX
+BNDCU .void _bnd_chk_ptr_ubounds(const void *q)
+.EE
 
 .SH FLAGS AFFECTED
-.PP
 None
 
-.SH PROTECTED MODE EXCEPTIONS
+.SH PROTECTED MODE EXCEPTIONS  href="./bndcu:bndcn.html#protected-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #BR	If upper bound check fails.
 #UD	If the LOCK prefix is used.
 	T{
-If ModRM.r/m encodes BND4\-BND7 when Intel MPX is enabled.
+If ModRM.r/m encodes BND4-BND7 when Intel MPX is enabled.
 T}
 	T{
 If 67H prefix is not used and CS.D=0.
@@ -145,62 +110,67 @@ If 67H prefix is used and CS.D=1.
 T}
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS  href="./bndcu:bndcn.html#real-address-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #BR	If upper bound check fails.
 #UD	If the LOCK prefix is used.
 	T{
-If ModRM.r/m encodes BND4\-BND7 when Intel MPX is enabled.
+If ModRM.r/m encodes BND4-BND7 when Intel MPX is enabled.
 T}
-	If 16\-bit addressing is used.
+	If 16-bit addressing is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS  href="./bndcu:bndcn.html#virtual-8086-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #BR	If upper bound check fails.
 #UD	If the LOCK prefix is used.
 	T{
-If ModRM.r/m encodes BND4\-BND7 when Intel MPX is enabled.
+If ModRM.r/m encodes BND4-BND7 when Intel MPX is enabled.
 T}
-	If 16\-bit addressing is used.
+	If 16-bit addressing is used.
 .TE
 
-.SH COMPATIBILITY MODE EXCEPTIONS
+.SH COMPATIBILITY MODE EXCEPTIONS  href="./bndcu:bndcn.html#compatibility-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	T{
-If ModRM.r/m and REX encodes BND4\-BND15 when Intel MPX is enabled.
+If ModRM.r/m and REX encodes BND4-BND15 when Intel MPX is enabled.
 T}
 .TE
 
 .PP
 Same exceptions as in protected mode.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

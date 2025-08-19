@@ -1,0 +1,240 @@
+'\" t
+.nh
+.TH "X86-VPCOMPRESSB-VCOMPRESSW" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
+.SH NAME
+VPCOMPRESSB-VCOMPRESSW - STORE SPARSE PACKED BYTE-WORD INTEGER VALUES INTO DENSEMEMORY-REGISTER
+.TS
+allbox;
+l l l l l 
+l l l l l .
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
+T{
+EVEX.128.66.0F38.W0 63 /r VPCOMPRESSB m128{k1}, xmm1
+T}	A	V/V	AVX512_VBMI2 AVX512VL	T{
+Compress up to 128 bits of packed byte values from xmm1 to m128 with writemask k1.
+T}
+T{
+EVEX.128.66.0F38.W0 63 /r VPCOMPRESSB xmm1{k1}{z}, xmm2
+T}	B	V/V	AVX512_VBMI2 AVX512VL	T{
+Compress up to 128 bits of packed byte values from xmm2 to xmm1 with writemask k1.
+T}
+T{
+EVEX.256.66.0F38.W0 63 /r VPCOMPRESSB m256{k1}, ymm1
+T}	A	V/V	AVX512_VBMI2 AVX512VL	T{
+Compress up to 256 bits of packed byte values from ymm1 to m256 with writemask k1.
+T}
+T{
+EVEX.256.66.0F38.W0 63 /r VPCOMPRESSB ymm1{k1}{z}, ymm2
+T}	B	V/V	AVX512_VBMI2 AVX512VL	T{
+Compress up to 256 bits of packed byte values from ymm2 to ymm1 with writemask k1.
+T}
+T{
+EVEX.512.66.0F38.W0 63 /r VPCOMPRESSB m512{k1}, zmm1
+T}	A	V/V	AVX512_VBMI2	T{
+Compress up to 512 bits of packed byte values from zmm1 to m512 with writemask k1.
+T}
+T{
+EVEX.512.66.0F38.W0 63 /r VPCOMPRESSB zmm1{k1}{z}, zmm2
+T}	B	V/V	AVX512_VBMI2	T{
+Compress up to 512 bits of packed byte values from zmm2 to zmm1 with writemask k1.
+T}
+T{
+EVEX.128.66.0F38.W1 63 /r VPCOMPRESSW m128{k1}, xmm1
+T}	A	V/V	AVX512_VBMI2 AVX512VL	T{
+Compress up to 128 bits of packed word values from xmm1 to m128 with writemask k1.
+T}
+T{
+EVEX.128.66.0F38.W1 63 /r VPCOMPRESSW xmm1{k1}{z}, xmm2
+T}	B	V/V	AVX512_VBMI2 AVX512VL	T{
+Compress up to 128 bits of packed word values from xmm2 to xmm1 with writemask k1.
+T}
+T{
+EVEX.256.66.0F38.W1 63 /r VPCOMPRESSW m256{k1}, ymm1
+T}	A	V/V	AVX512_VBMI2 AVX512VL	T{
+Compress up to 256 bits of packed word values from ymm1 to m256 with writemask k1.
+T}
+T{
+EVEX.256.66.0F38.W1 63 /r VPCOMPRESSW ymm1{k1}{z}, ymm2
+T}	B	V/V	AVX512_VBMI2 AVX512VL	T{
+Compress up to 256 bits of packed word values from ymm2 to ymm1 with writemask k1.
+T}
+T{
+EVEX.512.66.0F38.W1 63 /r VPCOMPRESSW m512{k1}, zmm1
+T}	A	V/V	AVX512_VBMI2	T{
+Compress up to 512 bits of packed word values from zmm1 to m512 with writemask k1.
+T}
+T{
+EVEX.512.66.0F38.W1 63 /r VPCOMPRESSW zmm1{k1}{z}, zmm2
+T}	B	V/V	AVX512_VBMI2	T{
+Compress up to 512 bits of packed word values from zmm2 to zmm1 with writemask k1.
+T}
+.TE
+
+.SH INSTRUCTION OPERAND ENCODING  href="./vpcompressb:vcompressw.html#instruction-operand-encoding"
+class="anchor">¶
+
+.TS
+allbox;
+l l l l l l 
+l l l l l l .
+\fBOp/En\fP	\fBTuple\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Tuple1 Scalar	ModRM:r/m (w)	ModRM:reg (r)	N/A	N/A
+B	N/A	ModRM:r/m (w)	ModRM:reg (r)	N/A	N/A
+.TE
+
+.SS DESCRIPTION
+Compress (stores) up to 64 byte values or 32 word values from the source
+operand (second operand) to the destination operand (first operand),
+based on the active elements determined by the writemask operand. Note:
+EVEX.vvvv is reserved and must be 1111b otherwise instructions will
+#UD.
+
+.PP
+Moves up to 512 bits of packed byte values from the source operand
+(second operand) to the destination operand (first operand). This
+instruction is used to store partial contents of a vector register into
+a byte vector or single memory location using the active elements in
+operand writemask.
+
+.PP
+Memory destination version: Only the contiguous vector is written to the
+destination memory location. EVEX.z must be zero.
+
+.PP
+Register destination version: If the vector length of the contiguous
+vector is less than that of the input vector in the source operand, the
+upper bits of the destination register are unmodified if EVEX.z is not
+set, otherwise the upper bits are zeroed.
+
+.PP
+This instruction supports memory fault suppression.
+
+.PP
+Note that the compressed displacement assumes a pre-scaling (N)
+corresponding to the size of one single element instead of the size of
+the full vector.
+
+.SS OPERATION
+.SS VPCOMPRESSB STORE FORM  href="./vpcompressb:vcompressw.html#vpcompressb-store-form"
+class="anchor">¶
+
+.EX
+(KL, VL) = (16, 128), (32, 256), (64, 512)
+k := 0
+FOR j := 0 TO KL-1:
+    IF k1[j] OR *no writemask*:
+        DEST.byte[k] := SRC.byte[j]
+        k := k +1
+.EE
+
+.SS VPCOMPRESSB REG-REG FORM  href="./vpcompressb:vcompressw.html#vpcompressb-reg-reg-form"
+class="anchor">¶
+
+.EX
+(KL, VL) = (16, 128), (32, 256), (64, 512)
+k := 0
+FOR j := 0 TO KL-1:
+    IF k1[j] OR *no writemask*:
+        DEST.byte[k] := SRC.byte[j]
+        k := k + 1
+IF *merging-masking*:
+    *DEST[VL-1:k*8] remains unchanged*
+    ELSE DEST[VL-1:k*8] := 0
+DEST[MAX_VL-1:VL] := 0
+.EE
+
+.SS VPCOMPRESSW STORE FORM  href="./vpcompressb:vcompressw.html#vpcompressw-store-form"
+class="anchor">¶
+
+.EX
+(KL, VL) = (8, 128), (16, 256), (32, 512)
+k := 0
+FOR j := 0 TO KL-1:
+    IF k1[j] OR *no writemask*:
+        DEST.word[k] := SRC.word[j]
+        k := k + 1
+.EE
+
+.SS VPCOMPRESSW REG-REG FORM  href="./vpcompressb:vcompressw.html#vpcompressw-reg-reg-form"
+class="anchor">¶
+
+.EX
+(KL, VL) = (8, 128), (16, 256), (32, 512)
+k := 0
+FOR j := 0 TO KL-1:
+    IF k1[j] OR *no writemask*:
+        DEST.word[k] := SRC.word[j]
+        k := k + 1
+IF *merging-masking*:
+    *DEST[VL-1:k*16] remains unchanged*
+    ELSE DEST[VL-1:k*16] := 0
+DEST[MAX_VL-1:VL] := 0
+.EE
+
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT <a
+href="./vpcompressb:vcompressw.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
+
+.EX
+VPCOMPRESSB __m128i _mm_mask_compress_epi8(__m128i, __mmask16, __m128i);
+
+VPCOMPRESSB __m128i _mm_maskz_compress_epi8(__mmask16, __m128i);
+
+VPCOMPRESSB __m256i _mm256_mask_compress_epi8(__m256i, __mmask32, __m256i);
+
+VPCOMPRESSB __m256i _mm256_maskz_compress_epi8(__mmask32, __m256i);
+
+VPCOMPRESSB __m512i _mm512_mask_compress_epi8(__m512i, __mmask64, __m512i);
+
+VPCOMPRESSB __m512i _mm512_maskz_compress_epi8(__mmask64, __m512i);
+
+VPCOMPRESSB void _mm_mask_compressstoreu_epi8(void*, __mmask16, __m128i);
+
+VPCOMPRESSB void _mm256_mask_compressstoreu_epi8(void*, __mmask32, __m256i);
+
+VPCOMPRESSB void _mm512_mask_compressstoreu_epi8(void*, __mmask64, __m512i);
+
+VPCOMPRESSW __m128i _mm_mask_compress_epi16(__m128i, __mmask8, __m128i);
+
+VPCOMPRESSW __m128i _mm_maskz_compress_epi16(__mmask8, __m128i);
+
+VPCOMPRESSW __m256i _mm256_mask_compress_epi16(__m256i, __mmask16, __m256i);
+
+VPCOMPRESSW __m256i _mm256_maskz_compress_epi16(__mmask16, __m256i);
+
+VPCOMPRESSW __m512i _mm512_mask_compress_epi16(__m512i, __mmask32, __m512i);
+
+VPCOMPRESSW __m512i _mm512_maskz_compress_epi16(__mmask32, __m512i);
+
+VPCOMPRESSW void _mm_mask_compressstoreu_epi16(void*, __mmask8, __m128i);
+
+VPCOMPRESSW void _mm256_mask_compressstoreu_epi16(void*, __mmask16, __m256i);
+
+VPCOMPRESSW void _mm512_mask_compressstoreu_epi16(void*, __mmask32, __m512i);
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="./vpcompressb:vcompressw.html#simd-floating-point-exceptions"
+class="anchor">¶
+
+.PP
+None.
+
+.SS OTHER EXCEPTIONS  href="./vpcompressb:vcompressw.html#other-exceptions"
+class="anchor">¶
+
+.PP
+See Table 2-49, “Type E4 Class
+Exception Conditions.”
+
+.SH COLOPHON
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
+
+.br
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

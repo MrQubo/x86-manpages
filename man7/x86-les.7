@@ -1,12 +1,13 @@
+'\" t
 .nh
-.TH "X86-LDS-LES-LFS-LGS-LSS" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-LDS-LES-LFS-LGS-LSS" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 LDS-LES-LFS-LGS-LSS - LOAD FAR POINTER
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
 C5 /r	LDS r16,m16:16	RM	Invalid	Valid	T{
 Load DS:r16 with far pointer from memory.
 T}
@@ -48,26 +49,27 @@ Load GS:r64 with far pointer from memory.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./lds:les:lfs:lgs:lss.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-RM	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+RM	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Loads a far pointer (segment selector and offset) from the second
 operand (source operand) into a segment register and the first operand
-(destination operand). The source operand specifies a 48\-bit or a 32\-bit
-pointer in memory depending on the current setting of the operand\-size
+(destination operand). The source operand specifies a 48-bit or a 32-bit
+pointer in memory depending on the current setting of the operand-size
 attribute (32 bits or 16 bits, respectively). The instruction opcode and
-the destination operand specify a segment register/general\-purpose
-register pair. The 16\-bit segment selector from the source operand is
+the destination operand specify a segment register/general-purpose
+register pair. The 16-bit segment selector from the source operand is
 loaded into the segment register specified with the opcode (DS, SS, ES,
-FS, or GS). The 32\-bit or 16\-bit offset is loaded into the register
+FS, or GS). The 32-bit or 16-bit offset is loaded into the register
 specified with the destination operand.
 
 .PP
@@ -81,30 +83,27 @@ Also in protected mode, a NULL selector (values 0000 through 0003) can
 be loaded into DS, ES, FS, or GS registers without causing a protection
 exception. (Any subsequent reference to a segment whose corresponding
 segment register is loaded with a NULL selector, causes a
-general\-protection exception (#GP) and no memory reference to the
+general-protection exception (#GP) and no memory reference to the
 segment occurs.)
 
 .PP
-In 64\-bit mode, the instruction’s default operation size is 32 bits.
+In 64-bit mode, the instruction’s default operation size is 32 bits.
 Using a REX prefix in the form of REX.W promotes operation to specify a
-source operand referencing an 80\-bit pointer (16\-bit selector, 64\-bit
+source operand referencing an 80-bit pointer (16-bit selector, 64-bit
 offset) in memory. Using a REX prefix in the form of REX.R permits
-access to additional registers (R8\-R15). See the summary chart at the
+access to additional registers (R8-R15). See the summary chart at the
 beginning of this section for encoding data and limits.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
-64\-BIT\_MODE
+.EX
+64-BIT_MODE
     IF SS is loaded
         THEN
             IF SegmentSelector = NULL and ( (RPL = 3) or
                     (RPL ≠ 3 and RPL ≠ CPL) )
                 THEN #GP(0);
-            ELSE IF descriptor is in non\-canonical space
-                THEN #GP(0); FI;
+            ELSE IF descriptor is in non-canonical space
+                THEN #GP(selector); FI;
             ELSE IF Segment selector index is not within descriptor table limits
                     or segment selector RPL ≠ CPL
                     or access rights indicate nonwritable data segment
@@ -113,29 +112,29 @@ beginning of this section for encoding data and limits.
             ELSE IF Segment marked not present
                 THEN #SS(selector); FI;
             FI;
-            SS ← SegmentSelector(SRC);
-            SS ← SegmentDescriptor([SRC]);
+            SS := SegmentSelector(SRC);
+            SS := SegmentDescriptor([SRC]);
     ELSE IF attempt to load DS, or ES
         THEN #UD;
-    ELSE IF FS, or GS is loaded with non\-NULL segment selector
+    ELSE IF FS, or GS is loaded with non-NULL segment selector
         THEN IF Segment selector index is not within descriptor table limits
             or access rights indicate segment neither data nor readable code segment
-            or segment is data or nonconforming\-code segment
+            or segment is data or nonconforming-code segment
             and ( RPL > DPL or CPL > DPL)
                 THEN #GP(selector); FI;
             ELSE IF Segment marked not present
                 THEN #NP(selector); FI;
             FI;
-            SegmentRegister ← SegmentSelector(SRC) ;
-            SegmentRegister ← SegmentDescriptor([SRC]);
+            SegmentRegister := SegmentSelector(SRC) ;
+            SegmentRegister := SegmentDescriptor([SRC]);
         FI;
     ELSE IF FS, or GS is loaded with a NULL selector:
         THEN
-            SegmentRegister ← NULLSelector;
-            SegmentRegister(DescriptorValidBit) ← 0; FI; (* Hidden flag;
+            SegmentRegister := NULLSelector;
+            SegmentRegister(DescriptorValidBit) := 0; FI; (* Hidden flag;
                 not accessible by software *)
     FI;
-    DEST ← Offset(SRC);
+    DEST := Offset(SRC);
 PREOTECTED MODE OR COMPATIBILITY MODE;
     IF SS is loaded
         THEN
@@ -149,43 +148,43 @@ PREOTECTED MODE OR COMPATIBILITY MODE;
             ELSE IF Segment marked not present
                 THEN #SS(selector); FI;
             FI;
-            SS ← SegmentSelector(SRC);
-            SS ← SegmentDescriptor([SRC]);
-    ELSE IF DS, ES, FS, or GS is loaded with non\-NULL segment selector
+            SS := SegmentSelector(SRC);
+            SS := SegmentDescriptor([SRC]);
+    ELSE IF DS, ES, FS, or GS is loaded with non-NULL segment selector
         THEN IF Segment selector index is not within descriptor table limits
             or access rights indicate segment neither data nor readable code segment
-            or segment is data or nonconforming\-code segment
+            or segment is data or nonconforming-code segment
             and (RPL > DPL or CPL > DPL)
                 THEN #GP(selector); FI;
             ELSE IF Segment marked not present
                 THEN #NP(selector); FI;
             FI;
-            SegmentRegister ← SegmentSelector(SRC) AND RPL;
-            SegmentRegister ← SegmentDescriptor([SRC]);
+            SegmentRegister := SegmentSelector(SRC) AND RPL;
+            SegmentRegister := SegmentDescriptor([SRC]);
         FI;
     ELSE IF DS, ES, FS, or GS is loaded with a NULL selector:
         THEN
-            SegmentRegister ← NULLSelector;
-            SegmentRegister(DescriptorValidBit) ← 0; FI; (* Hidden flag;
+            SegmentRegister := NULLSelector;
+            SegmentRegister(DescriptorValidBit) := 0; FI; (* Hidden flag;
                 not accessible by software *)
     FI;
-    DEST ← Offset(SRC);
-Real\-Address or Virtual\-8086 Mode
-    SegmentRegister ← SegmentSelector(SRC); FI;
-    DEST ← Offset(SRC);
-
-.fi
-.RE
+    DEST := Offset(SRC);
+Real-Address or Virtual-8086 Mode
+    SegmentRegister := SegmentSelector(SRC); FI;
+    DEST := Offset(SRC);
+.EE
 
 .SH FLAGS AFFECTED
-.PP
-None
+None.
 
-.SH PROTECTED MODE EXCEPTIONS
+.SH PROTECTED MODE EXCEPTIONS  href="./lds:les:lfs:lgs:lss.html#protected-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	T{
 If source operand is not a memory location.
 T}
@@ -200,10 +199,10 @@ T}
 If the DS, ES, FS, or GS register is used to access memory and it contains a NULL segment selector.
 T}
 #GP(selector)	T{
-If the SS register is being loaded and any of the following is true: the segment selector index is not within the descriptor table limits, the segment selector RPL is not equal to CPL, the segment is a non\-writable data segment, or DPL is not equal to CPL.
+If the SS register is being loaded and any of the following is true: the segment selector index is not within the descriptor table limits, the segment selector RPL is not equal to CPL, the segment is a non-writable data segment, or DPL is not equal to CPL.
 T}
 	T{
-If the DS, ES, FS, or GS register is being loaded with a non\-NULL segment selector and any of the following is true: the segment selector index is not within descriptor table limits, the segment is neither a data nor a readable code segment, or the segment is a data or nonconforming\-code segment and both RPL and CPL are greater than DPL.
+If the DS, ES, FS, or GS register is being loaded with a non-NULL segment selector and any of the following is true: the segment selector index is not within descriptor table limits, the segment is neither a data nor a readable code segment, or the segment is a data or nonconforming-code segment and both RPL and CPL are greater than DPL.
 T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
@@ -212,19 +211,22 @@ T}
 If the SS register is being loaded and the segment is marked not present.
 T}
 #NP(selector)	T{
-If DS, ES, FS, or GS register is being loaded with a non\-NULL segment selector and the segment is marked not present.
+If DS, ES, FS, or GS register is being loaded with a non-NULL segment selector and the segment is marked not present.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS  href="./lds:les:lfs:lgs:lss.html#real-address-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
@@ -237,11 +239,14 @@ T}
 	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS  href="./lds:les:lfs:lgs:lss.html#virtual-8086-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	T{
 If source operand is not a memory location.
 T}
@@ -252,49 +257,54 @@ T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made.
 T}
 .TE
 
-.SH COMPATIBILITY MODE EXCEPTIONS
+.SH COMPATIBILITY MODE EXCEPTIONS  href="./lds:les:lfs:lgs:lss.html#compatibility-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS  href="./lds:les:lfs:lgs:lss.html#64-bit-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
-If the memory address is in a non\-canonical form.
+If the memory address is in a non-canonical form.
 T}
 	T{
 If a NULL selector is attempted to be loaded into the SS register in compatibility mode.
 T}
 	T{
-If a NULL selector is attempted to be loaded into the SS register in CPL3 and 64\-bit mode.
+If a NULL selector is attempted to be loaded into the SS register in CPL3 and 64-bit mode.
 T}
 	T{
-If a NULL selector is attempted to be loaded into the SS register in non\-CPL3 and 64\-bit mode where its RPL is not equal to CPL.
+If a NULL selector is attempted to be loaded into the SS register in non-CPL3 and 64-bit mode where its RPL is not equal to CPL.
 T}
 #GP(Selector)	T{
-If the FS, or GS register is being loaded with a non\-NULL segment selector and any of the following is true: the segment selector index is not within descriptor table limits, the memory address of the descriptor is non\-canonical, the segment is neither a data nor a readable code segment, or the segment is a data or nonconforming\-code segment and both RPL and CPL are greater than DPL.
+If the FS, or GS register is being loaded with a non-NULL segment selector and any of the following is true: the segment selector index is not within descriptor table limits, the memory address of the descriptor is non-canonical, the segment is neither a data nor a readable code segment, or the segment is a data or nonconforming-code segment and both RPL and CPL are greater than DPL.
 T}
 	T{
-If the SS register is being loaded and any of the following is true: the segment selector index is not within the descriptor table limits, the memory address of the descriptor is non\-canonical, the segment selector RPL is not equal to CPL, the segment is a nonwritable data segment, or DPL is not equal to CPL.
+If the SS register is being loaded and any of the following is true: the segment selector index is not within the descriptor table limits, the memory address of the descriptor is non-canonical, the segment selector RPL is not equal to CPL, the segment is a nonwritable data segment, or DPL is not equal to CPL.
 T}
 #SS(0)	T{
-If a memory operand effective address is non\-canonical
+If a memory operand effective address is non-canonical
 T}
 #SS(Selector)	T{
 If the SS register is being loaded and the segment is marked not present.
 T}
 #NP(selector)	T{
-If FS, or GS register is being loaded with a non\-NULL segment selector and the segment is marked not present.
+If FS, or GS register is being loaded with a non-NULL segment selector and the segment is marked not present.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
@@ -304,19 +314,15 @@ T}
 	If the LOCK prefix is used.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

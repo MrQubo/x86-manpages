@@ -1,15 +1,14 @@
+'\" t
 .nh
-.TH "X86-CLFLUSH" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-CLFLUSH" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 CLFLUSH - FLUSH CACHE LINE
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode / Instruction\fR	\fB\fCOp/En\fR	\fB\fC64\-bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
-NP 0F AE /7 CLFLUSH m8	M	Valid	Valid	T{
-Flushes cache line containing m8.
-T}
+\fBOpcode / Instruction\fP	\fBOp/En\fP	\fB64-bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
+NP 0F AE /7 CLFLUSH \fIm8\fP	M	Valid	Valid	Flushes cache line containing \fIm8\fP\&.
 .TE
 
 .SH INSTRUCTION OPERAND ENCODING
@@ -17,12 +16,11 @@ T}
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-M	ModRM:r/m (w)	NA	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+M	ModRM:r/m (w)	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Invalidates from every level of the cache hierarchy in the cache
 coherence domain the cache line that contains the linear address
 specified with the memory operand. If that cache line contains modified
@@ -40,18 +38,23 @@ register is 1).
 The memory attribute of the page containing the affected line has no
 effect on the behavior of this instruction. It should be noted that
 processors are free to speculatively fetch and cache data from system
-memory regions assigned a memory\-type allowing for speculative reads
-(such as, the WB, WC, and WT memory types). PREFETCHh instructions or
-any of the speculative fetching mechanisms (that is, data can be
-speculatively loaded into a cache line just before, during, or after the
-execution of a CLFLUSH instruction that references the cache line).
+memory regions assigned a memory-type allowing for speculative reads
+(such as, the WB, WC, and WT memory types). PREFETCH\fIh\fP instructions can
+be used to provide the processor with hints for this speculative
+behavior. Because this speculative fetching can occur at any time and is
+not tied to instruction execution, the CLFLUSH instruction is not
+ordered with respect to PREFETCH\fIh\fP instructions or any of the
+speculative fetching mechanisms (that is, data can be speculatively
+loaded into a cache line just before, during, or after the execution of
+a CLFLUSH instruction that references the cache line).
 
 .PP
 Executions of the CLFLUSH instruction are ordered with respect to each
-other and with respect to writes, locked read\-modify\-write instructions,
-fence instructions, and executions of CLFLUSHOPT to the same cache
-line.1 They are not ordered with respect to executions of CLFLUSHOPT to
-different cache lines.
+other and with respect to writes, locked read-modify-write instructions,
+and fence instructions.1 They are not ordered with respect to
+executions of CLFLUSHOPT and CLWB. Software can use the SFENCE
+instruction to order an execution of CLFLUSH relative to one of those
+operations.
 
 .PP
 .RS
@@ -68,7 +71,7 @@ to the other operations enumerated above.
 The CLFLUSH instruction can be used at all privilege levels and is
 subject to all permission checking and faults associated with a byte
 load (and in addition, a CLFLUSH instruction is allowed to flush a
-linear address in an execute\-only segment). Like a load, the CLFLUSH
+linear address in an execute-only segment). Like a load, the CLFLUSH
 instruction sets the A bit but not the D bit in the page tables.
 
 .PP
@@ -82,118 +85,99 @@ cause transactional abort is implementation dependent.
 .PP
 The CLFLUSH instruction was introduced with the SSE2 extensions;
 however, because it has its own CPUID feature flag, it can be
-implemented in IA\-32 processors that do not include the SSE2 extensions.
+implemented in IA-32 processors that do not include the SSE2 extensions.
 Also, detecting the presence of the SSE2 extensions with the CPUID
 instruction does not guarantee that the CLFLUSH instruction is
 implemented in the processor.
 
 .PP
-CLFLUSH operation is the same in non\-64\-bit modes and 64\-bit mode.
+CLFLUSH operation is the same in non-64-bit modes and 64-bit mode.
 
 .SH OPERATION
-.PP
-.RS
+.EX
+Flush_Cache_Line(SRC);
+.EE
 
-.nf
-Flush\_Cache\_Line(SRC);
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENTS  href="clflush.html#intel-c-c++-compiler-intrinsic-equivalents"
+class="anchor">¶
 
-.fi
-.RE
-
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENTS
-.PP
-.RS
-
-.nf
-CLFLUSH: void \_mm\_clflush(void const *p)
-
-.fi
-.RE
+.EX
+CLFLUSH void _mm_clflush(void const *p)
+.EE
 
 .SH PROTECTED MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 For an illegal memory operand effective address in the CS, DS, ES, FS or GS segments.
 T}
 #SS(0)	T{
 For an illegal address in the SS segment.
 T}
-#PF(fault\-code)	For a page fault.
-#UD	If CPUID.01H:EDX.CLFSH
-[
-bit 19
-]
- = 0.
+#PF(fault-code)	For a page fault.
+#UD	If CPUID.01H:EDX.CLFSH[bit 19] = 0.
 	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP	T{
 If any part of the operand lies outside the effective address space from 0 to FFFFH.
 T}
-#UD	If CPUID.01H:EDX.CLFSH
-[
-bit 19
-]
- = 0.
+#UD	If CPUID.01H:EDX.CLFSH[bit 19] = 0.
 	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
-.PP
+.SH VIRTUAL-8086 MODE EXCEPTIONS
 Same exceptions as in real address mode.
 
 .TS
 allbox;
 l l 
 l l .
-#PF(fault\-code)	For a page fault.
+\fB\fP	\fB\fP
+#PF(fault-code)	For a page fault.
 .TE
 
-.SH COMPATIBILITY MODE EXCEPTIONS
+.SH COMPATIBILITY MODE EXCEPTIONS  href="clflush.html#compatibility-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
-If a memory address referencing the SS segment is in a non\-canonical form.
+If a memory address referencing the SS segment is in a non-canonical form.
 T}
 #GP(0)	T{
-If the memory address is in a non\-canonical form.
+If the memory address is in a non-canonical form.
 T}
-#PF(fault\-code)	For a page fault.
-#UD	If CPUID.01H:EDX.CLFSH
-[
-bit 19
-]
- = 0.
+#PF(fault-code)	For a page fault.
+#UD	If CPUID.01H:EDX.CLFSH[bit 19] = 0.
 	If the LOCK prefix is used.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

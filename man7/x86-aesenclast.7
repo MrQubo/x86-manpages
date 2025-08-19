@@ -1,118 +1,149 @@
+'\" t
 .nh
-.TH "X86-AESENCLAST" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-AESENCLAST" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 AESENCLAST - PERFORM LAST ROUND OF AN AES ENCRYPTION FLOW
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32\-bit Mode\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32-bit Mode\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 66 0F 38 DD /r AESENCLAST xmm1, xmm2/m128
-T}
-	RM	V/V	AES	T{
-Perform the last round of an AES encryption flow, operating on a 128\-bit data (state) from xmm1 with a 128\-bit round key from xmm2/m128.
+T}	A	V/V	AES	T{
+Perform the last round of an AES encryption flow, using one 128-bit data (state) from xmm1 with one 128-bit round key from xmm2/m128.
 T}
 T{
 VEX.128.66.0F38.WIG DD /r VAESENCLAST xmm1, xmm2, xmm3/m128
+T}	B	V/V	AES AVX	T{
+Perform the last round of an AES encryption flow, using one 128-bit data (state) from xmm2 with one 128-bit round key from xmm3/m128; store the result in xmm1.
 T}
-	RVM	V/V	Both AES and AVX flags	T{
-Perform the last round of an AES encryption flow, operating on a 128\-bit data (state) from xmm2 with a 128 bit round key from xmm3/m128; store the result in xmm1.
+T{
+VEX.256.66.0F38.WIG DD /r VAESENCLAST ymm1, ymm2, ymm3/m256
+T}	B	V/V	VAES	T{
+Perform the last round of an AES encryption flow, using two 128-bit data (state) from ymm2 with two 128-bit round keys from ymm3/m256; store the result in ymm1.
+T}
+T{
+EVEX.128.66.0F38.WIG DD /r VAESENCLAST xmm1, xmm2, xmm3/m128
+T}	C	V/V	VAES AVX512VL	T{
+Perform the last round of an AES encryption flow, using one 128-bit data (state) from xmm2 with one 128-bit round key from xmm3/m128; store the result in xmm1.
+T}
+T{
+EVEX.256.66.0F38.WIG DD /r VAESENCLAST ymm1, ymm2, ymm3/m256
+T}	C	V/V	VAES AVX512VL	T{
+Perform the last round of an AES encryption flow, using two 128-bit data (state) from ymm2 with two 128-bit round keys from ymm3/m256; store the result in ymm1.
+T}
+T{
+EVEX.512.66.0F38.WIG DD /r VAESENCLAST zmm1, zmm2, zmm3/m512
+T}	C	V/V	VAES AVX512F	T{
+Perform the last round of an AES encryption flow, using four 128-bit data (state) from zmm2 with four 128-bit round keys from zmm3/m512; store the result in zmm1.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="aesenclast.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
-l l l l l 
-l l l l l .
-Op/En	Operand 1	Operand2	Operand3	Operand4
-RM	ModRM:reg (r, w)	ModRM:r/m (r)	NA	NA
-RVM	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	NA
+l l l l l l 
+l l l l l l .
+\fBOp/En\fP	\fBTuple\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (r, w)	ModRM:r/m (r)	N/A	N/A
+B	N/A	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	N/A
+C	Full Mem	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 This instruction performs the last round of an AES encryption flow using
-a round key from the second source operand, operating on 128\-bit data
-(state) from the first source operand, and store the result in the
-destination operand.
+one/two/four (depending on vector length) 128-bit data (state) from the
+first source operand with one/two/four (depending on vector length)
+round key(s) from the second source operand, and stores the result in
+the destination operand.
 
 .PP
-128\-bit Legacy SSE version: The first source operand and the destination
-operand are the same and must be an XMM register. The second source
-operand can be an XMM register or a 128\-bit memory location. Bits
-(MAXVL\-1:128) of the corresponding YMM destination register remain
-unchanged.
+VEX and EVEX encoded versions of the instruction allows 3-operand
+(non-destructive) operation. The legacy encoded versions of the
+instruction require that the first source operand and the destination
+operand are the same and must be an XMM register.
 
 .PP
-VEX.128 encoded version: The first source operand and the destination
-operand are XMM registers. The second source operand can be an XMM
-register or a 128\-bit memory location. Bits (MAXVL\-1:128) of the
-destination YMM register are zeroed.
+The EVEX encoded form of this instruction does not support memory fault
+suppression.
 
 .SH OPERATION
 .SS AESENCLAST
+.EX
+STATE := SRC1;
+RoundKey := SRC2;
+STATE := ShiftRows( STATE );
+STATE := SubBytes( STATE );
+DEST[127:0] := STATE XOR RoundKey;
+DEST[MAXVL-1:128] (Unmodified)
+.EE
+
+.SS VAESENCLAST (128B AND 256B VEX ENCODED VERSIONS) <a
+href="aesenclast.html#vaesenclast--128b-and-256b-vex-encoded-versions-"
+class="anchor">¶
+
+.EX
+(KL, VL) = (1,128), (2,256)
+FOR I=0 to KL-1:
+    STATE := SRC1.xmm[i]
+    RoundKey := SRC2.xmm[i]
+    STATE := ShiftRows( STATE )
+    STATE := SubBytes( STATE )
+    DEST.xmm[i] := STATE XOR RoundKey
+DEST[MAXVL-1:VL] := 0
+.EE
+
+.SS VAESENCLAST (EVEX ENCODED VERSION)  href="aesenclast.html#vaesenclast--evex-encoded-version-"
+class="anchor">¶
+
+.EX
+(KL,VL) = (1,128), (2,256), (4,512)
+FOR i = 0 to KL-1:
+    STATE := SRC1.xmm[i]
+    RoundKey := SRC2.xmm[i]
+    STATE := ShiftRows( STATE )
+    STATE := SubBytes( STATE )
+    DEST.xmm[i] := STATE XOR RoundKey
+DEST[MAXVL-1:VL] := 0
+.EE
+
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="aesenclast.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
+
+.EX
+(V)AESENCLAST __m128i _mm_aesenclast (__m128i, __m128i)
+
+VAESENCLAST __m256i _mm256_aesenclast_epi128(__m256i, __m256i);
+
+VAESENCLAST __m512i _mm512_aesenclast_epi128(__m512i, __m512i);
+.EE
+
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="aesenclast.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
-
-.nf
-STATE ← SRC1;
-RoundKey ← SRC2;
-STATE ← ShiftRows( STATE );
-STATE ← SubBytes( STATE );
-DEST[127:0] ← STATE XOR RoundKey;
-DEST[MAXVL\-1:128] (Unmodified)
-
-.fi
-.RE
-
-.SS VAESENCLAST
-.PP
-.RS
-
-.nf
-STATE ← SRC1;
-RoundKey ← SRC2;
-STATE←ShiftRows( STATE );
-STATE←SubBytes( STATE );
-DEST[127:0]←STATE XOR RoundKey;
-DEST[MAXVL\-1:128] ← 0
-
-.fi
-.RE
-
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
-
-.nf
-(V)AESENCLAST: \_\_m128i \_mm\_aesenclast (\_\_m128i, \_\_m128i)
-
-.fi
-.RE
-
-.SH SIMD FLOATING\-POINT EXCEPTIONS
-.PP
-None
+None.
 
 .SH OTHER EXCEPTIONS
-.PP
-See Exceptions Type 4.
+See Table 2-21, “Type 4 Class
+Exception Conditions.”
 
-.SH SEE ALSO
 .PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+EVEX-encoded: See Table 2-50, “Type
+E4NF Class Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

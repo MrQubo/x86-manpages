@@ -1,31 +1,33 @@
+'\" t
 .nh
-.TH "X86-ESETCONTEXT" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-ESETCONTEXT" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 ESETCONTEXT - SET THE ENCLAVECONTEXT FIELD IN SECS
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 EAX = 02H ENCLV[ESETCONTEXT]	IR	V/V	EAX[5]	T{
 This leaf function sets the ENCLAVECONTEXT field in SECS.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="esetcontext.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
-l l l l 
-l l l l .
-Op/En	EAX	RCX	RDX
-IR	ESETCONTEXT (In)	T{
+l l l l l 
+l l l l l .
+\fB\fP	\fB\fP	\fB\fP	\fB\fP	\fB\fP
+Op/En	EAX		RCX	RDX
+IR	ESETCONTEXT (In)	Return error code (Out)	T{
 Address of the destination EPC page (In, EA)
-T}
-	Context Value (In, EA)
+T}	Context Value (In, EA)
 .TE
 
-.SS Description
-.PP
+.SS DESCRIPTION
 The ESETCONTEXT leaf overwrites the ENCLAVECONTEXT field in the SECS.
 ECREATE and ELD of an SECS set the ENCLAVECONTEXT field in the SECS to
 the address of the SECS (for access later in ERDINFO). The ESETCONTEXT
@@ -41,25 +43,23 @@ override is not supported.
 
 .PP
 The instruction fails if:
-
-.RS
 .IP \(bu 2
 The operand is not properly aligned.
 .IP \(bu 2
 RCX does not refer to an SECS page.
 
-.RE
+.SH ESETCONTEXT MEMORY PARAMETER SEMANTICS  href="esetcontext.html#esetcontext-memory-parameter-semantics"
+class="anchor">¶
 
-.SH ESETCONTEXT MEMORY PARAMETER SEMANTICS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 EPCPAGE	CONTEXT
 T{
 Read access permitted by Enclave
-T}
-	T{
+T}	T{
 Read/Write access permitted by Non Enclave
 T}
 .TE
@@ -67,139 +67,56 @@ T}
 .PP
 The instruction faults if any of the following:
 
-.SH ESETCONTEXT FAULTING CONDITIONS
+.SH ESETCONTEXT FAULTING CONDITIONS  href="esetcontext.html#esetcontext-faulting-conditions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 T{
 A memory operand effective address is outside the DS segment limit (32b mode).
-T}
-	T{
+T}	T{
 A memory operand is not properly aligned.
 T}
 T{
 DS segment is unusable (32b mode).
-T}
-	T{
+T}	T{
 A page fault occurs in accessing memory operands.
 T}
 T{
-A memory address is in a non\-canonical form (64b mode).
-T}
-	.TE
+A memory address is in a non-canonical form (64b mode).
+T}	
+.TE
 
-.SS Concurrency Restrictions
-.PP
-Leaf
+.SS CONCURRENCY RESTRICTIONS
+.SS OPERATION
+.SH TEMP VARIABLES IN ESETCONTEXT OPERATIONAL FLOW <a
+href="esetcontext.html#temp-variables-in-esetcontext-operational-flow"
+class="anchor">¶
 
-.PP
-Parameter
-
-.PP
-Base Concurrency Restrictions
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-SGX\_CONFLICT VM Exit Qualification
-
-.PP
-ESETCONTEXT
-
-.PP
-SECS [DS:RCX]
-
-.PP
-Shared
-
-.PP
-SGX\_EPC\_PAGE\_ CONFLICT
-
-.PP
-Table 40\-78\&. Base Concurrency
-Restrictions of ESETCONTEXT
-
-.PP
-Leaf
-
-.PP
-Parameter
-
-.PP
-Additional Concurrency Restrictions
-
-.PP
-vs. EACCEPT, EACCEPTCOPY, EMODPE, EMODPR, EMODT
-
-.PP
-vs. EADD, EEXTEND, EINIT
-
-.PP
-vs. ETRACK, ETRACKC
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-Access
-
-.PP
-On Conflict
-
-.PP
-ESETCONTEXT
-
-.PP
-SECS [DS:RCX]
-
-.PP
-Concurrent
-
-.PP
-Concurrent
-
-.PP
-Concurrent
-
-.PP
-Table 40\-79\&. Additional Concurrency
-Restrictions of ESETCONTEXT
-
-.SS Operation
-.SH TEMP VARIABLES IN ESETCONTEXT OPERATIONAL FLOW
 .TS
 allbox;
 l l l l 
 l l l l .
-\fB\fCName\fR	\fB\fCType\fR	\fB\fCSize (bits)\fR	\fB\fCDescription\fR
-TMP\_SECS	Physical Address	64	T{
+\fBName\fP	\fBType\fP	\fBSize (bits)\fP	\fBDescription\fP
+TMP_SECS	Physical Address	64	T{
 Physical address of the SECS of the page being modified.
 T}
-TMP\_CONTEXT	CONTEXT	64	Data Value of CONTEXT.
+TMP_CONTEXT	CONTEXT	64	Data Value of CONTEXT.
 .TE
 
-.SH ESETCONTEXT RETURN VALUE IN RAX
+.SH ESETCONTEXT RETURN VALUE IN RAX  href="esetcontext.html#esetcontext-return-value-in-rax"
+class="anchor">¶
+
 .TS
 allbox;
 l l l 
 l l l .
-\fB\fCError\fR	\fB\fCValue\fR	\fB\fCDescription\fR
+\fBError\fP	\fBValue\fP	\fBDescription\fP
 No Error	0	ESETCONTEXT Successful.
-SGX\_EPC\_PAGE\_CONFLICT		T{
+SGX_EPC_PAGE_CONFLICT		T{
 Failure due to concurrent operation of another SGX instruction.
 T}
 .TE
@@ -235,7 +152,7 @@ IF (DS:RDX is not 8Byte Aligned) THEN
 (* Load CONTEXT into local variable *)
 
 .PP
-TMP\_CONTEXT ← DS:RDX
+TMP_CONTEXT := DS:RDX
 
 .PP
 (* Check the EPC page for concurrency *)
@@ -244,13 +161,13 @@ TMP\_CONTEXT ← DS:RDX
 IF (EPC page is being modified) THEN
 
 .PP
-RFLAGS.ZF ← 1;
+RFLAGS.ZF := 1;
 
 .PP
-RFLAGS.CF ← 0;
+RFLAGS.CF := 0;
 
 .PP
-RAX ← SGX\_EPC\_PAGE\_CONFLICT;
+RAX := SGX_EPC_PAGE_CONFLICT;
 
 .PP
 goto DONE;
@@ -274,7 +191,7 @@ FI;
 (* check EPC page is an SECS page *)
 
 .PP
-IF (EPCM(DS:RCX).PT is not PT\_SECS) THEN
+IF (EPCM(DS:RCX).PT is not PT_SECS) THEN
 
 .PP
 #PF(DS:RCX, PFEC.SGX);
@@ -286,13 +203,13 @@ FI;
 (* load the context value into SECS(DS:RCX).ENCLAVECONTEXT *)
 
 .PP
-SECS(DS:RCX).ENCLAVECONTEXT ← TMP\_CONTEXT;
+SECS(DS:RCX).ENCLAVECONTEXT := TMP_CONTEXT;
 
 .PP
-RAX←0;
+RAX := 0;
 
 .PP
-RFLAGS.ZF ← 0;
+RFLAGS.ZF := 0;
 
 .PP
 DONE:
@@ -301,64 +218,61 @@ DONE:
 (* clear flags *)
 
 .PP
-RFLAGS.CF,PF,AF,OF,SF ← 0;
+RFLAGS.CF,PF,AF,OF,SF := 0;
 
-.SS Flags Affected
-.PP
+.SS FLAGS AFFECTED
 ZF is set if ESETCONTEXT fails due to concurrent operation with another
 SGX instruction; otherwise cleared.
 
 .PP
-CF, PF, AF, OF and SF are cleared.
+CF, PF, AF, OF, and SF are cleared.
 
-.SS Protected Mode Exceptions
-.PP
-#GP(0)
+.SS PROTECTED MODE EXCEPTIONS  href="esetcontext.html#protected-mode-exceptions"
+class="anchor">¶
 
-.PP
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
 If a memory operand effective address is outside the DS segment limit.
-
-.PP
-If DS segment is unusable.
-
-.PP
+T}
+	If DS segment is unusable.
+	T{
 If a memory operand is not properly aligned.
-
-.PP
-#PF(error
-
-.PP
+T}
+#PF(error	T{
 code) If a page fault occurs in accessing memory operands.
+T}
+.TE
 
-.SS 64\-Bit Mode Exceptions
-.PP
-#GP(0)
-
-.PP
-If a memory address is in a non\-canonical form.
-
-.PP
+.SS 64-BIT MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
+If a memory address is in a non-canonical form.
+T}
+	T{
 If a memory operand is not properly aligned.
-
-.PP
-#PF(error
-
-.PP
+T}
+#PF(error	T{
 code) If a page fault occurs in accessing memory operands.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+T}
+.TE
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

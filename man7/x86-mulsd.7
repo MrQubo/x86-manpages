@@ -1,29 +1,27 @@
+'\" t
 .nh
-.TH "X86-MULSD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-MULSD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-MULSD - MULTIPLY SCALAR DOUBLE-PRECISION FLOATING-POINT VALUE
+MULSD - MULTIPLY SCALAR DOUBLE PRECISION FLOATING-POINT VALUE
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp / En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 F2 0F 59 /r MULSD xmm1,xmm2/m64
-T}
-	A	V/V	SSE2	T{
-Multiply the low double\-precision floating\-point value in xmm2/m64 by low double\-precision floating\-point value in xmm1.
+T}	A	V/V	SSE2	T{
+Multiply the low double precision floating-point value in xmm2/m64 by low double precision floating-point value in xmm1.
 T}
 T{
 VEX.LIG.F2.0F.WIG 59 /r VMULSD xmm1,xmm2, xmm3/m64
-T}
-	B	V/V	AVX	T{
-Multiply the low double\-precision floating\-point value in xmm3/m64 by low double\-precision floating\-point value in xmm2.
+T}	B	V/V	AVX	T{
+Multiply the low double precision floating-point value in xmm3/m64 by low double precision floating-point value in xmm2.
 T}
 T{
-EVEX.LIG.F2.0F.W1 59 /r VMULSD xmm1 {k1}{z}, xmm2, xmm3/m64 {er}
-T}
-	C	V/V	AVX512F	T{
-Multiply the low double\-precision floating\-point value in xmm3/m64 by low double\-precision floating\-point value in xmm2.
+EVEX.LLIG.F2.0F.W1 59 /r VMULSD xmm1 {k1}{z}, xmm2, xmm3/m64 {er}
+T}	C	V/V	AVX512F	T{
+Multiply the low double precision floating-point value in xmm3/m64 by low double precision floating-point value in xmm2.
 T}
 .TE
 
@@ -32,135 +30,116 @@ T}
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	NA	ModRM:reg (r, w)	ModRM:r/m (r)	NA	NA
-B	NA	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	NA
-C	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (r, w)	ModRM:r/m (r)	N/A	N/A
+B	N/A	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	N/A
+C	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	N/A
 .TE
 
-.SS Description
-.PP
-Multiplies the low double\-precision floating\-point value in the second
-source operand by the low double\-precision floating\-point value in the
-first source operand, and stores the double\-precision floating\-point
+.SH DESCRIPTION
+Multiplies the low double precision floating-point value in the second
+source operand by the low double precision floating-point value in the
+first source operand, and stores the double precision floating-point
 result in the destination operand. The second source operand can be an
-XMM register or a 64\-bit memory location. The first source operand and
+XMM register or a 64-bit memory location. The first source operand and
 the destination operands are XMM registers.
 
 .PP
-128\-bit Legacy SSE version: The first source operand and the destination
-operand are the same. Bits (MAXVL\-1:64) of the corresponding destination
+128-bit Legacy SSE version: The first source operand and the destination
+operand are the same. Bits (MAXVL-1:64) of the corresponding destination
 register remain unchanged.
 
 .PP
 VEX.128 and EVEX encoded version: The quadword at bits 127:64 of the
 destination operand is copied from the same bits of the first source
-operand. Bits (MAXVL\-1:128) of the destination register are zeroed.
+operand. Bits (MAXVL-1:128) of the destination register are zeroed.
 
 .PP
 EVEX encoded version: The low quadword element of the destination
-operand is updated according to the writemask.
+operand is updated according to the write-mask.
 
 .PP
 Software should ensure VMULSD is encoded with VEX.L=0. Encoding VMULSD
 with VEX.L=1 may encounter unpredictable behavior across different
 processor generations.
 
-.SS Operation
-.SS VMULSD (EVEX encoded version)
-.PP
-.RS
-
-.nf
+.SH OPERATION
+.SS VMULSD (EVEX ENCODED VERSION)
+.EX
 IF (EVEX.b = 1) AND SRC2 *is a register*
     THEN
-        SET\_RM(EVEX.RC);
+        SET_ROUNDING_MODE_FOR_THIS_INSTRUCTION(EVEX.RC);
     ELSE
-        SET\_RM(MXCSR.RM);
+        SET_ROUNDING_MODE_FOR_THIS_INSTRUCTION(MXCSR.RC);
 FI;
 IF k1[0] or *no writemask*
-    THEN DEST[63:0]←SRC1[63:0] * SRC2[63:0]
+    THEN DEST[63:0] := SRC1[63:0] * SRC2[63:0]
     ELSE
-        IF *merging\-masking* ; merging\-masking
+        IF *merging-masking* ; merging-masking
             THEN *DEST[63:0] remains unchanged*
-            ELSE ; zeroing\-masking
-                THEN DEST[63:0]←0
+            ELSE ; zeroing-masking
+                THEN DEST[63:0] := 0
             FI
     FI;
 ENDFOR
-DEST[127:64] ← SRC1[127:64]
-DEST[MAXVL\-1:128] ← 0
+DEST[127:64] := SRC1[127:64]
+DEST[MAXVL-1:128] := 0
+.EE
 
-.fi
-.RE
+.SS VMULSD (VEX.128 ENCODED VERSION)  href="mulsd.html#vmulsd--vex-128-encoded-version-"
+class="anchor">¶
 
-.SS VMULSD (VEX.128 encoded version)
-.PP
-.RS
+.EX
+DEST[63:0] := SRC1[63:0] * SRC2[63:0]
+DEST[127:64] := SRC1[127:64]
+DEST[MAXVL-1:128] := 0
+.EE
 
-.nf
-DEST[63:0]←SRC1[63:0] * SRC2[63:0]
-DEST[127:64] ←SRC1[127:64]
-DEST[MAXVL\-1:128] ←0
+.SS MULSD (128-BIT LEGACY SSE VERSION)  href="mulsd.html#mulsd--128-bit-legacy-sse-version-"
+class="anchor">¶
 
-.fi
-.RE
+.EX
+DEST[63:0] := DEST[63:0] * SRC[63:0]
+DEST[MAXVL-1:64] (Unmodified)
+.EE
 
-.SS MULSD (128\-bit Legacy SSE version)
-.PP
-.RS
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="mulsd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.nf
-DEST[63:0]←DEST[63:0] * SRC[63:0]
-DEST[MAXVL\-1:64] (Unmodified)
+.EX
+VMULSD __m128d _mm_mask_mul_sd(__m128d s, __mmask8 k, __m128d a, __m128d b);
 
-.fi
-.RE
+VMULSD __m128d _mm_maskz_mul_sd( __mmask8 k, __m128d a, __m128d b);
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+VMULSD __m128d _mm_mul_round_sd( __m128d a, __m128d b, int);
 
-.nf
-VMULSD \_\_m128d \_mm\_mask\_mul\_sd(\_\_m128d s, \_\_mmask8 k, \_\_m128d a, \_\_m128d b);
+VMULSD __m128d _mm_mask_mul_round_sd(__m128d s, __mmask8 k, __m128d a, __m128d b, int);
 
-VMULSD \_\_m128d \_mm\_maskz\_mul\_sd( \_\_mmask8 k, \_\_m128d a, \_\_m128d b);
+VMULSD __m128d _mm_maskz_mul_round_sd( __mmask8 k, __m128d a, __m128d b, int);
 
-VMULSD \_\_m128d \_mm\_mul\_round\_sd( \_\_m128d a, \_\_m128d b, int);
+MULSD __m128d _mm_mul_sd (__m128d a, __m128d b)
+.EE
 
-VMULSD \_\_m128d \_mm\_mask\_mul\_round\_sd(\_\_m128d s, \_\_mmask8 k, \_\_m128d a, \_\_m128d b, int);
+.SH SIMD FLOATING-POINT EXCEPTIONS
+Overflow, Underflow, Invalid, Precision, Denormal.
 
-VMULSD \_\_m128d \_mm\_maskz\_mul\_round\_sd( \_\_mmask8 k, \_\_m128d a, \_\_m128d b, int);
-
-MULSD \_\_m128d \_mm\_mul\_sd (\_\_m128d a, \_\_m128d b)
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-Overflow, Underflow, Invalid, Precision, Denormal
-
-.SS Other Exceptions
-.PP
-Non\-EVEX\-encoded instruction, see Exceptions Type 3.
+.SH OTHER EXCEPTIONS
+Non-EVEX-encoded instruction, see Table
+2-20, “Type 3 Class Exception Conditions.”
 
 .PP
-EVEX\-encoded instruction, see Exceptions Type E3.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+EVEX-encoded instruction, see Table
+2-47, “Type E3 Class Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

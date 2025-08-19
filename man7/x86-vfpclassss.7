@@ -1,138 +1,132 @@
+'\" t
 .nh
-.TH "X86-VFPCLASSSS" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VFPCLASSSS" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-VFPCLASSSS - TESTS TYPES OF A SCALAR FLOAT32 VALUES
+VFPCLASSSS - TESTS TYPE OF A SCALAR FLOAT32 VALUE
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 Bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
-EVEX.LIG.66.0F3A.W0 67 /r VFPCLASSSS k2 {k1}, xmm2/m32, imm8
-T}
-	A	V/V	AVX512DQ	T{
-Tests the input for the following categories: NaN, +0, \-0, +Infinity, \-Infinity, denormal, finite negative. The immediate field provides a mask bit for each of these category tests. The masked test results are OR\-ed together to form a mask result.
+EVEX.LLIG.66.0F3A.W0 67 /r VFPCLASSSS k2 {k1}, xmm2/m32, imm8
+T}	A	V/V	AVX512DQ	T{
+Tests the input for the following categories: NaN, +0, -0, +Infinity, -Infinity, denormal, finite negative. The immediate field provides a mask bit for each of these category tests. The masked test results are OR-ed together to form a mask result.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="vfpclassss.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Tuple1 Scalar	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Tuple1 Scalar	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
-.SS Description
-.PP
-The FPCLASSSS instruction checks the low single\-precision floating point
+.SS DESCRIPTION
+The FPCLASSSS instruction checks the low single-precision floating-point
 value in the source operand for special categories, specified by the set
 bits in the imm8 byte. Each set bit in imm8 specifies a category of
-floating\-point values that the input data element is classified against.
+floating-point values that the input data element is classified against.
 The classified results of all specified categories of an input value are
 ORed together to form the final boolean result for the input element.
 The result is written to the low bit in a mask register k2 according to
-the writemask k1. Bits MAX\_KL\-1: 1 of the destination are cleared.
+the writemask k1. Bits MAX_KL-1: 1 of the destination are cleared.
 
 .PP
 The classification categories specified by imm8 are shown in Figure
-5\-13. The classification test for each category is listed in Table 5\-13\&.
+5-13
+\[la]vfpclasspd.html#fig\-5\-13\[ra]\&. The classification test for each
+category is listed in Table 5-14\&.
 
 .PP
 EVEX.vvvv is reserved and must be 1111b otherwise instructions will
 #UD.
 
-.SS Operation
-.PP
-.RS
-
-.nf
+.SS OPERATION
+.EX
 CheckFPClassSP (tsrc[31:0], imm8[7:0]){
     //* Start checking the source operand for special type *//
-    NegNum ←tsrc[31];
-    IF (tsrc[30:23]=0FFh) Then ExpAllOnes←1; FI;
-    IF (tsrc[30:23]=0h) Then ExpAllZeros←1;
+    NegNum :=tsrc[31];
+    IF (tsrc[30:23]=0FFh) Then ExpAllOnes := 1; FI;
+    IF (tsrc[30:23]=0h) Then ExpAllZeros := 1;
     IF (ExpAllZeros AND MXCSR.DAZ) Then
-        MantAllZeros ← 1;
+        MantAllZeros := 1;
     ELSIF (tsrc[22:0]=0h) Then
-        MantAllZeros ← 1;
+        MantAllZeros := 1;
     FI;
     ZeroNumber= ExpAllZeros AND MantAllZeros
     SignalingBit= tsrc[22];
-    sNaN\_res←ExpAllOnes AND NOT(MantAllZeros) AND NOT(SignalingBit); // sNaN
-    qNaN\_res←ExpAllOnes AND NOT(MantAllZeros) AND SignalingBit; // qNaN
-    Pzero\_res←NOT(NegNum) AND ExpAllZeros AND MantAllZeros; // +0
-    Nzero\_res←NegNum AND ExpAllZeros AND MantAllZeros; // \-0
-    PInf\_res←NOT(NegNum) AND ExpAllOnes AND MantAllZeros; // +Inf
-    NInf\_res←NegNum AND ExpAllOnes AND MantAllZeros; // \-Inf
-    Denorm\_res←ExpAllZeros AND NOT(MantAllZeros); // denorm
-    FinNeg\_res←NegNum AND NOT(ExpAllOnes) AND NOT(ZeroNumber); // \-finite
-    bResult = ( imm8[0] AND qNaN\_res ) OR (imm8[1] AND Pzero\_res ) OR
-            ( imm8[2] AND Nzero\_res ) OR ( imm8[3] AND PInf\_res ) OR
-            ( imm8[4] AND NInf\_res ) OR ( imm8[5] AND Denorm\_res ) OR
-            ( imm8[6] AND FinNeg\_res ) OR ( imm8[7] AND sNaN\_res );
+    sNaN_res := ExpAllOnes AND NOT(MantAllZeros) AND NOT(SignalingBit); // sNaN
+    qNaN_res := ExpAllOnes AND NOT(MantAllZeros) AND SignalingBit; // qNaN
+    Pzero_res := NOT(NegNum) AND ExpAllZeros AND MantAllZeros; // +0
+    Nzero_res := NegNum AND ExpAllZeros AND MantAllZeros; // -0
+    PInf_res := NOT(NegNum) AND ExpAllOnes AND MantAllZeros; // +Inf
+    NInf_res := NegNum AND ExpAllOnes AND MantAllZeros; // -Inf
+    Denorm_res := ExpAllZeros AND NOT(MantAllZeros); // denorm
+    FinNeg_res := NegNum AND NOT(ExpAllOnes) AND NOT(ZeroNumber); // -finite
+    bResult = ( imm8[0] AND qNaN_res ) OR (imm8[1] AND Pzero_res ) OR
+            ( imm8[2] AND Nzero_res ) OR ( imm8[3] AND PInf_res ) OR
+            ( imm8[4] AND NInf_res ) OR ( imm8[5] AND Denorm_res ) OR
+            ( imm8[6] AND FinNeg_res ) OR ( imm8[7] AND sNaN_res );
     Return bResult;
 } //* end of CheckSPClassSP() *//
+.EE
 
-.fi
-.RE
+.SS VFPCLASSSS (EVEX ENCODED VERSION)  href="vfpclassss.html#vfpclassss--evex-encoded-version-"
+class="anchor">¶
 
-.SS VFPCLASSSS (EVEX encoded version)
-.PP
-.RS
-
-.nf
+.EX
 IF k1[0] OR *no writemask*
-    THEN DEST[0]←
+    THEN DEST[0] :=
         CheckFPClassSP(SRC1[31:0], imm8[7:0])
-    ELSE DEST[0]←0 ; zeroing\-masking only
+    ELSE DEST[0] := 0 ; zeroing-masking only
 FI;
-DEST[MAX\_KL\-1:1] ← 0
+DEST[MAX_KL-1:1] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vfpclassss.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
+.EX
+VFPCLASSSS __mmask8 _mm_fpclass_ss_mask( __m128 a, int c)
+
+VFPCLASSSS __mmask8 _mm_mask_fpclass_ss_mask( __mmask8 m, __m128 a, int c)
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vfpclassss.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
+None.
 
-.nf
-VFPCLASSSS \_\_mmask8 \_mm\_fpclass\_ss\_mask( \_\_m128 a, int c)
+.SS OTHER EXCEPTIONS
+See Table 2-53, “Type E6 Class
+Exception Conditions.”
 
-VFPCLASSSS \_\_mmask8 \_mm\_mask\_fpclass\_ss\_mask( \_\_mmask8 m, \_\_m128 a, int c)
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
-None
-
-.SS Other Exceptions
-.PP
-See Exceptions Type E6
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If EVEX.vvvv != 1111B.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

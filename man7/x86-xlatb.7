@@ -1,98 +1,85 @@
+'\" t
 .nh
-.TH "X86-XLAT-XLATB" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-XLAT-XLATB" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 XLAT-XLATB - TABLE LOOK-UP TRANSLATION
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
-D7	XLAT m8	ZO	Valid	Valid	Set AL to memory byte DS:
-[
-(E)BX + unsigned AL
-]
-\&.
-D7	XLATB	ZO	Valid	Valid	Set AL to memory byte DS:
-[
-(E)BX + unsigned AL
-]
-\&.
-REX.W + D7	XLATB	ZO	Valid	N.E.	Set AL to memory byte 
-[
-RBX + unsigned AL
-]
-\&.
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
+D7	XLAT m8	ZO	Valid	Valid	Set AL to memory byte DS:[(E)BX + unsigned AL]\&.
+D7	XLATB	ZO	Valid	Valid	Set AL to memory byte DS:[(E)BX + unsigned AL]\&.
+REX.W + D7	XLATB	ZO	Valid	N.E.	Set AL to memory byte [RBX + unsigned AL]\&.
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./xlat:xlatb.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-ZO	NA	NA	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+ZO	N/A	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Locates a byte entry in a table in memory, using the contents of the AL
 register as a table index, then copies the contents of the table entry
 back into the AL register. The index in the AL register is treated as an
 unsigned integer. The XLAT and XLATB instructions get the base address
 of the table in memory from either the DS:EBX or the DS:BX registers
-(depending on the address\-size attribute of the instruction, 32 or 16,
+(depending on the address-size attribute of the instruction, 32 or 16,
 respectively). (The DS segment may be overridden with a segment override
 prefix.)
 
 .PP
-At the assembly\-code level, two forms of this instruction are allowed:
-the “explicit\-operand” form and the “no\-operand” form. The
-explicit\-operand form (specified with the XLAT mnemonic) allows the base
+At the assembly-code level, two forms of this instruction are allowed:
+the “explicit-operand” form and the “no-operand” form. The
+explicit-operand form (specified with the XLAT mnemonic) allows the base
 address of the table to be specified explicitly with a symbol. This
-explicit\-operands form is provided to allow documentation; however, note
+explicit-operands form is provided to allow documentation; however, note
 that the documentation provided by this form can be misleading. That is,
 the symbol does not have to specify the correct base address. The base
 address is always specified by the DS:(E)BX registers, which must be
 loaded correctly before the XLAT instruction is executed.
 
 .PP
-The no\-operands form (XLATB) provides a “short form” of the XLAT
+The no-operands form (XLATB) provides a “short form” of the XLAT
 instructions. Here also the processor assumes that the DS:(E)BX
 registers contain the base address of the table.
 
 .PP
-In 64\-bit mode, operation is similar to that in legacy or compatibility
+In 64-bit mode, operation is similar to that in legacy or compatibility
 mode. AL is used to specify the table index (the operand size is fixed
 at 8 bits). RBX, however, is used to specify the table’s base address.
 See the summary chart at the beginning of this section for encoding data
 and limits.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
+.EX
 IF AddressSize = 16
     THEN
-        AL ← (DS:BX + ZeroExtend(AL));
+        AL := (DS:BX + ZeroExtend(AL));
     ELSE IF (AddressSize = 32)
-        AL ← (DS:EBX + ZeroExtend(AL)); FI;
+        AL := (DS:EBX + ZeroExtend(AL)); FI;
     ELSE (AddressSize = 64)
-        AL ← (RBX + ZeroExtend(AL));
+        AL := (RBX + ZeroExtend(AL));
 FI;
-
-.fi
-.RE
+.EE
 
 .SH FLAGS AFFECTED
-.PP
 None.
 
-.SH PROTECTED MODE EXCEPTIONS
+.SH PROTECTED MODE EXCEPTIONS  href="./xlat:xlatb.html#protected-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
@@ -102,15 +89,18 @@ T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS  href="./xlat:xlatb.html#real-address-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
@@ -120,53 +110,55 @@ T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS  href="./xlat:xlatb.html#virtual-8086-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH COMPATIBILITY MODE EXCEPTIONS
+.SH COMPATIBILITY MODE EXCEPTIONS  href="./xlat:xlatb.html#compatibility-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
-If a memory address referencing the SS segment is in a non\-canonical form.
+If a memory address referencing the SS segment is in a non-canonical form.
 T}
 #GP(0)	T{
-If the memory address is in a non\-canonical form.
+If the memory address is in a non-canonical form.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

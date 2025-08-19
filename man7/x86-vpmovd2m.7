@@ -1,96 +1,90 @@
+'\" t
 .nh
-.TH "X86-VPMOVB2M-VPMOVW2M-VPMOVD2M-VPMOVQ2M" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VPMOVB2M-VPMOVW2M-VPMOVD2M-VPMOVQ2M" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VPMOVB2M-VPMOVW2M-VPMOVD2M-VPMOVQ2M - CONVERT A VECTOR REGISTER TO A MASK
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 EVEX.128.F3.0F38.W0 29 /r VPMOVB2M k1, xmm1
-T}
-	RM	V/V	AVX512VL AVX512BW	T{
+T}	RM	V/V	AVX512VL AVX512BW	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding byte in XMM1.
 T}
 T{
 EVEX.256.F3.0F38.W0 29 /r VPMOVB2M k1, ymm1
-T}
-	RM	V/V	AVX512VL AVX512BW	T{
+T}	RM	V/V	AVX512VL AVX512BW	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding byte in YMM1.
 T}
 T{
 EVEX.512.F3.0F38.W0 29 /r VPMOVB2M k1, zmm1
-T}
-	RM	V/V	AVX512BW	T{
+T}	RM	V/V	AVX512BW	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding byte in ZMM1.
 T}
 T{
 EVEX.128.F3.0F38.W1 29 /r VPMOVW2M k1, xmm1
-T}
-	RM	V/V	AVX512VL AVX512BW	T{
+T}	RM	V/V	AVX512VL AVX512BW	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding word in XMM1.
 T}
 T{
 EVEX.256.F3.0F38.W1 29 /r VPMOVW2M k1, ymm1
-T}
-	RM	V/V	AVX512VL AVX512BW	T{
+T}	RM	V/V	AVX512VL AVX512BW	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding word in YMM1.
 T}
 T{
 EVEX.512.F3.0F38.W1 29 /r VPMOVW2M k1, zmm1
-T}
-	RM	V/V	AVX512BW	T{
+T}	RM	V/V	AVX512BW	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding word in ZMM1.
 T}
 T{
 EVEX.128.F3.0F38.W0 39 /r VPMOVD2M k1, xmm1
-T}
-	RM	V/V	AVX512VL AVX512DQ	T{
+T}	RM	V/V	AVX512VL AVX512DQ	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding doubleword in XMM1.
 T}
 T{
 EVEX.256.F3.0F38.W0 39 /r VPMOVD2M k1, ymm1
-T}
-	RM	V/V	AVX512VL AVX512DQ	T{
+T}	RM	V/V	AVX512VL AVX512DQ	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding doubleword in YMM1.
 T}
 T{
 EVEX.512.F3.0F38.W0 39 /r VPMOVD2M k1, zmm1
-T}
-	RM	V/V	AVX512DQ	T{
+T}	RM	V/V	AVX512DQ	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding doubleword in ZMM1.
 T}
 T{
 EVEX.128.F3.0F38.W1 39 /r VPMOVQ2M k1, xmm1
-T}
-	RM	V/V	AVX512VL AVX512DQ	T{
+T}	RM	V/V	AVX512VL AVX512DQ	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding quadword in XMM1.
 T}
 T{
 EVEX.256.F3.0F38.W1 39 /r VPMOVQ2M k1, ymm1
-T}
-	RM	V/V	AVX512VL AVX512DQ	T{
+T}	RM	V/V	AVX512VL AVX512DQ	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding quadword in YMM1.
 T}
 T{
 EVEX.512.F3.0F38.W1 39 /r VPMOVQ2M k1, zmm1
-T}
-	RM	V/V	AVX512DQ	T{
+T}	RM	V/V	AVX512DQ	T{
 Sets each bit in k1 to 1 or 0 based on the value of the most significant bit of the corresponding quadword in ZMM1.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING <a
+href="./vpmovb2m:vpmovw2m:vpmovd2m:vpmovq2m.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-RM	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+RM	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
-.SS Description
+.SS DESCRIPTION  href="./vpmovb2m:vpmovw2m:vpmovd2m:vpmovq2m.html#description"
+class="anchor">¶
+
 .PP
 Converts a vector register to a mask register. Each element in the
 destination register is set to 1 or 0 depending on the value of most
@@ -104,139 +98,137 @@ a mask register.
 EVEX.vvvv is reserved and must be 1111b otherwise instructions will
 #UD.
 
-.SS Operation
-.SS VPMOVB2M (EVEX encoded versions)
-.PP
-.RS
+.SS OPERATION  href="./vpmovb2m:vpmovw2m:vpmovd2m:vpmovq2m.html#operation"
+class="anchor">¶
 
-.nf
+.SS VPMOVB2M (EVEX ENCODED VERSIONS) <a
+href="./vpmovb2m:vpmovw2m:vpmovd2m:vpmovq2m.html#vpmovb2m--evex-encoded-versions-"
+class="anchor">¶
+
+.EX
 (KL, VL) = (16, 128), (32, 256), (64, 512)
-FOR j←0 TO KL\-1
-    i←j * 8
+FOR j := 0 TO KL-1
+    i := j * 8
     IF SRC[i+7]
-        THEN DEST[j] ← 1
-        ELSE DEST[j] ← 0
+        THEN DEST[j]:=1
+        ELSE DEST[j] := 0
     FI;
 ENDFOR
-DEST[MAX\_KL\-1:KL] ← 0
+DEST[MAX_KL-1:KL] := 0
+.EE
 
-.fi
-.RE
+.SS VPMOVW2M (EVEX ENCODED VERSIONS) <a
+href="./vpmovb2m:vpmovw2m:vpmovd2m:vpmovq2m.html#vpmovw2m--evex-encoded-versions-"
+class="anchor">¶
 
-.SS VPMOVW2M (EVEX encoded versions)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (8, 128), (16, 256), (32, 512)
-FOR j←0 TO KL\-1
-    i←j * 16
+FOR j := 0 TO KL-1
+    i := j * 16
     IF SRC[i+15]
-        THEN DEST[j] ← 1
-        ELSE DEST[j] ← 0
+        THEN DEST[j]:=1
+        ELSE DEST[j] := 0
     FI;
 ENDFOR
-DEST[MAX\_KL\-1:KL] ← 0
+DEST[MAX_KL-1:KL] := 0
+.EE
 
-.fi
-.RE
+.SS VPMOVD2M (EVEX ENCODED VERSIONS) <a
+href="./vpmovb2m:vpmovw2m:vpmovd2m:vpmovq2m.html#vpmovd2m--evex-encoded-versions-"
+class="anchor">¶
 
-.SS VPMOVD2M (EVEX encoded versions)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (4, 128), (8, 256), (16, 512)
-FOR j←0 TO KL\-1
-    i←j * 32
+FOR j := 0 TO KL-1
+    i := j * 32
     IF SRC[i+31]
-        THEN DEST[j] ← 1
-        ELSE DEST[j] ← 0
+        THEN DEST[j]:=1
+        ELSE DEST[j] := 0
     FI;
 ENDFOR
-DEST[MAX\_KL\-1:KL] ← 0
+DEST[MAX_KL-1:KL] := 0
+.EE
 
-.fi
-.RE
+.SS VPMOVQ2M (EVEX ENCODED VERSIONS) <a
+href="./vpmovb2m:vpmovw2m:vpmovd2m:vpmovq2m.html#vpmovq2m--evex-encoded-versions-"
+class="anchor">¶
 
-.SS VPMOVQ2M (EVEX encoded versions)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
-FOR j←0 TO KL\-1
-    i←j * 64
+FOR j := 0 TO KL-1
+    i := j * 64
     IF SRC[i+63]
-        THEN DEST[j] ← 1
-        ELSE DEST[j] ← 0
+        THEN DEST[j]:=1
+        ELSE DEST[j] := 0
     FI;
 ENDFOR
-DEST[MAX\_KL\-1:KL] ← 0
+DEST[MAX_KL-1:KL] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENTS <a
+href="./vpmovb2m:vpmovw2m:vpmovd2m:vpmovq2m.html#intel-c-c++-compiler-intrinsic-equivalents"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalents
+.EX
+VPMPOVB2M __mmask64 _mm512_movepi8_mask( __m512i );
+
+VPMPOVD2M __mmask16 _mm512_movepi32_mask( __m512i );
+
+VPMPOVQ2M __mmask8 _mm512_movepi64_mask( __m512i );
+
+VPMPOVW2M __mmask32 _mm512_movepi16_mask( __m512i );
+
+VPMPOVB2M __mmask32 _mm256_movepi8_mask( __m256i );
+
+VPMPOVD2M __mmask8 _mm256_movepi32_mask( __m256i );
+
+VPMPOVQ2M __mmask8 _mm256_movepi64_mask( __m256i );
+
+VPMPOVW2M __mmask16 _mm256_movepi16_mask( __m256i );
+
+VPMPOVB2M __mmask16 _mm_movepi8_mask( __m128i );
+
+VPMPOVD2M __mmask8 _mm_movepi32_mask( __m128i );
+
+VPMPOVQ2M __mmask8 _mm_movepi64_mask( __m128i );
+
+VPMPOVW2M __mmask8 _mm_movepi16_mask( __m128i );
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS <a
+href="./vpmovb2m:vpmovw2m:vpmovd2m:vpmovq2m.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
+None.
 
-.nf
-VPMPOVB2M \_\_mmask64 \_mm512\_movepi8\_mask( \_\_m512i );
+.SS OTHER EXCEPTIONS  href="./vpmovb2m:vpmovw2m:vpmovd2m:vpmovq2m.html#other-exceptions"
+class="anchor">¶
 
-VPMPOVD2M \_\_mmask16 \_mm512\_movepi32\_mask( \_\_m512i );
-
-VPMPOVQ2M \_\_mmask8 \_mm512\_movepi64\_mask( \_\_m512i );
-
-VPMPOVW2M \_\_mmask32 \_mm512\_movepi16\_mask( \_\_m512i );
-
-VPMPOVB2M \_\_mmask32 \_mm256\_movepi8\_mask( \_\_m256i );
-
-VPMPOVD2M \_\_mmask8 \_mm256\_movepi32\_mask( \_\_m256i );
-
-VPMPOVQ2M \_\_mmask8 \_mm256\_movepi64\_mask( \_\_m256i );
-
-VPMPOVW2M \_\_mmask16 \_mm256\_movepi16\_mask( \_\_m256i );
-
-VPMPOVB2M \_\_mmask16 \_mm\_movepi8\_mask( \_\_m128i );
-
-VPMPOVD2M \_\_mmask8 \_mm\_movepi32\_mask( \_\_m128i );
-
-VPMPOVQ2M \_\_mmask8 \_mm\_movepi64\_mask( \_\_m128i );
-
-VPMPOVW2M \_\_mmask8 \_mm\_movepi16\_mask( \_\_m128i );
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
-None
+EVEX-encoded instruction, see Table
+2-55, “Type E7NM Class Exception Conditions.”
 
-.SS Other Exceptions
 .PP
-EVEX\-encoded instruction, see Exceptions Type E7NM
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If EVEX.vvvv != 1111B.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

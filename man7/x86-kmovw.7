@@ -1,126 +1,111 @@
+'\" t
 .nh
-.TH "X86-KMOVW-KMOVB-KMOVQ-KMOVD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-KMOVW-KMOVB-KMOVQ-KMOVD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 KMOVW-KMOVB-KMOVQ-KMOVD - MOVE FROM AND TO MASK REGISTERS
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 VEX.L0.0F.W0 90 /r KMOVW k1, k2/m16
-T}
-	RM	V/V	AVX512F	T{
+T}	RM	V/V	AVX512F	T{
 Move 16 bits mask from k2/m16 and store the result in k1.
 T}
 T{
 VEX.L0.66.0F.W0 90 /r KMOVB k1, k2/m8
-T}
-	RM	V/V	AVX512DQ	T{
+T}	RM	V/V	AVX512DQ	T{
 Move 8 bits mask from k2/m8 and store the result in k1.
 T}
 T{
 VEX.L0.0F.W1 90 /r KMOVQ k1, k2/m64
-T}
-	RM	V/V	AVX512BW	T{
+T}	RM	V/V	AVX512BW	T{
 Move 64 bits mask from k2/m64 and store the result in k1.
 T}
 T{
 VEX.L0.66.0F.W1 90 /r KMOVD k1, k2/m32
-T}
-	RM	V/V	AVX512BW	T{
+T}	RM	V/V	AVX512BW	T{
 Move 32 bits mask from k2/m32 and store the result in k1.
 T}
 T{
 VEX.L0.0F.W0 91 /r KMOVW m16, k1
-T}
-	MR	V/V	AVX512F	T{
+T}	MR	V/V	AVX512F	T{
 Move 16 bits mask from k1 and store the result in m16.
 T}
 T{
 VEX.L0.66.0F.W0 91 /r KMOVB m8, k1
-T}
-	MR	V/V	AVX512DQ	T{
+T}	MR	V/V	AVX512DQ	T{
 Move 8 bits mask from k1 and store the result in m8.
 T}
 T{
 VEX.L0.0F.W1 91 /r KMOVQ m64, k1
-T}
-	MR	V/V	AVX512BW	T{
+T}	MR	V/V	AVX512BW	T{
 Move 64 bits mask from k1 and store the result in m64.
 T}
 T{
 VEX.L0.66.0F.W1 91 /r KMOVD m32, k1
-T}
-	MR	V/V	AVX512BW	T{
+T}	MR	V/V	AVX512BW	T{
 Move 32 bits mask from k1 and store the result in m32.
 T}
 T{
 VEX.L0.0F.W0 92 /r KMOVW k1, r32
-T}
-	RR	V/V	AVX512F	T{
+T}	RR	V/V	AVX512F	T{
 Move 16 bits mask from r32 to k1.
 T}
 T{
 VEX.L0.66.0F.W0 92 /r KMOVB k1, r32
-T}
-	RR	V/V	AVX512DQ	T{
+T}	RR	V/V	AVX512DQ	T{
 Move 8 bits mask from r32 to k1.
 T}
 T{
 VEX.L0.F2.0F.W1 92 /r KMOVQ k1, r64
-T}
-	RR	V/I	AVX512BW	T{
+T}	RR	V/I	AVX512BW	T{
 Move 64 bits mask from r64 to k1.
 T}
 T{
 VEX.L0.F2.0F.W0 92 /r KMOVD k1, r32
-T}
-	RR	V/V	AVX512BW	T{
+T}	RR	V/V	AVX512BW	T{
 Move 32 bits mask from r32 to k1.
 T}
 T{
 VEX.L0.0F.W0 93 /r KMOVW r32, k1
-T}
-	RR	V/V	AVX512F	T{
+T}	RR	V/V	AVX512F	T{
 Move 16 bits mask from k1 to r32.
 T}
 T{
 VEX.L0.66.0F.W0 93 /r KMOVB r32, k1
-T}
-	RR	V/V	AVX512DQ	T{
+T}	RR	V/V	AVX512DQ	T{
 Move 8 bits mask from k1 to r32.
 T}
 T{
 VEX.L0.F2.0F.W1 93 /r KMOVQ r64, k1
-T}
-	RR	V/I	AVX512BW	T{
+T}	RR	V/I	AVX512BW	T{
 Move 64 bits mask from k1 to r64.
 T}
 T{
 VEX.L0.F2.0F.W0 93 /r KMOVD r32, k1
-T}
-	RR	V/V	AVX512BW	T{
+T}	RR	V/V	AVX512BW	T{
 Move 32 bits mask from k1 to r32.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./kmovw:kmovb:kmovq:kmovd.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l 
 l l l .
-Op/En	Operand 1	Operand 2
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP
 RM	ModRM:reg (w)	ModRM:r/m (r)
 MR	ModRM:r/m (w, ModRM:[7:6] must not be 11b)	ModRM:reg (r)
-RR	ModRM:reg (w)	ModRM:r/m (r, ModRM:
-[
-7:6
-]
- must be 11b)
+RR	ModRM:reg (w)	ModRM:r/m (r, ModRM:[7:6] must be 11b)
 .TE
 
-.SH DESCRIPTION
+.SH DESCRIPTION  href="./kmovw:kmovb:kmovq:kmovd.html#description"
+class="anchor">¶
+
 .PP
 Copies values from the source operand (second operand) to the
 destination operand (first operand). The source and destination operands
@@ -129,105 +114,89 @@ instruction cannot be used to transfer data between general purpose
 registers and or memory locations.
 
 .PP
-When moving to a mask register, the result is zero extended to MAX\_KL
-size (i.e., 64 bits currently). When moving to a general\-purpose
-register (GPR), the result is zero\-extended to the size of the
-destination. In 32\-bit mode, the default GPR destination’s size is 32
-bits. In 64\-bit mode, the default GPR destination’s size is 64 bits.
+When moving to a mask register, the result is zero extended to MAX_KL
+size (i.e., 64 bits currently). When moving to a general-purpose
+register (GPR), the result is zero-extended to the size of the
+destination. In 32-bit mode, the default GPR destination’s size is 32
+bits. In 64-bit mode, the default GPR destination’s size is 64 bits.
 Note that VEX.W can only be used to modify the size of the GPR operand
 in 64b mode.
 
 .SH OPERATION
 .SS KMOVW
-.PP
-.RS
-
-.nf
+.EX
 IF *destination is a memory location*
-    DEST[15:0] ← SRC[15:0]
+    DEST[15:0] := SRC[15:0]
 IF *destination is a mask register or a GPR *
-    DEST ← ZeroExtension(SRC[15:0])
-
-.fi
-.RE
+    DEST := ZeroExtension(SRC[15:0])
+.EE
 
 .SS KMOVB
-.PP
-.RS
-
-.nf
+.EX
 IF *destination is a memory location*
-    DEST[7:0] ← SRC[7:0]
+    DEST[7:0] := SRC[7:0]
 IF *destination is a mask register or a GPR *
-    DEST ← ZeroExtension(SRC[7:0])
-
-.fi
-.RE
+    DEST := ZeroExtension(SRC[7:0])
+.EE
 
 .SS KMOVQ
-.PP
-.RS
-
-.nf
+.EX
 IF *destination is a memory location or a GPR*
-    DEST[63:0] ← SRC[63:0]
+    DEST[63:0] := SRC[63:0]
 IF *destination is a mask register*
-    DEST ← ZeroExtension(SRC[63:0])
-
-.fi
-.RE
+    DEST := ZeroExtension(SRC[63:0])
+.EE
 
 .SS KMOVD
-.PP
-.RS
-
-.nf
+.EX
 IF *destination is a memory location*
-    DEST[31:0] ← SRC[31:0]
+    DEST[31:0] := SRC[31:0]
 IF *destination is a mask register or a GPR *
-    DEST ← ZeroExtension(SRC[31:0])
+    DEST := ZeroExtension(SRC[31:0])
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT <a
+href="./kmovw:kmovb:kmovq:kmovd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
+.EX
+KMOVW __mmask16 _mm512_kmov(__mmask16 a);
+.EE
 
-.nf
-KMOVW \_\_mmask16 \_mm512\_kmov(\_\_mmask16 a);
-
-.fi
-.RE
-
-.SH FLAGS AFFECTED
-.PP
-None
-
-.SH SIMD FLOATING\-POINT EXCEPTIONS
-.PP
-None
-
-.SH OTHER EXCEPTIONS
-.PP
-Instructions with RR operand encoding See Exceptions Type K20.
+.SH FLAGS AFFECTED  href="./kmovw:kmovb:kmovq:kmovd.html#flags-affected"
+class="anchor">¶
 
 .PP
-Instructions with RM or MR operand encoding See Exceptions Type K21.
+None.
 
-.SH SEE ALSO
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="./kmovw:kmovb:kmovq:kmovd.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+None.
+
+.SH OTHER EXCEPTIONS  href="./kmovw:kmovb:kmovq:kmovd.html#other-exceptions"
+class="anchor">¶
+
+.PP
+Instructions with RR operand encoding, see
+Table 2-63, “TYPE K20 Exception
+Definition (VEX-Encoded OpMask Instructions w/o Memory Arg).”
+
+.PP
+Instructions with RM or MR operand encoding, see
+Table 2-64, “TYPE K21 Exception
+Definition (VEX-Encoded OpMask Instructions Addressing Memory).”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

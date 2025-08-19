@@ -1,29 +1,27 @@
+'\" t
 .nh
-.TH "X86-SUBSD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-SUBSD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-SUBSD - SUBTRACT SCALAR DOUBLE-PRECISION FLOATING-POINT VALUE
+SUBSD - SUBTRACT SCALAR DOUBLE PRECISION FLOATING-POINT VALUE
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp / En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 F2 0F 5C /r SUBSD xmm1, xmm2/m64
-T}
-	A	V/V	SSE2	T{
-Subtract the low double\-precision floating\-point value in xmm2/m64 from xmm1 and store the result in xmm1.
+T}	A	V/V	SSE2	T{
+Subtract the low double precision floating-point value in xmm2/m64 from xmm1 and store the result in xmm1.
 T}
 T{
 VEX.LIG.F2.0F.WIG 5C /r VSUBSD xmm1,xmm2, xmm3/m64
-T}
-	B	V/V	AVX	T{
-Subtract the low double\-precision floating\-point value in xmm3/m64 from xmm2 and store the result in xmm1.
+T}	B	V/V	AVX	T{
+Subtract the low double precision floating-point value in xmm3/m64 from xmm2 and store the result in xmm1.
 T}
 T{
-EVEX.LIG.F2.0F.W1 5C /r VSUBSD xmm1 {k1}{z}, xmm2, xmm3/m64{er}
-T}
-	C	V/V	AVX512F	T{
-Subtract the low double\-precision floating\-point value in xmm3/m64 from xmm2 and store the result in xmm1 under writemask k1.
+EVEX.LLIG.F2.0F.W1 5C /r VSUBSD xmm1 {k1}{z}, xmm2, xmm3/m64{er}
+T}	C	V/V	AVX512F	T{
+Subtract the low double precision floating-point value in xmm3/m64 from xmm2 and store the result in xmm1 under writemask k1.
 T}
 .TE
 
@@ -32,136 +30,117 @@ T}
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	NA	ModRM:reg (r, w)	ModRM:r/m (r)	NA	NA
-B	NA	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	NA
-C	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (r, w)	ModRM:r/m (r)	N/A	N/A
+B	N/A	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	N/A
+C	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	N/A
 .TE
 
-.SS Description
-.PP
-Subtract the low double\-precision floating\-point value in the second
-source operand from the first source operand and stores the
-double\-precision floating\-point result in the low quadword of the
-destination operand.
+.SH DESCRIPTION
+Subtract the low double precision floating-point value in the second
+source operand from the first source operand and stores the double
+precision floating-point result in the low quadword of the destination
+operand.
 
 .PP
-The second source operand can be an XMM register or a 64\-bit memory
+The second source operand can be an XMM register or a 64-bit memory
 location. The first source and destination operands are XMM registers.
 
 .PP
-128\-bit Legacy SSE version: The destination and first source operand are
-the same. Bits (MAXVL\-1:64) of the corresponding destination register
+128-bit Legacy SSE version: The destination and first source operand are
+the same. Bits (MAXVL-1:64) of the corresponding destination register
 remain unchanged.
 
 .PP
 VEX.128 and EVEX encoded versions: Bits (127:64) of the XMM register
 destination are copied from corresponding bits in the first source
-operand. Bits (MAXVL\-1:128) of the destination register are zeroed.
+operand. Bits (MAXVL-1:128) of the destination register are zeroed.
 
 .PP
 EVEX encoded version: The low quadword element of the destination
-operand is updated according to the writemask.
+operand is updated according to the write-mask.
 
 .PP
 Software should ensure VSUBSD is encoded with VEX.L=0. Encoding VSUBSD
 with VEX.L=1 may encounter unpredictable behavior across different
 processor generations.
 
-.SS Operation
-.SS VSUBSD (EVEX encoded version)
-.PP
-.RS
-
-.nf
+.SH OPERATION
+.SS VSUBSD (EVEX ENCODED VERSION)
+.EX
 IF (SRC2 *is register*) AND (EVEX.b = 1)
     THEN
-        SET\_RM(EVEX.RC);
+        SET_ROUNDING_MODE_FOR_THIS_INSTRUCTION(EVEX.RC);
     ELSE
-        SET\_RM(MXCSR.RM);
+        SET_ROUNDING_MODE_FOR_THIS_INSTRUCTION(MXCSR.RC);
 FI;
 IF k1[0] or *no writemask*
-    THEN DEST[63:0]←SRC1[63:0] \- SRC2[63:0]
+    THEN DEST[63:0] := SRC1[63:0] - SRC2[63:0]
     ELSE
-        IF *merging\-masking* ; merging\-masking
+        IF *merging-masking* ; merging-masking
             THEN *DEST[63:0] remains unchanged*
-            ELSE ; zeroing\-masking
-                THEN DEST[63:0]←0
+            ELSE ; zeroing-masking
+                THEN DEST[63:0] := 0
         FI;
 FI;
-DEST[127:64] ← SRC1[127:64]
-DEST[MAXVL\-1:128] ← 0
+DEST[127:64] := SRC1[127:64]
+DEST[MAXVL-1:128] := 0
+.EE
 
-.fi
-.RE
+.SS VSUBSD (VEX.128 ENCODED VERSION)  href="subsd.html#vsubsd--vex-128-encoded-version-"
+class="anchor">¶
 
-.SS VSUBSD (VEX.128 encoded version)
-.PP
-.RS
+.EX
+DEST[63:0] := SRC1[63:0] - SRC2[63:0]
+DEST[127:64] := SRC1[127:64]
+DEST[MAXVL-1:128] := 0
+.EE
 
-.nf
-DEST[63:0]←SRC1[63:0] \- SRC2[63:0]
-DEST[127:64] ←SRC1[127:64]
-DEST[MAXVL\-1:128] ←0
+.SS SUBSD (128-BIT LEGACY SSE VERSION)  href="subsd.html#subsd--128-bit-legacy-sse-version-"
+class="anchor">¶
 
-.fi
-.RE
+.EX
+DEST[63:0] := DEST[63:0] - SRC[63:0]
+DEST[MAXVL-1:64] (Unmodified)
+.EE
 
-.SS SUBSD (128\-bit Legacy SSE version)
-.PP
-.RS
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="subsd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.nf
-DEST[63:0]←DEST[63:0] \- SRC[63:0]
-DEST[MAXVL\-1:64] (Unmodified)
+.EX
+VSUBSD __m128d _mm_mask_sub_sd (__m128d s, __mmask8 k, __m128d a, __m128d b);
 
-.fi
-.RE
+VSUBSD __m128d _mm_maskz_sub_sd (__mmask8 k, __m128d a, __m128d b);
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+VSUBSD __m128d _mm_sub_round_sd (__m128d a, __m128d b, int);
 
-.nf
-VSUBSD \_\_m128d \_mm\_mask\_sub\_sd (\_\_m128d s, \_\_mmask8 k, \_\_m128d a, \_\_m128d b);
+VSUBSD __m128d _mm_mask_sub_round_sd (__m128d s, __mmask8 k, __m128d a, __m128d b, int);
 
-VSUBSD \_\_m128d \_mm\_maskz\_sub\_sd (\_\_mmask8 k, \_\_m128d a, \_\_m128d b);
+VSUBSD __m128d _mm_maskz_sub_round_sd (__mmask8 k, __m128d a, __m128d b, int);
 
-VSUBSD \_\_m128d \_mm\_sub\_round\_sd (\_\_m128d a, \_\_m128d b, int);
+SUBSD __m128d _mm_sub_sd (__m128d a, __m128d b);
+.EE
 
-VSUBSD \_\_m128d \_mm\_mask\_sub\_round\_sd (\_\_m128d s, \_\_mmask8 k, \_\_m128d a, \_\_m128d b, int);
+.SH SIMD FLOATING-POINT EXCEPTIONS
+Overflow, Underflow, Invalid, Precision, Denormal.
 
-VSUBSD \_\_m128d \_mm\_maskz\_sub\_round\_sd (\_\_mmask8 k, \_\_m128d a, \_\_m128d b, int);
-
-SUBSD \_\_m128d \_mm\_sub\_sd (\_\_m128d a, \_\_m128d b);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-Overflow, Underflow, Invalid, Precision, Denormal
-
-.SS Other Exceptions
-.PP
-VEX\-encoded instructions, see Exceptions Type 3.
+.SH OTHER EXCEPTIONS
+VEX-encoded instructions, see Table
+2-20, “Type 3 Class Exception Conditions.”
 
 .PP
-EVEX\-encoded instructions, see Exceptions Type E3.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+EVEX-encoded instructions, see Table
+2-47, “Type E3 Class Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

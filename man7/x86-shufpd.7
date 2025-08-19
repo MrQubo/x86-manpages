@@ -1,47 +1,42 @@
+'\" t
 .nh
-.TH "X86-SHUFPD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-SHUFPD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-SHUFPD - PACKED INTERLEAVE SHUFFLE OF PAIRS OF DOUBLE-PRECISION FLOATING-POINT VALUES
+SHUFPD - PACKED INTERLEAVE SHUFFLE OF PAIRS OF DOUBLE PRECISION FLOATING-POINT VALUES
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp / En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 66 0F C6 /r ib SHUFPD xmm1, xmm2/m128, imm8
-T}
-	A	V/V	SSE2	T{
-Shuffle two pairs of double\-precision floating\-point values from xmm1 and xmm2/m128 using imm8 to select from each pair, interleaved result is stored in xmm1.
+T}	A	V/V	SSE2	T{
+Shuffle two pairs of double precision floating-point values from xmm1 and xmm2/m128 using imm8 to select from each pair, interleaved result is stored in xmm1.
 T}
 T{
 VEX.128.66.0F.WIG C6 /r ib VSHUFPD xmm1, xmm2, xmm3/m128, imm8
-T}
-	B	V/V	AVX	T{
-Shuffle two pairs of double\-precision floating\-point values from xmm2 and xmm3/m128 using imm8 to select from each pair, interleaved result is stored in xmm1.
+T}	B	V/V	AVX	T{
+Shuffle two pairs of double precision floating-point values from xmm2 and xmm3/m128 using imm8 to select from each pair, interleaved result is stored in xmm1.
 T}
 T{
 VEX.256.66.0F.WIG C6 /r ib VSHUFPD ymm1, ymm2, ymm3/m256, imm8
-T}
-	B	V/V	AVX	T{
-Shuffle four pairs of double\-precision floating\-point values from ymm2 and ymm3/m256 using imm8 to select from each pair, interleaved result is stored in xmm1.
+T}	B	V/V	AVX	T{
+Shuffle four pairs of double precision floating-point values from ymm2 and ymm3/m256 using imm8 to select from each pair, interleaved result is stored in xmm1.
 T}
 T{
 EVEX.128.66.0F.W1 C6 /r ib VSHUFPD xmm1{k1}{z}, xmm2, xmm3/m128/m64bcst, imm8
-T}
-	C	V/V	AVX512VL AVX512F	T{
-Shuffle two paris of double\-precision floating\-point values from xmm2 and xmm3/m128/m64bcst using imm8 to select from each pair. store interleaved results in xmm1 subject to writemask k1.
+T}	C	V/V	AVX512VL AVX512F	T{
+Shuffle two pairs of double precision floating-point values from xmm2 and xmm3/m128/m64bcst using imm8 to select from each pair. store interleaved results in xmm1 subject to writemask k1.
 T}
 T{
 EVEX.256.66.0F.W1 C6 /r ib VSHUFPD ymm1{k1}{z}, ymm2, ymm3/m256/m64bcst, imm8
-T}
-	C	V/V	AVX512VL AVX512F	T{
-Shuffle four paris of double\-precision floating\-point values from ymm2 and ymm3/m256/m64bcst using imm8 to select from each pair. store interleaved results in ymm1 subject to writemask k1.
+T}	C	V/V	AVX512VL AVX512F	T{
+Shuffle four pairs of double precision floating-point values from ymm2 and ymm3/m256/m64bcst using imm8 to select from each pair. store interleaved results in ymm1 subject to writemask k1.
 T}
 T{
 EVEX.512.66.0F.W1 C6 /r ib VSHUFPD zmm1{k1}{z}, zmm2, zmm3/m512/m64bcst, imm8
-T}
-	C	V/V	AVX512F	T{
-Shuffle eight paris of double\-precision floating\-point values from zmm2 and zmm3/m512/m64bcst using imm8 to select from each pair. store interleaved results in zmm1 subject to writemask k1.
+T}	C	V/V	AVX512F	T{
+Shuffle eight pairs of double precision floating-point values from zmm2 and zmm3/m512/m64bcst using imm8 to select from each pair. store interleaved results in zmm1 subject to writemask k1.
 T}
 .TE
 
@@ -50,17 +45,16 @@ T}
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	NA	ModRM:reg (r, w)	ModRM:r/m (r)	Imm8	NA
-B	NA	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	Imm8
-C	Full	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	Imm8
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (r, w)	ModRM:r/m (r)	imm8	N/A
+B	N/A	ModRM:reg (w)	VEX.vvvv (r)	ModRM:r/m (r)	imm8
+C	Full	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	imm8
 .TE
 
-.SS Description
-.PP
-Selects a double\-precision floating\-point value of an input pair using a
+.SH DESCRIPTION
+Selects a double precision floating-point value of an input pair using a
 bit control and move to a designated element of the destination operand.
-The low\-to\-high order of double\-precision element of the destination
+The low-to-high order of double precision element of the destination
 operand is interleaved between the first source operand and the second
 source operand at the granularity of input pair of 128 bits. Each bit in
 the imm8 byte, starting from bit 0, is the select control of the
@@ -70,254 +64,233 @@ of an input pair.
 .PP
 EVEX encoded versions: The first source operand is a ZMM/YMM/XMM
 register. The second source operand can be a ZMM/YMM/XMM register, a
-512/256/128\-bit memory location or a 512/256/128\-bit vector broadcasted
-from a 64\-bit memory location The destination operand is a ZMM/YMM/XMM
+512/256/128-bit memory location or a 512/256/128-bit vector broadcasted
+from a 64-bit memory location The destination operand is a ZMM/YMM/XMM
 register updated according to the writemask. The select controls are the
 lower 8/4/2 bits of the imm8 byte.
 
 .PP
 VEX.256 encoded version: The first source operand is a YMM register. The
-second source operand can be a YMM register or a 256\-bit memory
+second source operand can be a YMM register or a 256-bit memory
 location. The destination operand is a YMM register. The select controls
 are the bit 3:0 of the imm8 byte, imm8[7:4) are ignored.
 
 .PP
 VEX.128 encoded version: The first source operand is a XMM register. The
-second source operand can be a XMM register or a 128\-bit memory
+second source operand can be a XMM register or a 128-bit memory
 location. The destination operand is a XMM register. The upper bits
-(MAXVL\-1:128) of the corresponding ZMM register destination are zeroed.
-The select controls are the bit 1:0 of the imm8 byte, imm8[7:2) are
-ignored.
+(MAXVL-1:128) of
 
 .PP
-128\-bit Legacy SSE version: The second source can be an XMM register or
-an 128\-bit memory location. The destination operand and the first source
-operand is the same and is an XMM register. The upper bits (MAXVL\-1:128)
-of the corresponding ZMM register destination are unmodified. The select
+the corresponding ZMM register destination are zeroed. The select
 controls are the bit 1:0 of the imm8 byte, imm8[7:2) are ignored.
 
 .PP
-X3X2X1X0SRC1Y2Y1Y0SRC2DESTY2 or Y3X2 or X3Y0 or Y1X0 or X1
+128-bit Legacy SSE version: The second source can be an XMM register or
+an 128-bit memory location. The destination operand and the first source
+operand is the same and is an XMM register. The upper bits (MAXVL-1:128)
+of the corresponding ZMM register destination are unmodified. The select
+controls are the bit 1:0 of the imm8 byte, imm8[7:2) are ignored.
 
-.PP
-Figure 4\-25. 256\-bit VSHUFPD Operation of Four Pairs of DP FP Values
+.SH OPERATION
+.SS VSHUFPD (EVEX ENCODED VERSIONS WHEN SRC2 IS A VECTOR REGISTER) <a
+href="shufpd.html#vshufpd--evex-encoded-versions-when-src2-is-a-vector-register-"
+class="anchor">¶
 
-.SS Operation
-.SS VSHUFPD (EVEX encoded versions when SRC2 is a vector register)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
 IF IMM0[0] = 0
-    THEN TMP\_DEST[63:0]←SRC1[63:0]
-    ELSE TMP\_DEST[63:0]←SRC1[127:64] FI;
+    THEN TMP_DEST[63:0] := SRC1[63:0]
+    ELSE TMP_DEST[63:0] := SRC1[127:64] FI;
 IF IMM0[1] = 0
-    THEN TMP\_DEST[127:64]←SRC2[63:0]
-    ELSE TMP\_DEST[127:64]←SRC2[127:64] FI;
+    THEN TMP_DEST[127:64] := SRC2[63:0]
+    ELSE TMP_DEST[127:64] := SRC2[127:64] FI;
 IF VL >= 256
     IF IMM0[2] = 0
-        THEN TMP\_DEST[191:128]←SRC1[191:128]
-        ELSE TMP\_DEST[191:128]←SRC1[255:192] FI;
+        THEN TMP_DEST[191:128] := SRC1[191:128]
+        ELSE TMP_DEST[191:128] := SRC1[255:192] FI;
     IF IMM0[3] = 0
-        THEN TMP\_DEST[255:192]←SRC2[191:128]
-        ELSE TMP\_DEST[255:192]←SRC2[255:192] FI;
+        THEN TMP_DEST[255:192] := SRC2[191:128]
+        ELSE TMP_DEST[255:192] := SRC2[255:192] FI;
 FI;
 IF VL >= 512
     IF IMM0[4] = 0
-        THEN TMP\_DEST[319:256]←SRC1[319:256]
-        ELSE TMP\_DEST[319:256]←SRC1[383:320] FI;
+        THEN TMP_DEST[319:256] := SRC1[319:256]
+        ELSE TMP_DEST[319:256] := SRC1[383:320] FI;
     IF IMM0[5] = 0
-        THEN TMP\_DEST[383:320]←SRC2[319:256]
-        ELSE TMP\_DEST[383:320]←SRC2[383:320] FI;
+        THEN TMP_DEST[383:320] := SRC2[319:256]
+        ELSE TMP_DEST[383:320] := SRC2[383:320] FI;
     IF IMM0[6] = 0
-        THEN TMP\_DEST[447:384]←SRC1[447:384]
-        ELSE TMP\_DEST[447:384]←SRC1[511:448] FI;
+        THEN TMP_DEST[447:384] := SRC1[447:384]
+        ELSE TMP_DEST[447:384] := SRC1[511:448] FI;
     IF IMM0[7] = 0
-        THEN TMP\_DEST[511:448]←SRC2[447:384]
-        ELSE TMP\_DEST[511:448]←SRC2[511:448] FI;
+        THEN TMP_DEST[511:448] := SRC2[447:384]
+        ELSE TMP_DEST[511:448] := SRC2[511:448] FI;
 FI;
-FOR j←0 TO KL\-1
-    i←j * 64
+FOR j := 0 TO KL-1
+    i := j * 64
     IF k1[j] OR *no writemask*
-        THEN DEST[i+63:i]←TMP\_DEST[i+63:i]
+        THEN DEST[i+63:i] := TMP_DEST[i+63:i]
         ELSE
-            IF *merging\-masking* ; merging\-masking
+            IF *merging-masking* ; merging-masking
                 THEN *DEST[i+63:i] remains unchanged*
-                ELSE *zeroing\-masking*
-                        ; zeroing\-masking
-                    DEST[i+63:i] ← 0
+                ELSE *zeroing-masking*
+                        ; zeroing-masking
+                    DEST[i+63:i] := 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS VSHUFPD (EVEX ENCODED VERSIONS WHEN SRC2 IS MEMORY) <a
+href="shufpd.html#vshufpd--evex-encoded-versions-when-src2-is-memory-"
+class="anchor">¶
 
-.SS VSHUFPD (EVEX encoded versions when SRC2 is memory)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
-FOR j←0 TO KL\-1
-    i←j * 64
+FOR j := 0 TO KL-1
+    i := j * 64
     IF (EVEX.b = 1)
-        THEN TMP\_SRC2[i+63:i]←SRC2[63:0]
-        ELSE TMP\_SRC2[i+63:i]←SRC2[i+63:i]
+        THEN TMP_SRC2[i+63:i] := SRC2[63:0]
+        ELSE TMP_SRC2[i+63:i] := SRC2[i+63:i]
     FI;
 ENDFOR;
 IF IMM0[0] = 0
-    THEN TMP\_DEST[63:0]←SRC1[63:0]
-    ELSE TMP\_DEST[63:0]←SRC1[127:64] FI;
+    THEN TMP_DEST[63:0] := SRC1[63:0]
+    ELSE TMP_DEST[63:0] := SRC1[127:64] FI;
 IF IMM0[1] = 0
-    THEN TMP\_DEST[127:64]←TMP\_SRC2[63:0]
-    ELSE TMP\_DEST[127:64]←TMP\_SRC2[127:64] FI;
+    THEN TMP_DEST[127:64] := TMP_SRC2[63:0]
+    ELSE TMP_DEST[127:64] := TMP_SRC2[127:64] FI;
 IF VL >= 256
     IF IMM0[2] = 0
-        THEN TMP\_DEST[191:128]←SRC1[191:128]
-        ELSE TMP\_DEST[191:128]←SRC1[255:192] FI;
+        THEN TMP_DEST[191:128] := SRC1[191:128]
+        ELSE TMP_DEST[191:128] := SRC1[255:192] FI;
     IF IMM0[3] = 0
-        THEN TMP\_DEST[255:192]←TMP\_SRC2[191:128]
-        ELSE TMP\_DEST[255:192]←TMP\_SRC2[255:192] FI;
+        THEN TMP_DEST[255:192] := TMP_SRC2[191:128]
+        ELSE TMP_DEST[255:192] := TMP_SRC2[255:192] FI;
 FI;
 IF VL >= 512
     IF IMM0[4] = 0
-        THEN TMP\_DEST[319:256]←SRC1[319:256]
-        ELSE TMP\_DEST[319:256]←SRC1[383:320] FI;
+        THEN TMP_DEST[319:256] := SRC1[319:256]
+        ELSE TMP_DEST[319:256] := SRC1[383:320] FI;
     IF IMM0[5] = 0
-        THEN TMP\_DEST[383:320]←TMP\_SRC2[319:256]
-        ELSE TMP\_DEST[383:320]←TMP\_SRC2[383:320] FI;
+        THEN TMP_DEST[383:320] := TMP_SRC2[319:256]
+        ELSE TMP_DEST[383:320] := TMP_SRC2[383:320] FI;
     IF IMM0[6] = 0
-        THEN TMP\_DEST[447:384]←SRC1[447:384]
-        ELSE TMP\_DEST[447:384]←SRC1[511:448] FI;
+        THEN TMP_DEST[447:384] := SRC1[447:384]
+        ELSE TMP_DEST[447:384] := SRC1[511:448] FI;
     IF IMM0[7] = 0
-        THEN TMP\_DEST[511:448]←TMP\_SRC2[447:384]
-        ELSE TMP\_DEST[511:448]←TMP\_SRC2[511:448] FI;
+        THEN TMP_DEST[511:448] := TMP_SRC2[447:384]
+        ELSE TMP_DEST[511:448] := TMP_SRC2[511:448] FI;
 FI;
-FOR j←0 TO KL\-1
-    i←j * 64
+FOR j := 0 TO KL-1
+    i := j * 64
     IF k1[j] OR *no writemask*
-        THEN DEST[i+63:i]←TMP\_DEST[i+63:i]
+        THEN DEST[i+63:i] := TMP_DEST[i+63:i]
         ELSE
-            IF *merging\-masking*
+            IF *merging-masking* ; merging-masking
                 THEN *DEST[i+63:i] remains unchanged*
-                ELSE *zeroing\-masking*
-                        ; zeroing\-masking
-                    DEST[i+63:i] ← 0
+                ELSE *zeroing-masking*
+                        ; zeroing-masking
+                    DEST[i+63:i] := 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS VSHUFPD (VEX.256 ENCODED VERSION)  href="shufpd.html#vshufpd--vex-256-encoded-version-"
+class="anchor">¶
 
-.SS VSHUFPD (VEX.256 encoded version)
-.PP
-.RS
-
-.nf
+.EX
 IF IMM0[0] = 0
-    THEN DEST[63:0]←SRC1[63:0]
-    ELSE DEST[63:0]←SRC1[127:64] FI;
+    THEN DEST[63:0] := SRC1[63:0]
+    ELSE DEST[63:0] := SRC1[127:64] FI;
 IF IMM0[1] = 0
-    THEN DEST[127:64]←SRC2[63:0]
-    ELSE DEST[127:64]←SRC2[127:64] FI;
+    THEN DEST[127:64] := SRC2[63:0]
+    ELSE DEST[127:64] := SRC2[127:64] FI;
 IF IMM0[2] = 0
-    THEN DEST[191:128]←SRC1[191:128]
-    ELSE DEST[191:128]←SRC1[255:192] FI;
+    THEN DEST[191:128] := SRC1[191:128]
+    ELSE DEST[191:128] := SRC1[255:192] FI;
 IF IMM0[3] = 0
-    THEN DEST[255:192]←SRC2[191:128]
-    ELSE DEST[255:192]←SRC2[255:192] FI;
-DEST[MAXVL\-1:256] (Unmodified)
+    THEN DEST[255:192] := SRC2[191:128]
+    ELSE DEST[255:192] := SRC2[255:192] FI;
+DEST[MAXVL-1:256] (Unmodified)
+.EE
 
-.fi
-.RE
+.SS VSHUFPD (VEX.128 ENCODED VERSION)  href="shufpd.html#vshufpd--vex-128-encoded-version-"
+class="anchor">¶
 
-.SS VSHUFPD (VEX.128 encoded version)
-.PP
-.RS
-
-.nf
+.EX
 IF IMM0[0] = 0
-    THEN DEST[63:0]←SRC1[63:0]
-    ELSE DEST[63:0]←SRC1[127:64] FI;
+    THEN DEST[63:0] := SRC1[63:0]
+    ELSE DEST[63:0] := SRC1[127:64] FI;
 IF IMM0[1] = 0
-    THEN DEST[127:64]←SRC2[63:0]
-    ELSE DEST[127:64]←SRC2[127:64] FI;
-DEST[MAXVL\-1:128] ←0
+    THEN DEST[127:64] := SRC2[63:0]
+    ELSE DEST[127:64] := SRC2[127:64] FI;
+DEST[MAXVL-1:128] := 0
+.EE
 
-.fi
-.RE
+.SS VSHUFPD (128-BIT LEGACY SSE VERSION)  href="shufpd.html#vshufpd--128-bit-legacy-sse-version-"
+class="anchor">¶
 
-.SS VSHUFPD (128\-bit Legacy SSE version)
-.PP
-.RS
-
-.nf
+.EX
 IF IMM0[0] = 0
-    THEN DEST[63:0]←SRC1[63:0]
-    ELSE DEST[63:0]←SRC1[127:64] FI;
+    THEN DEST[63:0] := SRC1[63:0]
+    ELSE DEST[63:0] := SRC1[127:64] FI;
 IF IMM0[1] = 0
-    THEN DEST[127:64]←SRC2[63:0]
-    ELSE DEST[127:64]←SRC2[127:64] FI;
-DEST[MAXVL\-1:128] (Unmodified)
+    THEN DEST[127:64] := SRC2[63:0]
+    ELSE DEST[127:64] := SRC2[127:64] FI;
+DEST[MAXVL-1:128] (Unmodified)
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="shufpd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+.EX
+VSHUFPD __m512d _mm512_shuffle_pd(__m512d a, __m512d b, int imm);
 
-.nf
-VSHUFPD \_\_m512d \_mm512\_shuffle\_pd(\_\_m512d a, \_\_m512d b, int imm);
+VSHUFPD __m512d _mm512_mask_shuffle_pd(__m512d s, __mmask8 k, __m512d a, __m512d b, int imm);
 
-VSHUFPD \_\_m512d \_mm512\_mask\_shuffle\_pd(\_\_m512d s, \_\_mmask8 k, \_\_m512d a, \_\_m512d b, int imm);
+VSHUFPD __m512d _mm512_maskz_shuffle_pd( __mmask8 k, __m512d a, __m512d b, int imm);
 
-VSHUFPD \_\_m512d \_mm512\_maskz\_shuffle\_pd( \_\_mmask8 k, \_\_m512d a, \_\_m512d b, int imm);
+VSHUFPD __m256d _mm256_shuffle_pd (__m256d a, __m256d b, const int select);
 
-VSHUFPD \_\_m256d \_mm256\_shuffle\_pd (\_\_m256d a, \_\_m256d b, const int select);
+VSHUFPD __m256d _mm256_mask_shuffle_pd(__m256d s, __mmask8 k, __m256d a, __m256d b, int imm);
 
-VSHUFPD \_\_m256d \_mm256\_mask\_shuffle\_pd(\_\_m256d s, \_\_mmask8 k, \_\_m256d a, \_\_m256d b, int imm);
+VSHUFPD __m256d _mm256_maskz_shuffle_pd( __mmask8 k, __m256d a, __m256d b, int imm);
 
-VSHUFPD \_\_m256d \_mm256\_maskz\_shuffle\_pd( \_\_mmask8 k, \_\_m256d a, \_\_m256d b, int imm);
+SHUFPD __m128d _mm_shuffle_pd (__m128d a, __m128d b, const int select);
 
-SHUFPD \_\_m128d \_mm\_shuffle\_pd (\_\_m128d a, \_\_m128d b, const int select);
+VSHUFPD __m128d _mm_mask_shuffle_pd(__m128d s, __mmask8 k, __m128d a, __m128d b, int imm);
 
-VSHUFPD \_\_m128d \_mm\_mask\_shuffle\_pd(\_\_m128d s, \_\_mmask8 k, \_\_m128d a, \_\_m128d b, int imm);
+VSHUFPD __m128d _mm_maskz_shuffle_pd( __mmask8 k, __m128d a, __m128d b, int imm);
+.EE
 
-VSHUFPD \_\_m128d \_mm\_maskz\_shuffle\_pd( \_\_mmask8 k, \_\_m128d a, \_\_m128d b, int imm);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-None
-
-.SS Other Exceptions
-.PP
-Non\-EVEX\-encoded instruction, see Exceptions Type 4.
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="shufpd.html#simd-floating-point-exceptions"
+class="anchor">¶
 
 .PP
-EVEX\-encoded instruction, see Exceptions Type E4NF.
+None.
 
-.SH SEE ALSO
+.SH OTHER EXCEPTIONS
+Non-EVEX-encoded instruction, see Table
+2-21, “Type 4 Class Exception Conditions.”
+
 .PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+EVEX-encoded instruction, see Table
+2-50, “Type E4NF Class Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

@@ -1,48 +1,50 @@
+'\" t
 .nh
-.TH "X86-VRNDSCALESD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VRNDSCALESD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VRNDSCALESD - ROUND SCALAR FLOAT64 VALUE TO INCLUDE A GIVEN NUMBER OF FRACTION BITS
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
-EVEX.LIG.66.0F3A.W1 0B /r ib VRNDSCALESD xmm1 {k1}{z}, xmm2, xmm3/m64{sae}, imm8
-T}
-	A	V/V	AVX512F	T{
-Rounds scalar double\-precision floating\-point value in xmm3/m64 to a number of fraction bits specified by the imm8 field. Stores the result in xmm1 register.
+EVEX.LLIG.66.0F3A.W1 0B /r ib VRNDSCALESD xmm1 {k1}{z}, xmm2, xmm3/m64{sae}, imm8
+T}	A	V/V	AVX512F	T{
+Rounds scalar double precision floating-point value in xmm3/m64 to a number of fraction bits specified by the imm8 field. Stores the result in xmm1 register.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="vrndscalesd.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	Imm8
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Tuple1 Scalar	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	imm8
 .TE
 
-.SS Description
-.PP
-Rounds a double\-precision floating\-point value in the low quadword (see
-Figure 5\-29) element of the second source operand (the third operand) by
-the rounding mode specified in the immediate operand and places the
-result in the corresponding element of the destination operand (the
-first operand) according to the writemask. The quadword element at bits
-127:64 of the destination is copied from the first source operand (the
-second operand).
+.SS DESCRIPTION
+Rounds a double precision floating-point value in the low quadword (see
+Figure 5-29
+\[la]vrndscalepd.html#fig\-5\-29\[ra]) element of the second source
+operand (the third operand) by the rounding mode specified in the
+immediate operand and places the result in the corresponding element of
+the destination operand (the first operand) according to the writemask.
+The quadword element at bits 127:64 of the destination is copied from
+the first source operand (the second operand).
 
 .PP
 The destination and first source operands are XMM registers, the 2nd
 source operand can be an XMM register or memory location. Bits
-MAXVL\-1:128 of the destination register are cleared.
+MAXVL-1:128 of the destination register are cleared.
 
 .PP
 The rounding process rounds the input to an integral value, plus number
 bits of fraction that are specified by imm8[7:4] (to be included in
-the result) and returns the result as a double\-precision floating\-point
+the result) and returns the result as a double precision floating-point
 value.
 
 .PP
@@ -54,12 +56,12 @@ The immediate operand also specifies control fields for the rounding
 operation, three bit fields are defined and shown in the “Immediate
 Control Description” figure below. Bit 3 of the immediate byte controls
 the processor behavior for a precision exception, bit 2 selects the
-source of rounding mode control. Bits 1:0 specify a non\-sticky
-rounding\-mode value (Immediate control table below lists the encoded
-values for rounding\-mode field).
+source of rounding mode control. Bits 1:0 specify a non-sticky
+rounding-mode value (immediate control table below lists the encoded
+values for rounding-mode field).
 
 .PP
-The Precision Floating\-Point Exception is signaled according to the
+The Precision Floating-Point Exception is signaled according to the
 immediate operand. If any source operand is an SNaN then it will be
 converted to a QNaN. If DAZ is set to ‘1 then denormals will be
 converted to zero before rounding.
@@ -72,59 +74,61 @@ sign of zero.
 The formula of the operation for VRNDSCALESD is
 
 .PP
-ROUND(x) = 2M, round\_ctrl),
+ROUND(x) = 2-M*Round_to_INT(x*2M,
+round_ctrl),
 
 .PP
-round\_ctrl = imm[3:0];
+round_ctrl = imm[3:0];
 
 .PP
 M=imm[7:4];
 
 .PP
-The operation of x*2M is computed as if the exponent range is unlimited
-(i.e. no overflow ever occurs).
+The operation of x*2M is computed as if the exponent range
+is unlimited (i.e., no overflow ever occurs).
 
 .PP
-VRNDSCALESD is a more general form of the VEX\-encoded VROUNDSD
+VRNDSCALESD is a more general form of the VEX-encoded VROUNDSD
 instruction. In VROUNDSD, the formula of the operation is
 
 .PP
-ROUND(x) = Round\_to\_INT(x, round\_ctrl),
+ROUND(x) = Round_to_INT(x, round_ctrl),
 
 .PP
-round\_ctrl = imm[3:0];
+round_ctrl = imm[3:0];
 
 .PP
-EVEX encoded version: The source operand is a XMM register or a 64\-bit
+EVEX encoded version: The source operand is a XMM register or a 64-bit
 memory location. The destination operand is a XMM register.
 
 .PP
-Handling of special case of input values are listed in Table 5\-25.
+Handling of special case of input values are listed in Table
+5-31
+\[la]vrndscalepd.html#tbl\-5\-31\[ra]\&.
 
-.SS Operation
-.PP
-.RS
-
-.nf
+.SS OPERATION
+.EX
 RoundToIntegerDP(SRC[63:0], imm8[7:0]) {
     if (imm8[2] = 1)
-        rounding\_direction←MXCSR:RC
+        rounding_direction := MXCSR:RC
                         ; get round control from MXCSR
     else
-        rounding\_direction←imm8[1:0]
-    M←imm8[7:4] ; get the scaling factor
-    case (rounding\_direction)
-    00: TMP[63:0]←round\_to\_nearest\_even\_integer(2M*SRC[63:0])
-    01: TMP[63:0]←round\_to\_equal\_or\_smaller\_integer(2M*SRC[63:0])
-    10: TMP[63:0]←round\_to\_equal\_or\_larger\_integer(2M*SRC[63:0])
-    11: TMP[63:0]←round\_to\_nearest\_smallest\_magnitude\_integer(2M*SRC[63:0])
+        rounding_direction := imm8[1:0]
+                        ; get round control from imm8[1:0]
+    FI
+    M := imm8[7:4] ; get the scaling factor
+    case (rounding_direction)
+    00: TMP[63:0] := round_to_nearest_even_integer(2M*SRC[63:0])
+    01: TMP[63:0] := round_to_equal_or_smaller_integer(2M*SRC[63:0])
+    10: TMP[63:0] := round_to_equal_or_larger_integer(2M*SRC[63:0])
+    11: TMP[63:0] := round_to_nearest_smallest_magnitude_integer(2M*SRC[63:0])
     ESAC
-    Dest[63:0]←2\-M* TMP[63:0]
-                    ; scale down back to 2\-M
+    Dest[63:0] := 2-M* TMP[63:0]
+                    ; scale down back to 2-M
     if (imm8[3] = 0) Then ; check SPE
         if (SRC[63:0] != Dest[63:0]) Then
                         ; check precision lost
-            set\_precision()
+            set_precision()
                     ; set #PE
         FI;
     FI;
@@ -132,65 +136,58 @@ RoundToIntegerDP(SRC[63:0], imm8[7:0]) {
 }
 VRNDSCALESD (EVEX encoded version)
 IF k1[0] or *no writemask*
-    THEN DEST[63:0]←RoundToIntegerDP(SRC2[63:0], Zero\_upper\_imm[7:0])
+    THEN DEST[63:0] := RoundToIntegerDP(SRC2[63:0], Zero_upper_imm[7:0])
     ELSE
-        IF *merging\-masking* ; merging\-masking
+        IF *merging-masking* ; merging-masking
             THEN *DEST[63:0] remains unchanged*
-            ELSE ; zeroing\-masking
-                THEN DEST[63:0]←0
+            ELSE ; zeroing-masking
+                THEN DEST[63:0] := 0
         FI;
 FI;
-DEST[127:64] ← SRC1[127:64]
-DEST[MAXVL\-1:128] ← 0
+DEST[127:64] := SRC1[127:64]
+DEST[MAXVL-1:128] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vrndscalesd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
+.EX
+VRNDSCALESD __m128d _mm_roundscale_sd ( __m128d a, __m128d b, int imm);
+
+VRNDSCALESD __m128d _mm_roundscale_round_sd ( __m128d a, __m128d b, int imm, int sae);
+
+VRNDSCALESD __m128d _mm_mask_roundscale_sd (__m128d s, __mmask8 k, __m128d a, __m128d b, int imm);
+
+VRNDSCALESD __m128d _mm_mask_roundscale_round_sd (__m128d s, __mmask8 k, __m128d a, __m128d b, int imm, int sae);
+
+VRNDSCALESD __m128d _mm_maskz_roundscale_sd ( __mmask8 k, __m128d a, __m128d b, int imm);
+
+VRNDSCALESD __m128d _mm_maskz_roundscale_round_sd ( __mmask8 k, __m128d a, __m128d b, int imm, int sae);
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vrndscalesd.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
-
-.nf
-VRNDSCALESD \_\_m128d \_mm\_roundscale\_sd ( \_\_m128d a, \_\_m128d b, int imm);
-
-VRNDSCALESD \_\_m128d \_mm\_roundscale\_round\_sd ( \_\_m128d a, \_\_m128d b, int imm, int sae);
-
-VRNDSCALESD \_\_m128d \_mm\_mask\_roundscale\_sd (\_\_m128d s, \_\_mmask8 k, \_\_m128d a, \_\_m128d b, int imm);
-
-VRNDSCALESD \_\_m128d \_mm\_mask\_roundscale\_round\_sd (\_\_m128d s, \_\_mmask8 k, \_\_m128d a, \_\_m128d b, int imm, int sae);
-
-VRNDSCALESD \_\_m128d \_mm\_maskz\_roundscale\_sd ( \_\_mmask8 k, \_\_m128d a, \_\_m128d b, int imm);
-
-VRNDSCALESD \_\_m128d \_mm\_maskz\_roundscale\_round\_sd ( \_\_mmask8 k, \_\_m128d a, \_\_m128d b, int imm, int sae);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-Invalid, Precision
+Invalid, Precision.
 
 .PP
 If SPE is enabled, precision exception is not reported (regardless of
 MXCSR exception mask).
 
-.SS Other Exceptions
-.PP
-See Exceptions Type E3.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+.SS OTHER EXCEPTIONS
+See Table 2-47, “Type E3 Class
+Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

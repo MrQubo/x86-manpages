@@ -1,29 +1,27 @@
+'\" t
 .nh
-.TH "X86-COMISD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-COMISD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-COMISD - COMPARE SCALAR ORDERED DOUBLE-PRECISION FLOATING-POINT VALUES AND SET EFLAGS
+COMISD - COMPARE SCALAR ORDERED DOUBLE PRECISION FLOATING-POINT VALUES AND SET EFLAGS
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 66 0F 2F /r COMISD xmm1, xmm2/m64
-T}
-	A	V/V	SSE2	T{
-Compare low double\-precision floating\-point values in xmm1 and xmm2/mem64 and set the EFLAGS flags accordingly.
+T}	A	V/V	SSE2	T{
+Compare low double precision floating-point values in xmm1 and xmm2/mem64 and set the EFLAGS flags accordingly.
 T}
 T{
 VEX.LIG.66.0F.WIG 2F /r VCOMISD xmm1, xmm2/m64
-T}
-	A	V/V	AVX	T{
-Compare low double\-precision floating\-point values in xmm1 and xmm2/mem64 and set the EFLAGS flags accordingly.
+T}	A	V/V	AVX	T{
+Compare low double precision floating-point values in xmm1 and xmm2/mem64 and set the EFLAGS flags accordingly.
 T}
 T{
-EVEX.LIG.66.0F.W1 2F /r VCOMISD xmm1, xmm2/m64{sae}
-T}
-	B	V/V	AVX512F	T{
-Compare low double\-precision floating\-point values in xmm1 and xmm2/mem64 and set the EFLAGS flags accordingly.
+EVEX.LLIG.66.0F.W1 2F /r VCOMISD xmm1, xmm2/m64{sae}
+T}	B	V/V	AVX512F	T{
+Compare low double precision floating-point values in xmm1 and xmm2/mem64 and set the EFLAGS flags accordingly.
 T}
 .TE
 
@@ -32,33 +30,29 @@ T}
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	NA	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
-B	Tuple1 Scalar	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
+B	Tuple1 Scalar	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
-Compares the double\-precision floating\-point values in the low quadwords
+Compares the double precision floating-point values in the low quadwords
 of operand 1 (first operand) and operand 2 (second operand), and sets
 the ZF, PF, and CF flags in the EFLAGS register according to the result
-(unordered, greater than, less than, or equal). The OF, SF and AF flags
+(unordered, greater than, less than, or equal). The OF, SF, and AF flags
 in the EFLAGS register are set to 0. The unordered result is returned if
 either source operand is a NaN (QNaN or SNaN).
 
 .PP
 Operand 1 is an XMM register; operand 2 can be an XMM register or a 64
-bit memory
+bit memory location. The COMISD instruction differs from the UCOMISD
+instruction in that it signals a SIMD floating-point invalid operation
+exception (#I) when a source operand is either a QNaN or SNaN. The
+UCOMISD instruction signals an invalid operation exception only if a
+source operand is an SNaN.
 
 .PP
-location. The COMISD instruction differs from the UCOMISD instruction in
-that it signals a SIMD floating\-point invalid operation exception (#I)
-when a source operand is either a QNaN or SNaN. The UCOMISD instruction
-signals an invalid numeric exception only if a source operand is an
-SNaN.
-
-.PP
-The EFLAGS register is not updated if an unmasked SIMD floating\-point
+The EFLAGS register is not updated if an unmasked SIMD floating-point
 exception is generated.
 
 .PP
@@ -71,78 +65,73 @@ with VEX.L=1 may encounter unpredictable behavior across different
 processor generations.
 
 .SH OPERATION
-.SS COMISD (all versions)
-.PP
-.RS
-
-.nf
-RESULT← OrderedCompare(DEST[63:0] <> SRC[63:0]) {
+.SS COMISD (ALL VERSIONS)
+.EX
+RESULT := OrderedCompare(DEST[63:0] <> SRC[63:0]) {
 (* Set EFLAGS *) CASE (RESULT) OF
-    UNORDERED: ZF,PF,CF←111;
-    GREATER\_THAN: ZF,PF,CF←000;
-    LESS\_THAN: ZF,PF,CF←001;
-    EQUAL: ZF,PF,CF←100;
+    UNORDERED: ZF,PF,CF := 111;
+    GREATER_THAN: ZF,PF,CF := 000;
+    LESS_THAN: ZF,PF,CF := 001;
+    EQUAL: ZF,PF,CF := 100;
 ESAC;
-OF, AF, SF←0; }
+OF, AF, SF := 0; }
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="comisd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
+.EX
+VCOMISD int _mm_comi_round_sd(__m128d a, __m128d b, int imm, int sae);
 
-.nf
-VCOMISD int \_mm\_comi\_round\_sd(\_\_m128d a, \_\_m128d b, int imm, int sae);
+VCOMISD int _mm_comieq_sd (__m128d a, __m128d b)
 
-VCOMISD int \_mm\_comieq\_sd (\_\_m128d a, \_\_m128d b)
+VCOMISD int _mm_comilt_sd (__m128d a, __m128d b)
 
-VCOMISD int \_mm\_comilt\_sd (\_\_m128d a, \_\_m128d b)
+VCOMISD int _mm_comile_sd (__m128d a, __m128d b)
 
-VCOMISD int \_mm\_comile\_sd (\_\_m128d a, \_\_m128d b)
+VCOMISD int _mm_comigt_sd (__m128d a, __m128d b)
 
-VCOMISD int \_mm\_comigt\_sd (\_\_m128d a, \_\_m128d b)
+VCOMISD int _mm_comige_sd (__m128d a, __m128d b)
 
-VCOMISD int \_mm\_comige\_sd (\_\_m128d a, \_\_m128d b)
+VCOMISD int _mm_comineq_sd (__m128d a, __m128d b)
+.EE
 
-VCOMISD int \_mm\_comineq\_sd (\_\_m128d a, \_\_m128d b)
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="comisd.html#simd-floating-point-exceptions"
+class="anchor">¶
 
-.fi
-.RE
-
-.SH SIMD FLOATING\-POINT EXCEPTIONS
 .PP
 Invalid (if SNaN or QNaN operands), Denormal.
 
 .SH OTHER EXCEPTIONS
-.PP
-VEX\-encoded instructions, see Exceptions Type 3;
+VEX-encoded instructions, see Table
+2-20, “Type 3 Class Exception Conditions.”
 
 .PP
-EVEX\-encoded instructions, see Exceptions Type E3NF.
+EVEX-encoded instructions, see Table
+2-48, “Type E3NF Class Exception Conditions.”
+
+.PP
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	T{
 If VEX.vvvv != 1111B or EVEX.vvvv != 1111B.
 T}
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

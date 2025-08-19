@@ -1,12 +1,13 @@
+'\" t
 .nh
-.TH "X86-LOOP-LOOPCC" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-LOOP-LOOPCC" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 LOOP-LOOPCC - LOOP ACCORDING TO ECX COUNTER
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
 E2 cb	LOOP rel8	D	Valid	Valid	T{
 Decrement count; jump short if count ≠ 0.
 T}
@@ -18,21 +19,22 @@ Decrement count; jump short if count ≠ 0 and ZF = 0.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./loop:loopcc.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-D	Offset	NA	NA	NA
+\fBOp/En Operand 1 Operand 2 Operand 3\fP	\fB\fP	\fB\fP	\fB\fP	\fBOperand 4\fP
+D Offset N/A N/A				N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Performs a loop operation using the RCX, ECX or CX register as a counter
 (depending on whether address size is 64 bits, 32 bits, or 16 bits).
-Note that the LOOP instruction ignores REX.W; but 64\-bit address size
-can be over\-ridden using a 67H prefix.
+Note that the LOOP instruction ignores REX.W; but 64-bit address size
+can be over-ridden using a 67H prefix.
 
 .PP
 Each time the LOOP instruction is executed, the count register is
@@ -47,126 +49,132 @@ The target instruction is specified with a relative offset (a signed
 offset relative to the current value of the instruction pointer in the
 IP/EIP/RIP register). This offset is generally specified as a label in
 assembly code, but at the machine code level, it is encoded as a signed,
-8\-bit immediate value, which is added to the instruction pointer.
+8-bit immediate value, which is added to the instruction pointer.
 Offsets of –128 to +127 are allowed with this instruction.
 
 .PP
-Some forms of the loop instruction (LOOPcc instruction itself does not
-affect the state of the ZF flag; the ZF flag is changed by other
-instructions in the loop.
+Some forms of the loop instruction (LOOP\fIcc\fP) also accept the ZF flag as
+a condition for terminating the loop before the count reaches zero. With
+these forms of the instruction, a condition code (\fIcc\fP) is associated
+with each instruction to indicate the condition being tested for. Here,
+the LOOP\fIcc\fP instruction itself does not affect the state of the ZF
+flag; the ZF flag is changed by other instructions in the loop.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
+.EX
 IF (AddressSize = 32)
     THEN Count is ECX;
 ELSE IF (AddressSize = 64)
     Count is RCX;
 ELSE Count is CX;
 FI;
-Count ← Count – 1;
+Count := Count – 1;
 IF Instruction is not LOOP
     THEN
-        IF (Instruction ← LOOPE) or (Instruction ← LOOPZ)
+        IF (Instruction := LOOPE) or (Instruction := LOOPZ)
             THEN IF (ZF = 1) and (Count ≠ 0)
-                    THEN BranchCond ← 1;
-                    ELSE BranchCond ← 0;
+                    THEN BranchCond := 1;
+                    ELSE BranchCond := 0;
                 FI;
             ELSE (Instruction = LOOPNE) or (Instruction = LOOPNZ)
                 IF (ZF = 0 ) and (Count ≠ 0)
-                    THEN BranchCond ← 1;
-                    ELSE BranchCond ← 0;
-                FI;
+                    THEN BranchCond := 1;
+                    ELSE BranchCond := 0;
         FI;
     ELSE (* Instruction = LOOP *)
         IF (Count ≠ 0)
-            THEN BranchCond ← 1;
-            ELSE BranchCond ← 0;
+            THEN BranchCond := 1;
+            ELSE BranchCond := 0;
         FI;
 FI;
 IF BranchCond = 1
     THEN
-        IF OperandSize = 32
-            THEN EIP ← EIP + SignExtend(DEST);
-            ELSE IF OperandSize = 64
-                THEN RIP ← RIP + SignExtend(DEST);
+        IF in 64-bit mode (* OperandSize = 64 *)
+            THEN
+                tempRIP := RIP + SignExtend(DEST);
+                IF tempRIP is not canonical
+                    THEN #GP(0);
+                ELSE RIP := tempRIP;
                 FI;
-            ELSE IF OperandSize = 16
-                THEN EIP ← EIP AND 0000FFFFH;
+            ELSE
+                tempEIP := EIP SignExtend(DEST);
+                IF OperandSize 16
+                    THEN tempEIP := tempEIP AND 0000FFFFH;
                 FI;
-        FI;
-        IF OperandSize = (32 or 64)
-            THEN IF (R/E)IP < CS.Base or (R/E)IP > CS.Limit
-                #GP; FI;
+                IF tempEIP is not within code segment limit
+                    THEN #GP(0);
+                    ELSE EIP := tempEIP;
                 FI;
         FI;
     ELSE
         Terminate loop and continue program execution at (R/E)IP;
 FI;
-
-.fi
-.RE
+.EE
 
 .SH FLAGS AFFECTED
-.PP
-None
+None.
 
-.SH PROTECTED MODE EXCEPTIONS
+.SH PROTECTED MODE EXCEPTIONS  href="./loop:loopcc.html#protected-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If the offset being jumped to is beyond the limits of the CS segment.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS  href="./loop:loopcc.html#real-address-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP	T{
-If the offset being jumped to is beyond the limits of the CS segment or is outside of the effective address space from 0 to FFFFH. This condition can occur if a 32\-bit address size override prefix is used.
+If the offset being jumped to is beyond the limits of the CS segment or is outside of the effective address space from 0 to FFFFH. This condition can occur if a 32-bit address size override prefix is used.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS  href="./loop:loopcc.html#virtual-8086-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in real address mode.
 
-.SH COMPATIBILITY MODE EXCEPTIONS
+.SH COMPATIBILITY MODE EXCEPTIONS  href="./loop:loopcc.html#compatibility-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
-If the offset being jumped to is in a non\-canonical form.
+If the offset being jumped to is in a non-canonical form.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

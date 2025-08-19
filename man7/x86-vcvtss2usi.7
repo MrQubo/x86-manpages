@@ -1,23 +1,22 @@
+'\" t
 .nh
-.TH "X86-VCVTSS2USI" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VCVTSS2USI" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-VCVTSS2USI - CONVERT SCALAR SINGLE-PRECISION FLOATING-POINT VALUE TO UNSIGNED DOUBLEWORD INTEGER
+VCVTSS2USI - CONVERT SCALAR SINGLE PRECISION FLOATING-POINT VALUE TO UNSIGNED DOUBLEWORDINTEGER
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 Bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
-EVEX.LIG.F3.0F.W0 79 /r VCVTSS2USI r32, xmm1/m32{er}
-T}
-	A	V/V	AVX512F	T{
-Convert one single\-precision floating\-point value from xmm1/m32 to one unsigned doubleword integer in r32.
+EVEX.LLIG.F3.0F.W0 79 /r VCVTSS2USI r32, xmm1/m32{er}
+T}	A	V/V	AVX512F	T{
+Convert one single precision floating-point value from xmm1/m32 to one unsigned doubleword integer in r32.
 T}
 T{
-EVEX.LIG.F3.0F.W1 79 /r VCVTSS2USI r64, xmm1/m32{er}
-T}
-	A	V/N.E.1	AVX512F	T{
-Convert one single\-precision floating\-point value from xmm1/m32 to one unsigned quadword integer in r64.
+EVEX.LLIG.F3.0F.W1 79 /r VCVTSS2USI r64, xmm1/m32{er}
+T}	A	V/N.E.1	AVX512F	T{
+Convert one single precision floating-point value from xmm1/m32 to one unsigned quadword integer in r64.
 T}
 .TE
 
@@ -25,105 +24,99 @@ T}
 .RS
 
 .PP
-1\&. EVEX.W1 in non\-64 bit is ignored; the instructions behaves as if
+1\&. EVEX.W1 in non-64 bit is ignored; the instruction behaves as if
 the W0 version is used.
 
 .RE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="vcvtss2usi.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Tuple1 Fixed	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Tuple1 Fixed	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
-.SS Description
-.PP
-Converts a single\-precision floating\-point value in the source operand
-(the second operand) to an unsigned double\-word integer (or unsigned
+.SS DESCRIPTION
+Converts a single precision floating-point value in the source operand
+(the second operand) to an unsigned double-word integer (or unsigned
 quadword integer if operand size is 64 bits) in the destination operand
 (the first operand). The source operand can be an XMM register or a
-memory location. The destination operand is a general\-purpose register.
-When the source operand is an XMM register, the single\-precision
-floating\-point value is contained in the low doubleword of the register.
+memory location. The destination operand is a general-purpose register.
+When the source operand is an XMM register, the single precision
+floating-point value is contained in the low doubleword of the register.
 
 .PP
 When a conversion is inexact, the value returned is rounded according to
 the rounding control bits in the MXCSR register or the embedded rounding
 control bits. If a converted result cannot be represented in the
-destination format, the floating\-point invalid exception is raised, and
-if this exception is masked, the integer value 2w – 1 is returned, where
-w represents the number of bits in the destination format.
+destination format, the floating-point invalid exception is raised, and
+if this exception is masked, the integer value 2w – 1 is
+returned, where w represents the number of bits in the destination
+format.
 
 .PP
-VEX.W1 and EVEX.W1 versions: promotes the instruction to produce 64\-bit
-data in 64\-bit mode.
+VEX.W1 and EVEX.W1 versions: promotes the instruction to produce 64-bit
+data in 64-bit mode.
 
 .PP
 Note: EVEX.vvvv is reserved and must be 1111b, otherwise instructions
 will #UD.
 
-.SS Operation
-.SS VCVTSS2USI (EVEX encoded version)
-.PP
-.RS
+.SS OPERATION
+.SS VCVTSS2USI (EVEX ENCODED VERSION)  href="vcvtss2usi.html#vcvtss2usi--evex-encoded-version-"
+class="anchor">¶
 
-.nf
+.EX
 IF (SRC *is register*) AND (EVEX.b = 1)
     THEN
-        SET\_RM(EVEX.RC);
+        SET_ROUNDING_MODE_FOR_THIS_INSTRUCTION(EVEX.RC);
     ELSE
-        SET\_RM(MXCSR.RM);
+        SET_ROUNDING_MODE_FOR_THIS_INSTRUCTION(MXCSR.RC);
 FI;
-IF 64\-bit Mode and OperandSize = 64
+IF 64-bit Mode and OperandSize = 64
 THEN
-    DEST[63:0] ← Convert\_Single\_Precision\_Floating\_Point\_To\_UInteger(SRC[31:0]);
+    DEST[63:0] := Convert_Single_Precision_Floating_Point_To_UInteger(SRC[31:0]);
 ELSE
-    DEST[31:0] ← Convert\_Single\_Precision\_Floating\_Point\_To\_UInteger(SRC[31:0]);
+    DEST[31:0] := Convert_Single_Precision_Floating_Point_To_UInteger(SRC[31:0]);
 FI;
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vcvtss2usi.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
+.EX
+VCVTSS2USI unsigned _mm_cvtss_u32( __m128 a);
+
+VCVTSS2USI unsigned _mm_cvt_roundss_u32( __m128 a, int r);
+
+VCVTSS2USI unsigned __int64 _mm_cvtss_u64( __m128 a);
+
+VCVTSS2USI unsigned __int64 _mm_cvt_roundss_u64( __m128 a, int r);
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vcvtss2usi.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
+Invalid, Precision.
 
-.nf
-VCVTSS2USI unsigned \_mm\_cvtss\_u32( \_\_m128 a);
-
-VCVTSS2USI unsigned \_mm\_cvt\_roundss\_u32( \_\_m128 a, int r);
-
-VCVTSS2USI unsigned \_\_int64 \_mm\_cvtss\_u64( \_\_m128 a);
-
-VCVTSS2USI unsigned \_\_int64 \_mm\_cvt\_roundss\_u64( \_\_m128 a, int r);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-Invalid, Precision
-
-.SS Other Exceptions
-.PP
-EVEX\-encoded instructions, see Exceptions Type E3NF.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+.SS OTHER EXCEPTIONS
+EVEX-encoded instructions, see Table
+2-48, “Type E3NF Class Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

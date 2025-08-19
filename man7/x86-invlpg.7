@@ -1,51 +1,37 @@
+'\" t
 .nh
-.TH "X86-INVLPG" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-INVLPG" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 INVLPG - INVALIDATE TLB ENTRIES
+\fBOpcode1\fP
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-		M	Valid	Valid	T{
+\fB\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
+0F 01/7			Valid	Valid	T{
 Invalidate TLB entries for page containing m.
 T}
 .TE
 
 .PP
-.RS
-
-.PP
-* SeetheIA\-32ArchitectureCompatibilitysectionbelow.
-
-.RE
+1\&. See the IA-32 Architecture Compatibility section below.
 
 .SH INSTRUCTION OPERAND ENCODING
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-M	ModRM:r/m (r)	NA	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+M	ModRM:r/m (r)	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Invalidates any translation lookaside buffer (TLB) entries specified
 with the source operand. The source operand is a memory address. The
 processor determines the page that contains that address and flushes all
 TLB entries for that page.1
-
-.PP
-.RS
-
-.PP
-1\&. If the paging structures map the linear address using a page
-larger than 4 KBytes and there are multiple TLB entries for that page
-(see Section 4.10.2.3, “Details of TLB Use,” in the Intel® 64 and
-IA\-32 Architectures Software Developer’s Manual, Volume 3A), the
-instruction invalidates all of them.
-
-.RE
 
 .PP
 The INVLPG instruction is a privileged instruction. When the processor
@@ -63,34 +49,33 @@ for the specified page, regardless of PCID.
 
 .PP
 For more details on operations that flush the TLB, see “MOV—Move to/from
-Control Registers” in the Intel® 64 and IA\-32 Architectures Software
-Developer’s Manual, Volume 3A.
+Control Registers” in the Intel® 64 and IA-32 Architectures
+Software Developer’s Manual, Volume 2B, and Section 4.10.4.1,
+“Operations that Invalidate TLBs and Paging-Structure Caches,” in the
+Intel® 64 and IA-32 Architectures Software Developer’s
+Manual, Volume 3A.
 
 .PP
-This instruction’s operation is the same in all non\-64\-bit modes. It
-also operates the same in 64\-bit mode, except if the memory address is
-in non\-canonical form. In this case, INVLPG is the same as a NOP.
+This instruction’s operation is the same in all non-64-bit modes. It
+also operates the same in 64-bit mode, except if the memory address is
+in non-canonical form. In this case, INVLPG is the same as a NOP.
 
-.SH IA\-32 ARCHITECTURE COMPATIBILITY
+.SH IA-32 ARCHITECTURE COMPATIBILITY  href="invlpg.html#ia-32-architecture-compatibility"
+class="anchor">¶
+
 .PP
 The INVLPG instruction is implementation dependent, and its function may
-be implemented differently on different families of Intel 64 or IA\-32
-processors. This instruction is not supported on IA\-32 processors
+be implemented differently on different families of Intel 64 or IA-32
+processors. This instruction is not supported on IA-32 processors
 earlier than the Intel486 processor.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
+.EX
 Invalidate(RelevantTLBEntries);
 Continue; (* Continue execution *)
-
-.fi
-.RE
+.EE
 
 .SH FLAGS AFFECTED
-.PP
 None.
 
 .SH PROTECTED MODE EXCEPTIONS
@@ -98,6 +83,7 @@ None.
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If the current privilege level is not 0.
 T}
@@ -105,50 +91,61 @@ T}
 	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
-.TS
-allbox;
-l l 
-l l .
-#UD	Operand is a register.
-	If the LOCK prefix is used.
-.TE
-
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
-.TS
-allbox;
-l l 
-l l .
-#GP(0)	T{
-The INVLPG instruction cannot be executed at the virtual\-8086 mode.
-T}
-.TE
-
-.SH 64\-BIT MODE EXCEPTIONS
-.TS
-allbox;
-l l 
-l l .
-#GP(0)	T{
-If the current privilege level is not 0.
-T}
-#UD	Operand is a register.
-	If the LOCK prefix is used.
-.TE
-
-.SH SEE ALSO
 .PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+.RS
+
+.PP
+1\&. If the paging structures map the linear address using a page
+larger than 4 KBytes and there are multiple TLB entries for that page
+(see Section 4.10.2.3, “Details of TLB Use,” in the Intel®
+64 and IA-32 Architectures Software Developer’s Manual, Volume 3A),
+the instruction invalidates all of them.
+
+.RE
+
+.SH REAL-ADDRESS MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#UD	Operand is a register.
+	If the LOCK prefix is used.
+.TE
+
+.SH VIRTUAL-8086 MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
+The INVLPG instruction cannot be executed at the virtual-8086 mode.
+T}
+.TE
+
+.SH 64-BIT MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
+If the current privilege level is not 0.
+T}
+#UD	Operand is a register.
+	If the LOCK prefix is used.
+.TE
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

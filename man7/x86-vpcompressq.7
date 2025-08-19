@@ -1,51 +1,50 @@
+'\" t
 .nh
-.TH "X86-VPCOMPRESSQ" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VPCOMPRESSQ" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VPCOMPRESSQ - STORE SPARSE PACKED QUADWORD INTEGER VALUES INTO DENSE MEMORY-REGISTER
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 EVEX.128.66.0F38.W1 8B /r VPCOMPRESSQ xmm1/m128 {k1}{z}, xmm2
-T}
-	A	V/V	AVX512VL AVX512F	T{
-Compress packed quadword integer values from xmm2 to xmm1/m128 using controlmask k1.
+T}	A	V/V	AVX512VL AVX512F	T{
+Compress packed quadword integer values from xmm2 to xmm1/m128 using control mask k1.
 T}
 T{
 EVEX.256.66.0F38.W1 8B /r VPCOMPRESSQ ymm1/m256 {k1}{z}, ymm2
-T}
-	A	V/V	AVX512VL AVX512F	T{
-Compress packed quadword integer values from ymm2 to ymm1/m256 using controlmask k1.
+T}	A	V/V	AVX512VL AVX512F	T{
+Compress packed quadword integer values from ymm2 to ymm1/m256 using control mask k1.
 T}
 T{
 EVEX.512.66.0F38.W1 8B /r VPCOMPRESSQ zmm1/m512 {k1}{z}, zmm2
-T}
-	A	V/V	AVX512F	T{
-Compress packed quadword integer values from zmm2 to zmm1/m512 using controlmask k1.
+T}	A	V/V	AVX512F	T{
+Compress packed quadword integer values from zmm2 to zmm1/m512 using control mask k1.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="vpcompressq.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Tuple1 Scalar	ModRM:r/m (w)	ModRM:reg (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Tuple1 Scalar	ModRM:r/m (w)	ModRM:reg (r)	N/A	N/A
 .TE
 
-.SS Description
-.PP
+.SS DESCRIPTION
 Compress (stores) up to 8/4/2 quadword integer values from the source
 operand (second operand) to the destination operand (first operand). The
 source operand is a ZMM/YMM/XMM register, the destination operand can be
-a ZMM/YMM/XMM register or a 512/256/128\-bit memory location.
+a ZMM/YMM/XMM register or a 512/256/128-bit memory location.
 
 .PP
 The opmask register k1 selects the active elements (partial vector or
-possibly non\-contiguous if less than 8 active elements) from the source
+possibly non-contiguous if less than 8 active elements) from the source
 operand to compress into a contiguous vector. The contiguous vector is
 written to the destination starting from the low element of the
 destination operand.
@@ -65,103 +64,95 @@ Note: EVEX.vvvv is reserved and must be 1111b otherwise instructions
 will #UD.
 
 .PP
-Note that the compressed displacement assumes a pre\-scaling (N)
+Note that the compressed displacement assumes a pre-scaling (N)
 corresponding to the size of one single element instead of the size of
 the full vector.
 
-.SS Operation
-.SS VPCOMPRESSQ (EVEX encoded versions) store form
-.PP
-.RS
+.SS OPERATION
+.SS VPCOMPRESSQ (EVEX ENCODED VERSIONS) STORE FORM <a
+href="vpcompressq.html#vpcompressq--evex-encoded-versions--store-form"
+class="anchor">¶
 
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
-SIZE ← 64
-k←0
-FOR j←0 TO KL\-1
-    i←j * 64
+SIZE := 64
+k := 0
+FOR j := 0 TO KL-1
+    i := j * 64
     IF k1[j] OR *no controlmask*
         THEN
-            DEST[k+SIZE\-1:k]← SRC[i+63:i]
-            k←k + SIZE
+            DEST[k+SIZE-1:k] := SRC[i+63:i]
+            k := k + SIZE
     FI;
 ENFOR
+.EE
 
-.fi
-.RE
+.SS VPCOMPRESSQ (EVEX ENCODED VERSIONS) REG-REG FORM <a
+href="vpcompressq.html#vpcompressq--evex-encoded-versions--reg-reg-form"
+class="anchor">¶
 
-.SS VPCOMPRESSQ (EVEX encoded versions) reg\-reg form
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
-SIZE ← 64
-k←0
-FOR j←0 TO KL\-1
-    i←j * 64
+SIZE := 64
+k := 0
+FOR j := 0 TO KL-1
+    i := j * 64
     IF k1[j] OR *no controlmask*
         THEN
-                DEST[k+SIZE\-1:k]← SRC[i+63:i]
-                k←k + SIZE
+                DEST[k+SIZE-1:k] := SRC[i+63:i]
+                k := k + SIZE
     FI;
 ENDFOR
-IF *merging\-masking*
-            THEN *DEST[VL\-1:k] remains unchanged*
-            ELSE DEST[VL\-1:k] ← 0
+IF *merging-masking*
+            THEN *DEST[VL-1:k] remains unchanged*
+            ELSE DEST[VL-1:k] := 0
 FI
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vpcompressq.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+.EX
+VPCOMPRESSQ __m512i _mm512_mask_compress_epi64(__m512i s, __mmask8 c, __m512i a);
 
-.nf
-VPCOMPRESSQ \_\_m512i \_mm512\_mask\_compress\_epi64(\_\_m512i s, \_\_mmask8 c, \_\_m512i a);
+VPCOMPRESSQ __m512i _mm512_maskz_compress_epi64( __mmask8 c, __m512i a);
 
-VPCOMPRESSQ \_\_m512i \_mm512\_maskz\_compress\_epi64( \_\_mmask8 c, \_\_m512i a);
+VPCOMPRESSQ void _mm512_mask_compressstoreu_epi64(void * a, __mmask8 c, __m512i s);
 
-VPCOMPRESSQ void \_mm512\_mask\_compressstoreu\_epi64(void * a, \_\_mmask8 c, \_\_m512i s);
+VPCOMPRESSQ __m256i _mm256_mask_compress_epi64(__m256i s, __mmask8 c, __m256i a);
 
-VPCOMPRESSQ \_\_m256i \_mm256\_mask\_compress\_epi64(\_\_m256i s, \_\_mmask8 c, \_\_m256i a);
+VPCOMPRESSQ __m256i _mm256_maskz_compress_epi64( __mmask8 c, __m256i a);
 
-VPCOMPRESSQ \_\_m256i \_mm256\_maskz\_compress\_epi64( \_\_mmask8 c, \_\_m256i a);
+VPCOMPRESSQ void _mm256_mask_compressstoreu_epi64(void * a, __mmask8 c, __m256i s);
 
-VPCOMPRESSQ void \_mm256\_mask\_compressstoreu\_epi64(void * a, \_\_mmask8 c, \_\_m256i s);
+VPCOMPRESSQ __m128i _mm_mask_compress_epi64(__m128i s, __mmask8 c, __m128i a);
 
-VPCOMPRESSQ \_\_m128i \_mm\_mask\_compress\_epi64(\_\_m128i s, \_\_mmask8 c, \_\_m128i a);
+VPCOMPRESSQ __m128i _mm_maskz_compress_epi64( __mmask8 c, __m128i a);
 
-VPCOMPRESSQ \_\_m128i \_mm\_maskz\_compress\_epi64( \_\_mmask8 c, \_\_m128i a);
+VPCOMPRESSQ void _mm_mask_compressstoreu_epi64(void * a, __mmask8 c, __m128i s);
+.EE
 
-VPCOMPRESSQ void \_mm\_mask\_compressstoreu\_epi64(void * a, \_\_mmask8 c, \_\_m128i s);
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vpcompressq.html#simd-floating-point-exceptions"
+class="anchor">¶
 
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
 None
 
-.SS Other Exceptions
-.PP
-EVEX\-encoded instruction, see Exceptions Type E4.nb.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+.SS OTHER EXCEPTIONS
+EVEX-encoded instruction, see Exceptions Type E4.nb in
+Table 2-49, “Type E4 Class Exception
+Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

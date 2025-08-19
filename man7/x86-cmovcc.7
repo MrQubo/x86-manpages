@@ -1,12 +1,13 @@
+'\" t
 .nh
-.TH "X86-CMOVCC" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-CMOVCC" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 CMOVCC - CONDITIONAL MOVE
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
 0F 47 /r	CMOVA r16, r/m16	RM	Valid	Valid	Move if above (CF=0 and ZF=0).
 0F 47 /r	CMOVA r32, r/m32	RM	Valid	Valid	Move if above (CF=0 and ZF=0).
 REX.W + 0F 47 /r	CMOVA r64, r/m64	RM	Valid	N.E.	Move if above (CF=0 and ZF=0).
@@ -37,7 +38,7 @@ T}
 0F 4F /r	CMOVG r32, r/m32	RM	Valid	Valid	T{
 Move if greater (ZF=0 and SF=OF).
 T}
-REX.W + 0F 4F /r	CMOVG r64, r/m64	RM	V/N.E.	NA	T{
+REX.W + 0F 4F /r	CMOVG r64, r/m64	RM	V/N.E.	N/A	T{
 Move if greater (ZF=0 and SF=OF).
 T}
 0F 4D /r	CMOVGE r16, r/m16	RM	Valid	Valid	T{
@@ -164,21 +165,32 @@ REX.W + 0F 44 /r	CMOVZ r64, r/m64	RM	Valid	N.E.	Move if zero (ZF=1).
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-RM	ModRM:reg (r, w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+RM	ModRM:reg (r, w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
-The CMOVcc instruction.
+Each of the CMOVcc instructions performs a move operation if the status
+flags in the EFLAGS register (CF, OF, PF, SF, and ZF) are in a specified
+state (or condition). A condition code (\fIcc\fP) is associated with each
+instruction to indicate the condition being tested for. If the condition
+is not satisfied, a move is not performed and execution continues with
+the instruction following the CMOV\fIcc\fP instruction.
 
 .PP
-These instructions can move 16\-bit, 32\-bit or 64\-bit values from memory
-to a general\-purpose register or from one general\-purpose register to
-another. Conditional moves of 8\-bit register operands are not supported.
+Specifically, CMOVcc loads data from its source operand into a temporary
+register unconditionally (regardless of the condition code and the
+status flags in the EFLAGS register). If the condition code associated
+with the instruction (cc) is satisfied, the data in the temporary
+register is then copied into the instruction's destination operand.
 
 .PP
-The condition for each CMOVcc mnemonic is given in the description
+These instructions can move 16-bit, 32-bit or 64-bit values from memory
+to a general-purpose register or from one general-purpose register to
+another. Conditional moves of 8-bit register operands are not supported.
+
+.PP
+The condition for each CMOV\fIcc\fP mnemonic is given in the description
 column of the above table. The terms “less” and “greater” are used for
 comparisons of signed integers and the terms “above” and “below” are
 used for unsigned integers.
@@ -191,38 +203,29 @@ CMOVNBE (conditional move if not below or equal) instruction are
 alternate mnemonics for the opcode 0F 47H.
 
 .PP
-The CMOVcc instructions are supported by checking the processor’s
-feature information with the CPUID instruction (see “CPUID—CPU
-Identification” in this chapter).
+The CMOV\fIcc\fP instructions were introduced in P6 family processors;
+however, these instructions may not be supported by all IA-32
+processors. Software can determine if the CMOV\fIcc\fP instructions are
+supported by checking the processor’s feature information with the CPUID
+instruction (see “CPUID—CPU Identification” in this chapter).
 
 .PP
-In 64\-bit mode, the instruction’s default operation size is 32 bits. Use
-of the REX.R prefix permits access to additional registers (R8\-R15). Use
+In 64-bit mode, the instruction’s default operation size is 32 bits. Use
+of the REX.R prefix permits access to additional registers (R8-R15). Use
 of the REX.W prefix promotes operation to 64 bits. See the summary chart
 at the beginning of this section for encoding data and limits.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
-temp ← SRC
+.EX
+temp := SRC
 IF condition TRUE
-    THEN
-        DEST ← temp;
-    FI;
-ELSE
-    IF (OperandSize = 32 and IA\-32e mode active)
-        THEN
-            DEST[63:32] ← 0;
-    FI;
+    THEN DEST := temp;
+ELSE IF (OperandSize = 32 and IA-32e mode active)
+    THEN DEST[63:32] := 0;
 FI;
-
-.fi
-.RE
+.EE
 
 .SH FLAGS AFFECTED
-.PP
 None.
 
 .SH PROTECTED MODE EXCEPTIONS
@@ -230,6 +233,7 @@ None.
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
@@ -239,18 +243,19 @@ T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
@@ -260,18 +265,19 @@ T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made.
 T}
@@ -279,40 +285,36 @@ T}
 .TE
 
 .SH COMPATIBILITY MODE EXCEPTIONS
-.PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
-If a memory address referencing the SS segment is in a non\-canonical form.
+If a memory address referencing the SS segment is in a non-canonical form.
 T}
 #GP(0)	T{
-If the memory address is in a non\-canonical form.
+If the memory address is in a non-canonical form.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

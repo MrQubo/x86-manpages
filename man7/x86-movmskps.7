@@ -1,30 +1,31 @@
+'\" t
 .nh
-.TH "X86-MOVMSKPS" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-MOVMSKPS" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-MOVMSKPS - EXTRACT PACKED SINGLE-PRECISION FLOATING-POINT SIGN MASK
+MOVMSKPS - EXTRACT PACKED SINGLE PRECISION FLOATING-POINT SIGN MASK
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32\-bit Mode\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
-NP 0F 50 /xmm	RM	V/V	SSE	T{
-Extract 4\-bit sign mask from r64 are filled with zeros.
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32-bit Mode\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
+NP 0F 50 /r MOVMSKPS reg, xmm	RM	V/V	SSE	T{
+Extract 4-bit sign mask from xmm and store in reg. The upper bits of r32 or r64 are filled with zeros.
 T}
 T{
 VEX.128.0F.WIG 50 /r VMOVMSKPS reg, xmm2
-T}
-	RM	V/V	AVX	T{
-Extract 4\-bit sign mask from r64 are zeroed.
+T}	RM	V/V	AVX	T{
+Extract 4-bit sign mask from xmm2 and store in reg. The upper bits of r32 or r64 are zeroed.
 T}
 T{
 VEX.256.0F.WIG 50 /r VMOVMSKPS reg, ymm2
-T}
-	RM	V/V	AVX	T{
-Extract 8\-bit sign mask from ymm2 and store in reg. The upper bits of r64 are zeroed.
+T}	RM	V/V	AVX	T{
+Extract 8-bit sign mask from ymm2 and store in reg. The upper bits of r32 or r64 are zeroed.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING1
+.SH INSTRUCTION OPERAND ENCODING1  href="movmskps.html#instruction-operand-encoding"
+class="anchor">¶
+
 .PP
 .RS
 
@@ -37,27 +38,26 @@ T}
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-RM	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+RM	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
-Extracts the sign bits from the packed single\-precision floating\-point
-values in the source operand (second operand), formats them into a 4\- or
-8\-bit mask, and stores the mask in the destination operand (first
+Extracts the sign bits from the packed single precision floating-point
+values in the source operand (second operand), formats them into a 4- or
+8-bit mask, and stores the mask in the destination operand (first
 operand). The source operand is an XMM or YMM register, and the
-destination operand is a general\-purpose register. The mask is stored in
-the 4 or 8 low\-order bits of the destination operand. The upper bits of
+destination operand is a general-purpose register. The mask is stored in
+the 4 or 8 low-order bits of the destination operand. The upper bits of
 the destination operand beyond the mask are filled with zeros.
 
 .PP
-In 64\-bit mode, the instruction can access additional registers
-(XMM8\-XMM15, R8\-R15) when used with a REX.R prefix. The default operand
-size is 64\-bit in 64\-bit mode.
+In 64-bit mode, the instruction can access additional registers
+(XMM8-XMM15, R8-R15) when used with a REX.R prefix. The default operand
+size is 64-bit in 64-bit mode.
 
 .PP
-128\-bit versions: The source operand is a YMM register. The destination
+128-bit versions: The source operand is a YMM register. The destination
 operand is a general purpose register.
 
 .PP
@@ -65,104 +65,89 @@ VEX.256 encoded version: The source operand is a YMM register. The
 destination operand is a general purpose register.
 
 .PP
-Note: In VEX\-encoded versions, VEX.vvvv is reserved and must be 1111b,
+Note: In VEX-encoded versions, VEX.vvvv is reserved and must be 1111b,
 otherwise instructions will #UD.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
-DEST[0] ← SRC[31];
-DEST[1] ← SRC[63];
-DEST[2] ← SRC[95];
-DEST[3] ← SRC[127];
+.EX
+DEST[0] := SRC[31];
+DEST[1] := SRC[63];
+DEST[2] := SRC[95];
+DEST[3] := SRC[127];
 IF DEST = r32
-    THEN DEST[31:4] ← ZeroExtend;
-    ELSE DEST[63:4] ← ZeroExtend;
+    THEN DEST[31:4] := ZeroExtend;
+    ELSE DEST[63:4] := ZeroExtend;
 FI;
+.EE
 
-.fi
-.RE
+.SS (V)MOVMSKPS (128-BIT VERSION)  href="movmskps.html#-v-movmskps--128-bit-version-"
+class="anchor">¶
 
-.SS (V)MOVMSKPS (128\-bit version)
-.PP
-.RS
-
-.nf
-DEST[0] ← SRC[31]
-DEST[1] ← SRC[63]
-DEST[2] ← SRC[95]
-DEST[3] ← SRC[127]
+.EX
+DEST[0] := SRC[31]
+DEST[1] := SRC[63]
+DEST[2] := SRC[95]
+DEST[3] := SRC[127]
 IF DEST = r32
-    THEN DEST[31:4]←0;
-    ELSE DEST[63:4]←0;
+    THEN DEST[31:4] := 0;
+    ELSE DEST[63:4] := 0;
 FI
+.EE
 
-.fi
-.RE
+.SS VMOVMSKPS (VEX.256 ENCODED VERSION)  href="movmskps.html#vmovmskps--vex-256-encoded-version-"
+class="anchor">¶
 
-.SS VMOVMSKPS (VEX.256 encoded version)
-.PP
-.RS
-
-.nf
-DEST[0] ← SRC[31]
-DEST[1] ← SRC[63]
-DEST[2] ← SRC[95]
-DEST[3] ← SRC[127]
-DEST[4] ← SRC[159]
-DEST[5] ← SRC[191]
-DEST[6] ← SRC[223]
-DEST[7] ← SRC[255]
+.EX
+DEST[0] := SRC[31]
+DEST[1] := SRC[63]
+DEST[2] := SRC[95]
+DEST[3] := SRC[127]
+DEST[4] := SRC[159]
+DEST[5] := SRC[191]
+DEST[6] := SRC[223]
+DEST[7] := SRC[255]
 IF DEST = r32
-    THEN DEST[31:8]←0;
-    ELSE DEST[63:8]←0;
+    THEN DEST[31:8] := 0;
+    ELSE DEST[63:8] := 0;
 FI
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="movmskps.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
+.EX
+int _mm_movemask_ps(__m128 a)
 
-.nf
-int \_mm\_movemask\_ps(\_\_m128 a)
+int _mm256_movemask_ps(__m256 a)
+.EE
 
-int \_mm256\_movemask\_ps(\_\_m256 a)
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="movmskps.html#simd-floating-point-exceptions"
+class="anchor">¶
 
-.fi
-.RE
-
-.SH SIMD FLOATING\-POINT EXCEPTIONS
 .PP
 None.
 
 .SH OTHER EXCEPTIONS
-.PP
-See Exceptions Type 7; additionally
+See Table 2-24, “Type 7 Class
+Exception Conditions,” additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If VEX.vvvv ≠ 1111B.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

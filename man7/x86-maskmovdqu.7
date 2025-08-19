@@ -1,50 +1,45 @@
+'\" t
 .nh
-.TH "X86-MASKMOVDQU" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-MASKMOVDQU" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 MASKMOVDQU - STORE SELECTED BYTES OF DOUBLE QUADWORD
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32\-bit Mode\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
-66 0F F7 /xmm2	RM	V/V	SSE2	T{
-Selectively write bytes from xmm2. The default memory location is specified by DS:DI/EDI/RDI.
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32-bit Mode\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
+T{
+66 0F F7 /r MASKMOVDQU xmm1, xmm2
+T}	RM	V/V	SSE2	T{
+Selectively write bytes from xmm1 to memory location using the byte mask in xmm2. The default memory location is specified by DS:DI/EDI/RDI.
 T}
 T{
 VEX.128.66.0F.WIG F7 /r VMASKMOVDQU xmm1, xmm2
-T}
-	RM	V/V	AVX	T{
-Selectively write bytes from xmm2. The default memory location is specified by DS:DI/EDI/RDI.
+T}	RM	V/V	AVX	T{
+Selectively write bytes from xmm1 to memory location using the byte mask in xmm2. The default memory location is specified by DS:DI/EDI/RDI.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING1
-.PP
-.RS
-
-.PP
-1.ModRM.MOD = 011B required
-
-.RE
+.SH INSTRUCTION OPERAND ENCODING1  href="maskmovdqu.html#instruction-operand-encoding"
+class="anchor">¶
 
 .TS
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-RM	ModRM:reg (r)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+RM	ModRM:reg (r)	ModRM:r/m (r)	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Stores selected bytes from the source operand (first operand) into an
-128\-bit memory location. The mask operand (second operand) selects which
+128-bit memory location. The mask operand (second operand) selects which
 bytes from the source operand are written to memory. The source and mask
 operands are XMM registers. The memory location specified by the
 effective address in the DI/EDI/RDI register (the default segment
-register is DS, but this may be overridden with a segment\-override
+register is DS, but this may be overridden with a segment-override
 prefix). The memory location does not need to be aligned on a natural
-boundary. (The size of the store address depends on the address\-size
+boundary. (The size of the store address depends on the address-size
 attribute.)
 
 .PP
@@ -54,21 +49,27 @@ corresponding byte location in memory: 0 indicates no write and 1
 indicates write.
 
 .PP
-The MASKMOVDQU instruction generates a non\-temporal hint to the
-processor to minimize cache pollution. The non\-temporal hint is
+The MASKMOVDQU instruction generates a non-temporal hint to the
+processor to minimize cache pollution. The non-temporal hint is
 implemented by using a write combining (WC) memory type protocol (see
-“Caching of Temporal vs. Non\-Temporal Data” in Chapter 10, of the Intel®
-64 and IA\-32 Architectures Software Developer’s Manual, Volume 1).
-Because the WC protocol uses a weakly\-ordered memory consistency model,
-a fencing operation implemented with the SFENCE or MFENCE instruction
-should be used in conjunction with MASKMOVDQU instructions if multiple
-processors might use different memory types to read/write the
-destination memory locations.
+“Caching of Temporal vs. Non-Temporal Data” in Chapter 10, of the
+Intel® 64 and IA-32 Architectures Software Developer’s
+Manual, Volume 1). Because the WC protocol uses a weakly-ordered memory
+consistency model, a fencing operation implemented with the SFENCE or
+MFENCE instruction should be used in conjunction with MASKMOVDQU
+instructions if multiple processors might use different memory types to
+read/write the destination memory locations.
+
+.PP
+.RS
+
+.PP
+1.ModRM.MOD = 011B required
+
+.RE
 
 .PP
 Behavior with a mask of all 0s is as follows:
-
-.RS
 .IP \(bu 2
 No data will be written to memory.
 .IP \(bu 2
@@ -81,23 +82,21 @@ still be signaled (implementation dependent).
 .IP \(bu 2
 If the destination memory region is mapped as UC or WP, enforcement
 of associated semantics for these memory types is not guaranteed
-(that is, is reserved) and is implementation\-specific.
-
-.RE
+(that is, is reserved) and is implementation-specific.
 
 .PP
 The MASKMOVDQU instruction can be used to improve performance of
-algorithms that need to merge data on a byte\-by\-byte basis. MASKMOVDQU
+algorithms that need to merge data on a byte-by-byte basis. MASKMOVDQU
 should not cause a read for ownership; doing so generates unnecessary
-bandwidth since data is to be written directly using the byte\-mask
+bandwidth since data is to be written directly using the byte-mask
 without allocating old data prior to the store.
 
 .PP
-In 64\-bit mode, use of the REX.R prefix permits this instruction to
-access additional registers (XMM8\-XMM15).
+In 64-bit mode, use of the REX.R prefix permits this instruction to
+access additional registers (XMM8-XMM15).
 
 .PP
-Note: In VEX\-encoded versions, VEX.vvvv is reserved and must be 1111b
+Note: In VEX-encoded versions, VEX.vvvv is reserved and must be 1111b
 otherwise instructions will #UD.
 
 .PP
@@ -105,56 +104,45 @@ If VMASKMOVDQU is encoded with VEX.L= 1, an attempt to execute the
 instruction encoded with VEX.L= 1 will cause an #UD exception.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
+.EX
 IF (MASK[7] = 1)
-    THEN DEST[DI/EDI] ← SRC[7:0] ELSE (* Memory location unchanged *); FI;
+    THEN DEST[DI/EDI] := SRC[7:0] ELSE (* Memory location unchanged *); FI;
 IF (MASK[15] = 1)
-    THEN DEST[DI/EDI +1] ← SRC[15:8] ELSE (* Memory location unchanged *); FI;
+    THEN DEST[DI/EDI +1] := SRC[15:8] ELSE (* Memory location unchanged *); FI;
     (* Repeat operation for 3rd through 14th bytes in source operand *)
 IF (MASK[127] = 1)
-    THEN DEST[DI/EDI +15] ← SRC[127:120] ELSE (* Memory location unchanged *); FI;
+    THEN DEST[DI/EDI +15] := SRC[127:120] ELSE (* Memory location unchanged *); FI;
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="maskmovdqu.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
-
-.nf
-void \_mm\_maskmoveu\_si128(\_\_m128i d, \_\_m128i n, char * p)
-
-.fi
-.RE
+.EX
+void _mm_maskmoveu_si128(__m128i d, __m128i n, char * p)
+.EE
 
 .SH OTHER EXCEPTIONS
-.PP
-See Exceptions Type 4; additionally
+See Table 2-21, “Type 4 Class
+Exception Conditions,” additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If VEX.L= 1
 	If VEX.vvvv ≠ 1111B.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

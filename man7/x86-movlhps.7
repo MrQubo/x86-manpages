@@ -1,26 +1,25 @@
+'\" t
 .nh
-.TH "X86-MOVLHPS" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-MOVLHPS" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-MOVLHPS - MOVE PACKED SINGLE-PRECISION FLOATING-POINT VALUES LOW TO HIGH
+MOVLHPS - MOVE PACKED SINGLE PRECISION FLOATING-POINT VALUES LOW TO HIGH
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 NP 0F 16 /r MOVLHPS xmm1, xmm2	RM	V/V	SSE	T{
-Move two packed single\-precision floating\-point values from low quadword of xmm2 to high quadword of xmm1.
+Move two packed single precision floating-point values from low quadword of xmm2 to high quadword of xmm1.
 T}
 T{
 VEX.128.0F.WIG 16 /r VMOVLHPS xmm1, xmm2, xmm3
-T}
-	RVM	V/V	AVX	T{
-Merge two packed single\-precision floating\-point values from low quadword of xmm3 and low quadword of xmm2.
+T}	RVM	V/V	AVX	T{
+Merge two packed single precision floating-point values from low quadword of xmm3 and low quadword of xmm2.
 T}
 T{
 EVEX.128.0F.W0 16 /r VMOVLHPS xmm1, xmm2, xmm3
-T}
-	RVM	V/V	AVX512F	T{
-Merge two packed single\-precision floating\-point values from low quadword of xmm3 and low quadword of xmm2.
+T}	RVM	V/V	AVX512F	T{
+Merge two packed single precision floating-point values from low quadword of xmm3 and low quadword of xmm2.
 T}
 .TE
 
@@ -37,34 +36,33 @@ T}
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-RM	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
-RVM	ModRM:reg (w)	vvvv (r)	ModRM:r/m (r)	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+RM	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
+RVM	ModRM:reg (w)	VEX.vvvv (r) / EVEX.vvvv (r)	ModRM:r/m (r)	N/A
 .TE
 
-.SS Description
-.PP
+.SH DESCRIPTION
 This instruction cannot be used for memory to register moves.
 
 .PP
-128\-bit two\-argument form:
+128-bit two-argument form:
 
 .PP
-Moves two packed single\-precision floating\-point values from the low
+Moves two packed single precision floating-point values from the low
 quadword of the second XMM argument (second operand) to the high
 quadword of the first XMM register (first argument). The low quadword of
-the destination operand is left unchanged. Bits (MAXVL\-1:128) of the
+the destination operand is left unchanged. Bits (MAXVL-1:128) of the
 corresponding destination register are unmodified.
 
 .PP
-128\-bit three\-argument forms:
+128-bit three-argument forms:
 
 .PP
-Moves two packed single\-precision floating\-point values from the low
+Moves two packed single precision floating-point values from the low
 quadword of the third XMM argument (third operand) to the high quadword
 of the destination (first operand). Copies the low quadword from the
 second XMM argument (second operand) to the low quadword of the
-destination (first operand). Bits (MAXVL\-1:128) of the corresponding
+destination (first operand). Bits (MAXVL-1:128) of the corresponding
 destination register are zeroed.
 
 .PP
@@ -72,72 +70,65 @@ If VMOVLHPS is encoded with VEX.L or EVEX.L’L= 1, an attempt to execute
 the instruction encoded with VEX.L or EVEX.L’L= 1 will cause an #UD
 exception.
 
-.SS Operation
-.SS MOVLHPS (128\-bit two\-argument form)
-.PP
-.RS
+.SH OPERATION
+.SS MOVLHPS (128-BIT TWO-ARGUMENT FORM)  href="movlhps.html#movlhps--128-bit-two-argument-form-"
+class="anchor">¶
 
-.nf
+.EX
 DEST[63:0] (Unmodified)
-DEST[127:64] ← SRC[63:0]
-DEST[MAXVL\-1:128] (Unmodified)
+DEST[127:64] := SRC[63:0]
+DEST[MAXVL-1:128] (Unmodified)
+.EE
 
-.fi
-.RE
+.SS VMOVLHPS (128-BIT THREE-ARGUMENT FORM - VEX & EVEX) <a
+href="movlhps.html#vmovlhps--128-bit-three-argument-form---vex---evex-"
+class="anchor">¶
 
-.SS VMOVLHPS (128\-bit three\-argument form \- VEX \& EVEX)
+.EX
+DEST[63:0] := SRC1[63:0]
+DEST[127:64] := SRC2[63:0]
+DEST[MAXVL-1:128] := 0
+.EE
+
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="movlhps.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
+
+.EX
+MOVLHPS __m128 _mm_movelh_ps(__m128 a, __m128 b)
+.EE
+
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="movlhps.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
+None.
 
-.nf
-DEST[63:0] ← SRC1[63:0]
-DEST[127:64] ← SRC2[63:0]
-DEST[MAXVL\-1:128] ← 0
-
-.fi
-.RE
-
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
-
-.nf
-MOVLHPS \_\_m128 \_mm\_movelh\_ps(\_\_m128 a, \_\_m128 b)
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-None
-
-.SS Other Exceptions
-.PP
-Non\-EVEX\-encoded instruction, see Exceptions Type 7; additionally
+.SH OTHER EXCEPTIONS
+Non-EVEX-encoded instruction, see Table
+2-24, “Type 7 Class Exception Conditions,” additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If VEX.L = 1.
 .TE
 
 .PP
-EVEX\-encoded instruction, see Exceptions Type E7NM.128.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+EVEX-encoded instruction, see Exceptions Type E7NM.128 in
+Table 2-55, “Type E7NM Class Exception
+Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

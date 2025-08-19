@@ -1,12 +1,13 @@
+'\" t
 .nh
-.TH "X86-FST-FSTP" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-FST-FSTP" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
-FST-FSTP - STORE FLOATING POINT VALUE
+FST-FSTP - STORE FLOATING-POINT VALUE
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
+\fBOpcode\fP	\fBInstruction\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
 D9 /2	FST m32fp	Valid	Valid	Copy ST(0) to m32fp.
 DD /2	FST m64fp	Valid	Valid	Copy ST(0) to m64fp.
 DD D0+i	FST ST(i)	Valid	Valid	Copy ST(0) to ST(i).
@@ -25,11 +26,10 @@ T}
 .TE
 
 .SH DESCRIPTION
-.PP
 The FST instruction copies the value in the ST(0) register to the
 destination operand, which can be a memory location or another register
 in the FPU register stack. When storing the value in memory, the value
-is converted to single\-precision or double\-precision floating\-point
+is converted to single precision or double precision floating-point
 format.
 
 .PP
@@ -37,7 +37,7 @@ The FSTP instruction performs the same operation as the FST instruction
 and then pops the register stack. To pop the register stack, the
 processor marks the ST(0) register as empty and increments the stack
 pointer (TOP) by 1. The FSTP instruction can also store values in memory
-in double extended\-precision floating\-point format.
+in double extended-precision floating-point format.
 
 .PP
 If the destination operand is a memory location, the operand specifies
@@ -46,7 +46,7 @@ stored. If the destination operand is a register, the operand specifies
 a register in the register stack relative to the top of the stack.
 
 .PP
-If the destination size is single\-precision or double\-precision, the
+If the destination size is single precision or double precision, the
 significand of the value being stored is rounded to the width of the
 destination (according to the rounding mode specified by the RC field of
 the FPU control word), and the exponent is converted to the width and
@@ -58,59 +58,52 @@ denormal exception (#D) is not generated. This condition is simply
 signaled as a numeric underflow exception (#U) condition.
 
 .PP
-If the value being stored is ±0, ±∞, or a NaN, the least\-significant
+If the value being stored is ±0, ±∞, or a NaN, the least-significant
 bits of the significand and the exponent are truncated to fit the
 destination format. This operation preserves the value’s identity as a
 0, ∞, or NaN.
 
 .PP
-If the destination operand is a non\-empty register, the
-invalid\-operation exception is not generated.
+If the destination operand is a non-empty register, the
+invalid-operation exception is not generated.
 
 .PP
-This instruction’s operation is the same in non\-64\-bit modes and 64\-bit
+This instruction’s operation is the same in non-64-bit modes and 64-bit
 mode.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
-DEST ← ST(0);
+.EX
+DEST := ST(0);
 IF Instruction = FSTP
     THEN
         PopRegisterStack;
 FI;
-
-.fi
-.RE
+.EE
 
 .SH FPU FLAGS AFFECTED
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 C1	T{
 Set to 0 if stack underflow occurred.
 T}
 	T{
-Indicates rounding direction of if the floating\-point inexact exception (
-T}
-#
-T{
-P) is generated: 0 ← not roundup; 1 ← roundup.
+Indicates rounding direction of if the floating-point inexact exception (#P) is generated: 0 := not roundup; 1 := roundup.
 T}
 C0, C2, C3	Undefined.
 .TE
 
-.SH FLOATING\-POINT EXCEPTIONS
+.SH FLOATING-POINT EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #IS	Stack underflow occurred.
 #IA	T{
-If destination result is an SNaN value or unsupported format, except when the destination format is in double extended\-precision floating\-point format.
+If destination result is an SNaN value or unsupported format, except when the destination format is in double extended-precision floating-point format.
 T}
 #U	T{
 Result is too small for the destination format.
@@ -128,8 +121,9 @@ T}
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
-If the destination is located in a non\-writable segment.
+If the destination is located in a non-writable segment.
 T}
 	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
@@ -140,119 +134,92 @@ T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#NM	CR0.EM
-[
-bit 2
-]
- or CR0.TS
-[
-bit 3
-]
- = 1.
-#PF(fault\-code)	If a page fault occurs.
+#NM	CR0.EM[bit 2] or CR0.TS[bit 3] = 1.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS  href="./fst:fstp.html#real-address-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
 #SS	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#NM	CR0.EM
-[
-bit 2
-]
- or CR0.TS
-[
-bit 3
-]
- = 1.
+#NM	CR0.EM[bit 2] or CR0.TS[bit 3] = 1.
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS  href="./fst:fstp.html#virtual-8086-mode-exceptions"
+class="anchor">¶
+
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #GP(0)	T{
 If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
 T}
 #SS(0)	T{
 If a memory operand effective address is outside the SS segment limit.
 T}
-#NM	CR0.EM
-[
-bit 2
-]
- or CR0.TS
-[
-bit 3
-]
- = 1.
-#PF(fault\-code)	If a page fault occurs.
+#NM	CR0.EM[bit 2] or CR0.TS[bit 3] = 1.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH COMPATIBILITY MODE EXCEPTIONS
+.SH COMPATIBILITY MODE EXCEPTIONS  href="./fst:fstp.html#compatibility-mode-exceptions"
+class="anchor">¶
+
 .PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
-If a memory address referencing the SS segment is in a non\-canonical form.
+If a memory address referencing the SS segment is in a non-canonical form.
 T}
 #GP(0)	T{
-If the memory address is in a non\-canonical form.
+If the memory address is in a non-canonical form.
 T}
-#NM	CR0.EM
-[
-bit 2
-]
- or CR0.TS
-[
-bit 3
-]
- = 1.
+#NM	CR0.EM[bit 2] or CR0.TS[bit 3] = 1.
 #MF	T{
 If there is a pending x87 FPU exception.
 T}
-#PF(fault\-code)	If a page fault occurs.
+#PF(fault-code)	If a page fault occurs.
 #AC(0)	T{
 If alignment checking is enabled and an unaligned memory reference is made while the current privilege level is 3.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

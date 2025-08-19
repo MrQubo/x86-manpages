@@ -1,14 +1,15 @@
+'\" t
 .nh
-.TH "X86-CLWB" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-CLWB" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 CLWB - CACHE LINE WRITE BACK
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 66 0F AE /6 CLWB m8	M	V/V	CLWB	T{
-Writes back modified cache line containing m8, and may retain the line in cache hierarchy in non\-modified state.
+Writes back modified cache line containing m8, and may retain the line in cache hierarchy in non-modified state.
 T}
 .TE
 
@@ -23,20 +24,17 @@ T}
 
 .TS
 allbox;
-l 
-l .
-T{
-Op/En Operand 1 Operand 2 Operand 3 Operand 4
-T}
-M ModRM:r/m (w) NA NA NA
+l l l l l 
+l l l l l .
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+M	ModRM:r/m (w)	N/A	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
 Writes back to memory the cache line (if modified) that contains the
 linear address specified with the memory operand from any level of the
 cache hierarchy in the cache coherence domain. The line may be retained
-in the cache hierarchy in non\-modified state. Retaining the line in the
+in the cache hierarchy in non-modified state. Retaining the line in the
 cache hierarchy is a performance optimization (treated as a hint by
 hardware) to reduce the possibility of cache miss on a subsequent
 access. Hardware may choose to retain the line at any of the levels in
@@ -54,7 +52,7 @@ EBX register when the initial value in the EAX register is 1).
 The memory attribute of the page containing the affected line has no
 effect on the behavior of this instruction. It should be noted that
 processors are free to speculatively fetch and cache data from system
-memory regions that are assigned a memory\-type allowing for speculative
+memory regions that are assigned a memory-type allowing for speculative
 reads (such as, the WB, WC, and WT memory types). PREFETCHh instructions
 can be used to provide the processor with hints for this speculative
 behavior. Because this speculative fetching can occur at any time and is
@@ -65,12 +63,13 @@ cache line just before, during, or after the execution of a CLWB
 instruction that references the cache line).
 
 .PP
-CLWB instruction is ordered only by store\-fencing operations. For
-example, software can use an SFENCE, MFENCE, XCHG, or LOCK\-prefixed
-instructions to ensure that previous stores are included in the
-write\-back. CLWB instruction need not be ordered by another CLWB or
-CLFLUSHOPT instruction. CLWB is implicitly ordered with older stores
-executed by the logical processor to the same address.
+Executions of the CLWB instruction are ordered with respect to fence
+instructions and to locked read-modify-write instructions; they are also
+ordered with respect to older writes to the cache line being written
+back. They are not ordered with respect to other executions of CLWB, to
+executions of CLFLUSH and CLFLUSHOPT, or to younger writes to the cache
+line being written back. Software can use the SFENCE instruction to
+order an execution of CLWB relative to one of those operations.
 
 .PP
 For usages that require only writing back modified data from cache lines
@@ -94,119 +93,96 @@ instruction to force a transactional abort, since whether they cause
 transactional abort is implementation dependent.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
-Cache\_Line\_Write\_Back(m8);
-
-.fi
-.RE
+.EX
+Cache_Line_Write_Back(m8);
+.EE
 
 .SH FLAGS AFFECTED
-.PP
 None.
 
-.SH C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
+.SH C/C++ COMPILER INTRINSIC EQUIVALENT  href="clwb.html#c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.nf
-CLWB void \_mm\_clwb(void const *p);
-
-.fi
-.RE
+.EX
+CLWB void _mm_clwb(void const *p);
+.EE
 
 .SH PROTECTED MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If the LOCK prefix is used.
 	T{
-If CPUID.(EAX=07H, ECX=0H):EBX.CLWB
+If CPUID.(EAX=07H, ECX=0H):EBX.CLWB[bit 24] = 0.
 T}
-[
-bit 24
-]
- = 0.
 #GP(0)	T{
 For an illegal memory operand effective address in the CS, DS, ES, FS or GS segments.
 T}
 #SS(0)	T{
 For an illegal address in the SS segment.
 T}
-#PF(fault\-code)	For a page fault.
+#PF(fault-code)	For a page fault.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If the LOCK prefix is used.
 	T{
-If CPUID.(EAX=07H, ECX=0H):EBX.CLWB
+If CPUID.(EAX=07H, ECX=0H):EBX.CLWB[bit 24] = 0.
 T}
-[
-bit 24
-]
- = 0.
 #GP	T{
 If any part of the operand lies outside the effective address space from 0 to FFFFH.
 T}
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
-.PP
+.SH VIRTUAL-8086 MODE EXCEPTIONS
 Same exceptions as in real address mode.
 
 .TS
 allbox;
 l l 
 l l .
-#PF(fault\-code)	For a page fault.
+\fB\fP	\fB\fP
+#PF(fault-code)	For a page fault.
 .TE
 
 .SH COMPATIBILITY MODE EXCEPTIONS
-.PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If the LOCK prefix is used.
 	T{
-If CPUID.(EAX=07H, ECX=0H):EBX.CLWB
+If CPUID.(EAX=07H, ECX=0H):EBX.CLWB[bit 24] = 0.
 T}
-[
-bit 24
-]
- = 0.
 #SS(0)	T{
-If a memory address referencing the SS segment is in a non\-canonical form.
+If a memory address referencing the SS segment is in a non-canonical form.
 T}
 #GP(0)	T{
-If the memory address is in a non\-canonical form.
+If the memory address is in a non-canonical form.
 T}
-#PF(fault\-code)	For a page fault.
+#PF(fault-code)	For a page fault.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

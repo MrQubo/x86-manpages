@@ -1,28 +1,26 @@
+'\" t
 .nh
-.TH "X86-VPERMB" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VPERMB" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VPERMB - PERMUTE PACKED BYTES ELEMENTS
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 EVEX.128.66.0F38.W0 8D /r VPERMB xmm1 {k1}{z}, xmm2, xmm3/m128
-T}
-	A	V/V	AVX512VL AVX512\_VBMI	T{
+T}	A	V/V	AVX512VL AVX512_VBMI	T{
 Permute bytes in xmm3/m128 using byte indexes in xmm2 and store the result in xmm1 using writemask k1.
 T}
 T{
 EVEX.256.66.0F38.W0 8D /r VPERMB ymm1 {k1}{z}, ymm2, ymm3/m256
-T}
-	A	V/V	AVX512VL AVX512\_VBMI	T{
+T}	A	V/V	AVX512VL AVX512_VBMI	T{
 Permute bytes in ymm3/m256 using byte indexes in ymm2 and store the result in ymm1 using writemask k1.
 T}
 T{
 EVEX.512.66.0F38.W0 8D /r VPERMB zmm1 {k1}{z}, zmm2, zmm3/m512
-T}
-	A	V/V	AVX512\_VBMI	T{
+T}	A	V/V	AVX512_VBMI	T{
 Permute bytes in zmm3/m512 using byte indexes in zmm2 and store the result in zmm1 using writemask k1.
 T}
 .TE
@@ -32,12 +30,11 @@ T}
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Full Mem	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Full Mem	ModRM:reg (w)	EVEX.vvvv (r)	ModRM:r/m (r)	N/A
 .TE
 
-.SS Description
-.PP
+.SS DESCRIPTION
 Copies bytes from the second source operand (the third operand) to the
 destination operand (the first operand) according to the byte indices in
 the first source operand (the second operand). Note that this
@@ -51,86 +48,78 @@ operand.
 
 .PP
 The first source operand is a ZMM/YMM/XMM register. The second source
-operand can be a ZMM/YMM/XMM register, a 512/256/128\-bit memory
+operand can be a ZMM/YMM/XMM register, a 512/256/128-bit memory
 location. The destination operand is a ZMM/YMM/XMM register updated at
 byte granularity by the writemask k1.
 
-.SS Operation
-.SS VPERMB (EVEX encoded versions)
-.PP
-.RS
+.SS OPERATION
+.SS VPERMB (EVEX ENCODED VERSIONS)  href="vpermb.html#vpermb--evex-encoded-versions-"
+class="anchor">¶
 
-.nf
+.EX
 (KL, VL) = (16, 128), (32, 256), (64, 512)
 IF VL = 128:
-    n ← 3;
+    n := 3;
 ELSE IF VL = 256:
-    n ← 4;
+    n := 4;
 ELSE IF VL = 512:
-    n ← 5;
+    n := 5;
 FI;
-FOR j ← 0 TO KL\-1:
-    id ← SRC1[j*8 + n : j*8] ; // location of the source byte
+FOR j := 0 TO KL-1:
+    id := SRC1[j*8 + n : j*8] ; // location of the source byte
     IF k1[j] OR *no writemask* THEN
-        DEST[j*8 + 7: j*8] ← SRC2[id*8 +7: id*8];
-    ELSE IF zeroing\-masking THEN
-        DEST[j*8 + 7: j*8] ← 0;
+        DEST[j*8 + 7: j*8] := SRC2[id*8 +7: id*8];
+    ELSE IF zeroing-masking THEN
+        DEST[j*8 + 7: j*8] := 0;
     *ELSE
         DEST[j*8 + 7: j*8] remains unchanged*
     FI
 ENDFOR
-DEST[MAX\_VL\-1:VL] ← 0;
+DEST[MAX_VL-1:VL] := 0;
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vpermb.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+.EX
+VPERMB __m512i _mm512_permutexvar_epi8( __m512i idx, __m512i a);
 
-.nf
-VPERMB \_\_m512i \_mm512\_permutexvar\_epi8( \_\_m512i idx, \_\_m512i a);
+VPERMB __m512i _mm512_mask_permutexvar_epi8(__m512i s, __mmask64 k, __m512i idx, __m512i a);
 
-VPERMB \_\_m512i \_mm512\_mask\_permutexvar\_epi8(\_\_m512i s, \_\_mmask64 k, \_\_m512i idx, \_\_m512i a);
+VPERMB __m512i _mm512_maskz_permutexvar_epi8( __mmask64 k, __m512i idx, __m512i a);
 
-VPERMB \_\_m512i \_mm512\_maskz\_permutexvar\_epi8( \_\_mmask64 k, \_\_m512i idx, \_\_m512i a);
+VPERMB __m256i _mm256_permutexvar_epi8( __m256i idx, __m256i a);
 
-VPERMB \_\_m256i \_mm256\_permutexvar\_epi8( \_\_m256i idx, \_\_m256i a);
+VPERMB __m256i _mm256_mask_permutexvar_epi8(__m256i s, __mmask32 k, __m256i idx, __m256i a);
 
-VPERMB \_\_m256i \_mm256\_mask\_permutexvar\_epi8(\_\_m256i s, \_\_mmask32 k, \_\_m256i idx, \_\_m256i a);
+VPERMB __m256i _mm256_maskz_permutexvar_epi8( __mmask32 k, __m256i idx, __m256i a);
 
-VPERMB \_\_m256i \_mm256\_maskz\_permutexvar\_epi8( \_\_mmask32 k, \_\_m256i idx, \_\_m256i a);
+VPERMB __m128i _mm_permutexvar_epi8( __m128i idx, __m128i a);
 
-VPERMB \_\_m128i \_mm\_permutexvar\_epi8( \_\_m128i idx, \_\_m128i a);
+VPERMB __m128i _mm_mask_permutexvar_epi8(__m128i s, __mmask16 k, __m128i idx, __m128i a);
 
-VPERMB \_\_m128i \_mm\_mask\_permutexvar\_epi8(\_\_m128i s, \_\_mmask16 k, \_\_m128i idx, \_\_m128i a);
+VPERMB __m128i _mm_maskz_permutexvar_epi8( __mmask16 k, __m128i idx, __m128i a);
+.EE
 
-VPERMB \_\_m128i \_mm\_maskz\_permutexvar\_epi8( \_\_mmask16 k, \_\_m128i idx, \_\_m128i a);
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vpermb.html#simd-floating-point-exceptions"
+class="anchor">¶
 
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
 None.
 
-.SS Other Exceptions
-.PP
-See Exceptions Type E4NF.nb.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+.SS OTHER EXCEPTIONS
+See Exceptions Type E4NF.nb in Table
+2-50, “Type E4NF Class Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

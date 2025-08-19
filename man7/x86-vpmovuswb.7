@@ -1,339 +1,329 @@
+'\" t
 .nh
-.TH "X86-VPMOVWB-VPMOVSWB-VPMOVUSWB" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VPMOVWB-VPMOVSWB-VPMOVUSWB" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VPMOVWB-VPMOVSWB-VPMOVUSWB - DOWN CONVERT WORD TO BYTE
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp / En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
-EVEX.128.F3.0F38.W0 30 /xmm1/m64 {k1}{z}, xmm2
-T}
-	A	V/V	AVX512VL AVX512BW	T{
-Converts 8 packed word integers from xmm1/m64 with truncation under writemask k1.
-T}
-T{
-EVEX.128.F3.0F38.W0 20 /xmm1/m64 {k1}{z}, xmm2
-T}
-	A	V/V	AVX512VL AVX512BW	T{
-Converts 8 packed signed word integers from xmm1/m64 using signed saturation under writemask k1.
+EVEX.128.F3.0F38.W0 30 /r VPMOVWB xmm1/m64 {k1}{z}, xmm2
+T}	A	V/V	AVX512VL AVX512BW	T{
+Converts 8 packed word integers from xmm2 into 8 packed bytes in xmm1/m64 with truncation under writemask k1.
 T}
 T{
-EVEX.128.F3.0F38.W0 10 /xmm1/m64 {k1}{z}, xmm2
-T}
-	A	V/V	AVX512VL AVX512BW	T{
-Converts 8 packed unsigned word integers from 8mm1/m64 using unsigned saturation under writemask k1.
-T}
-T{
-EVEX.256.F3.0F38.W0 30 /xmm1/m128 {k1}{z}, ymm2
-T}
-	A	V/V	AVX512VL AVX512BW	T{
-Converts 16 packed word integers from xmm1/m128 with truncation under writemask k1.
+EVEX.128.F3.0F38.W0 20 /r VPMOVSWB xmm1/m64 {k1}{z}, xmm2
+T}	A	V/V	AVX512VL AVX512BW	T{
+Converts 8 packed signed word integers from xmm2 into 8 packed signed bytes in xmm1/m64 using signed saturation under writemask k1.
 T}
 T{
-EVEX.256.F3.0F38.W0 20 /xmm1/m128 {k1}{z}, ymm2
-T}
-	A	V/V	AVX512VL AVX512BW	T{
-Converts 16 packed signed word integers from xmm1/m128 using signed saturation under writemask k1.
-T}
-T{
-EVEX.256.F3.0F38.W0 10 /xmm1/m128 {k1}{z}, ymm2
-T}
-	A	V/V	AVX512VL AVX512BW	T{
-Converts 16 packed unsigned word integers from xmm1/m128 using unsigned saturation under writemask k1.
+EVEX.128.F3.0F38.W0 10 /r VPMOVUSWB xmm1/m64 {k1}{z}, xmm2
+T}	A	V/V	AVX512VL AVX512BW	T{
+Converts 8 packed unsigned word integers from xmm2 into 8 packed unsigned bytes in 8mm1/m64 using unsigned saturation under writemask k1.
 T}
 T{
-EVEX.512.F3.0F38.W0 30 /ymm1/m256 {k1}{z}, zmm2
-T}
-	A	V/V	AVX512BW	T{
-Converts 32 packed word integers from ymm1/m256 with truncation under writemask k1.
-T}
-T{
-EVEX.512.F3.0F38.W0 20 /ymm1/m256 {k1}{z}, zmm2
-T}
-	A	V/V	AVX512BW	T{
-Converts 32 packed signed word integers from ymm1/m256 using signed saturation under writemask k1.
+EVEX.256.F3.0F38.W0 30 /r VPMOVWB xmm1/m128 {k1}{z}, ymm2
+T}	A	V/V	AVX512VL AVX512BW	T{
+Converts 16 packed word integers from ymm2 into 16 packed bytes in xmm1/m128 with truncation under writemask k1.
 T}
 T{
-EVEX.512.F3.0F38.W0 10 /ymm1/m256 {k1}{z}, zmm2
+EVEX.256.F3.0F38.W0 20 /r VPMOVSWB xmm1/m128 {k1}{z}, ymm2
+T}	A	V/V	AVX512VL AVX512BW	T{
+Converts 16 packed signed word integers from ymm2 into 16 packed signed bytes in xmm1/m128 using signed saturation under writemask k1.
 T}
-	A	V/V	AVX512BW	T{
-Converts 32 packed unsigned word integers from ymm1/m256 using unsigned saturation under writemask k1.
+T{
+EVEX.256.F3.0F38.W0 10 /r VPMOVUSWB xmm1/m128 {k1}{z}, ymm2
+T}	A	V/V	AVX512VL AVX512BW	T{
+Converts 16 packed unsigned word integers from ymm2 into 16 packed unsigned bytes in xmm1/m128 using unsigned saturation under writemask k1.
+T}
+T{
+EVEX.512.F3.0F38.W0 30 /r VPMOVWB ymm1/m256 {k1}{z}, zmm2
+T}	A	V/V	AVX512BW	T{
+Converts 32 packed word integers from zmm2 into 32 packed bytes in ymm1/m256 with truncation under writemask k1.
+T}
+T{
+EVEX.512.F3.0F38.W0 20 /r VPMOVSWB ymm1/m256 {k1}{z}, zmm2
+T}	A	V/V	AVX512BW	T{
+Converts 32 packed signed word integers from zmm2 into 32 packed signed bytes in ymm1/m256 using signed saturation under writemask k1.
+T}
+T{
+EVEX.512.F3.0F38.W0 10 /r VPMOVUSWB ymm1/m256 {k1}{z}, zmm2
+T}	A	V/V	AVX512BW	T{
+Converts 32 packed unsigned word integers from zmm2 into 32 packed unsigned bytes in ymm1/m256 using unsigned saturation under writemask k1.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="./vpmovwb:vpmovswb:vpmovuswb.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Half Mem	ModRM:r/m (w)	ModRM:reg (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Half Mem	ModRM:r/m (w)	ModRM:reg (r)	N/A	N/A
 .TE
 
-.SS Description
+.SS DESCRIPTION  href="./vpmovwb:vpmovswb:vpmovuswb.html#description"
+class="anchor">¶
+
 .PP
-VPMOVWB down converts 16\-bit integers into packed bytes using
-truncation. VPMOVSWB converts signed 16\-bit integers into packed signed
+VPMOVWB down converts 16-bit integers into packed bytes using
+truncation. VPMOVSWB converts signed 16-bit integers into packed signed
 bytes using signed saturation. VPMOVUSWB convert unsigned word values
 into unsigned byte values using unsigned saturation.
 
 .PP
 The source operand is a ZMM/YMM/XMM register. The destination operand is
-a YMM/XMM/XMM register or a 256/128/64\-bit memory location.
+a YMM/XMM/XMM register or a 256/128/64-bit memory location.
 
 .PP
-Down\-converted byte elements are written to the destination operand (the
-first operand) from the least\-significant byte. Byte elements of the
+Down-converted byte elements are written to the destination operand (the
+first operand) from the least-significant byte. Byte elements of the
 destination operand are updated according to the writemask. Bits
-(MAXVL\-1:256/128/64) of the register destination are zeroed.
+(MAXVL-1:256/128/64) of the register destination are zeroed.
 
 .PP
 Note: EVEX.vvvv is reserved and must be 1111b otherwise instructions
 will #UD.
 
-.SS Operation
-.SS VPMOVWB instruction (EVEX encoded versions) when dest is a register
-.PP
-.RS
+.SS OPERATION  href="./vpmovwb:vpmovswb:vpmovuswb.html#operation"
+class="anchor">¶
 
-.nf
+.SS VPMOVWB INSTRUCTION (EVEX ENCODED VERSIONS) WHEN DEST IS A REGISTER <a
+href="./vpmovwb:vpmovswb:vpmovuswb.html#vpmovwb-instruction--evex-encoded-versions--when-dest-is-a-register"
+class="anchor">¶
+
+.EX
 (KL, VL) = (8, 128), (16, 256), (32, 512)
-FOR j←0 TO Kl\-1
-    i←j * 8
-    m←j * 16
+FOR j := 0 TO Kl-1
+    i := j * 8
+    m := j * 16
     IF k1[j] OR *no writemask*
-        THEN DEST[i+7:i]←TruncateWordToByte (SRC[m+15:m])
+        THEN DEST[i+7:i] := TruncateWordToByte (SRC[m+15:m])
         ELSE
-            IF *merging\-masking* ; merging\-masking
+            IF *merging-masking* ; merging-masking
                 THEN *DEST[i+7:i] remains unchanged*
-                ELSE *zeroing\-masking*
-                        ; zeroing\-masking
+                ELSE *zeroing-masking*
+                        ; zeroing-masking
                     DEST[i+7:i] = 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL/2] ← 0;
+DEST[MAXVL-1:VL/2] := 0;
+.EE
 
-.fi
-.RE
+.SS VPMOVWB INSTRUCTION (EVEX ENCODED VERSIONS) WHEN DEST IS MEMORY <a
+href="./vpmovwb:vpmovswb:vpmovuswb.html#vpmovwb-instruction--evex-encoded-versions--when-dest-is-memory"
+class="anchor">¶
 
-.SS VPMOVWB instruction (EVEX encoded versions) when dest is memory
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (8, 128), (16, 256), (32, 512)
-FOR j←0 TO Kl\-1
-    i←j * 8
-    m←j * 16
+FOR j := 0 TO Kl-1
+    i := j * 8
+    m := j * 16
     IF k1[j] OR *no writemask*
-        THEN DEST[i+7:i]←TruncateWordToByte (SRC[m+15:m])
+        THEN DEST[i+7:i] := TruncateWordToByte (SRC[m+15:m])
         ELSE
-            *DEST[i+7:i] remains unchanged* ; merging\-masking
+            *DEST[i+7:i] remains unchanged* ; merging-masking
     FI;
 ENDFOR
+.EE
 
-.fi
-.RE
+.SS VPMOVSWB INSTRUCTION (EVEX ENCODED VERSIONS) WHEN DEST IS A REGISTER <a
+href="./vpmovwb:vpmovswb:vpmovuswb.html#vpmovswb-instruction--evex-encoded-versions--when-dest-is-a-register"
+class="anchor">¶
 
-.SS VPMOVSWB instruction (EVEX encoded versions) when dest is a register
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (8, 128), (16, 256), (32, 512)
-FOR j←0 TO Kl\-1
-    i←j * 8
-    m←j * 16
+FOR j := 0 TO Kl-1
+    i := j * 8
+    m := j * 16
     IF k1[j] OR *no writemask*
-        THEN DEST[i+7:i]←SaturateSignedWordToByte (SRC[m+15:m])
+        THEN DEST[i+7:i] := SaturateSignedWordToByte (SRC[m+15:m])
         ELSE
-            IF *merging\-masking* ; merging\-masking
+            IF *merging-masking* ; merging-masking
                 THEN *DEST[i+7:i] remains unchanged*
-                ELSE *zeroing\-masking*
-                        ; zeroing\-masking
+                ELSE *zeroing-masking*
+                        ; zeroing-masking
                     DEST[i+7:i] = 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL/2] ← 0;
+DEST[MAXVL-1:VL/2] := 0;
+.EE
 
-.fi
-.RE
+.SS VPMOVSWB INSTRUCTION (EVEX ENCODED VERSIONS) WHEN DEST IS MEMORY <a
+href="./vpmovwb:vpmovswb:vpmovuswb.html#vpmovswb-instruction--evex-encoded-versions--when-dest-is-memory"
+class="anchor">¶
 
-.SS VPMOVSWB instruction (EVEX encoded versions) when dest is memory
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (8, 128), (16, 256), (32, 512)
-FOR j←0 TO Kl\-1
-    i←j * 8
-    m←j * 16
+FOR j := 0 TO Kl-1
+    i := j * 8
+    m := j * 16
     IF k1[j] OR *no writemask*
-        THEN DEST[i+7:i]←SaturateSignedWordToByte (SRC[m+15:m])
+        THEN DEST[i+7:i] := SaturateSignedWordToByte (SRC[m+15:m])
         ELSE
-            *DEST[i+7:i] remains unchanged* ; merging\-masking
+            *DEST[i+7:i] remains unchanged* ; merging-masking
     FI;
 ENDFOR
+.EE
 
-.fi
-.RE
+.SS VPMOVUSWB INSTRUCTION (EVEX ENCODED VERSIONS) WHEN DEST IS A REGISTER <a
+href="./vpmovwb:vpmovswb:vpmovuswb.html#vpmovuswb-instruction--evex-encoded-versions--when-dest-is-a-register"
+class="anchor">¶
 
-.SS VPMOVUSWB instruction (EVEX encoded versions) when dest is a register
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (8, 128), (16, 256), (32, 512)
-FOR j←0 TO Kl\-1
-    i←j * 8
-    m←j * 16
+FOR j := 0 TO Kl-1
+    i := j * 8
+    m := j * 16
     IF k1[j] OR *no writemask*
-        THEN DEST[i+7:i]←SaturateUnsignedWordToByte (SRC[m+15:m])
+        THEN DEST[i+7:i] := SaturateUnsignedWordToByte (SRC[m+15:m])
         ELSE
-            IF *merging\-masking* ; merging\-masking
+            IF *merging-masking* ; merging-masking
                 THEN *DEST[i+7:i] remains unchanged*
-                ELSE *zeroing\-masking*
-                        ; zeroing\-masking
+                ELSE *zeroing-masking*
+                        ; zeroing-masking
                     DEST[i+7:i] = 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL/2] ← 0;
+DEST[MAXVL-1:VL/2] := 0;
+.EE
 
-.fi
-.RE
+.SS VPMOVUSWB INSTRUCTION (EVEX ENCODED VERSIONS) WHEN DEST IS MEMORY <a
+href="./vpmovwb:vpmovswb:vpmovuswb.html#vpmovuswb-instruction--evex-encoded-versions--when-dest-is-memory"
+class="anchor">¶
 
-.SS VPMOVUSWB instruction (EVEX encoded versions) when dest is memory
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (8, 128), (16, 256), (32, 512)
-FOR j←0 TO Kl\-1
-    i←j * 8
-    m←j * 16
+FOR j := 0 TO Kl-1
+    i := j * 8
+    m := j * 16
     IF k1[j] OR *no writemask*
-        THEN DEST[i+7:i]←SaturateUnsignedWordToByte (SRC[m+15:m])
+        THEN DEST[i+7:i] := SaturateUnsignedWordToByte (SRC[m+15:m])
         ELSE
-            *DEST[i+7:i] remains unchanged* ; merging\-masking
+            *DEST[i+7:i] remains unchanged* ; merging-masking
     FI;
 ENDFOR
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENTS <a
+href="./vpmovwb:vpmovswb:vpmovuswb.html#intel-c-c++-compiler-intrinsic-equivalents"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalents
+.EX
+VPMOVUSWB __m256i _mm512_cvtusepi16_epi8(__m512i a);
+
+VPMOVUSWB __m256i _mm512_mask_cvtusepi16_epi8(__m256i a, __mmask32 k, __m512i b);
+
+VPMOVUSWB __m256i _mm512_maskz_cvtusepi16_epi8( __mmask32 k, __m512i b);
+
+VPMOVUSWB void _mm512_mask_cvtusepi16_storeu_epi8(void * , __mmask32 k, __m512i b);
+
+VPMOVSWB __m256i _mm512_cvtsepi16_epi8(__m512i a);
+
+VPMOVSWB __m256i _mm512_mask_cvtsepi16_epi8(__m256i a, __mmask32 k, __m512i b);
+
+VPMOVSWB __m256i _mm512_maskz_cvtsepi16_epi8( __mmask32 k, __m512i b);
+
+VPMOVSWB void _mm512_mask_cvtsepi16_storeu_epi8(void * , __mmask32 k, __m512i b);
+
+VPMOVWB __m256i _mm512_cvtepi16_epi8(__m512i a);
+
+VPMOVWB __m256i _mm512_mask_cvtepi16_epi8(__m256i a, __mmask32 k, __m512i b);
+
+VPMOVWB __m256i _mm512_maskz_cvtepi16_epi8( __mmask32 k, __m512i b);
+
+VPMOVWB void _mm512_mask_cvtepi16_storeu_epi8(void * , __mmask32 k, __m512i b);
+
+VPMOVUSWB __m128i _mm256_cvtusepi16_epi8(__m256i a);
+
+VPMOVUSWB __m128i _mm256_mask_cvtusepi16_epi8(__m128i a, __mmask16 k, __m256i b);
+
+VPMOVUSWB __m128i _mm256_maskz_cvtusepi16_epi8( __mmask16 k, __m256i b);
+
+VPMOVUSWB void _mm256_mask_cvtusepi16_storeu_epi8(void * , __mmask16 k, __m256i b);
+
+VPMOVUSWB __m128i _mm_cvtusepi16_epi8(__m128i a);
+
+VPMOVUSWB __m128i _mm_mask_cvtusepi16_epi8(__m128i a, __mmask8 k, __m128i b);
+
+VPMOVUSWB __m128i _mm_maskz_cvtusepi16_epi8( __mmask8 k, __m128i b);
+
+VPMOVUSWB void _mm_mask_cvtusepi16_storeu_epi8(void * , __mmask8 k, __m128i b);
+
+VPMOVSWB __m128i _mm256_cvtsepi16_epi8(__m256i a);
+
+VPMOVSWB __m128i _mm256_mask_cvtsepi16_epi8(__m128i a, __mmask16 k, __m256i b);
+
+VPMOVSWB __m128i _mm256_maskz_cvtsepi16_epi8( __mmask16 k, __m256i b);
+
+VPMOVSWB void _mm256_mask_cvtsepi16_storeu_epi8(void * , __mmask16 k, __m256i b);
+
+VPMOVSWB __m128i _mm_cvtsepi16_epi8(__m128i a);
+
+VPMOVSWB __m128i _mm_mask_cvtsepi16_epi8(__m128i a, __mmask8 k, __m128i b);
+
+VPMOVSWB __m128i _mm_maskz_cvtsepi16_epi8( __mmask8 k, __m128i b);
+
+VPMOVSWB void _mm_mask_cvtsepi16_storeu_epi8(void * , __mmask8 k, __m128i b);
+
+VPMOVWB __m128i _mm256_cvtepi16_epi8(__m256i a);
+
+VPMOVWB __m128i _mm256_mask_cvtepi16_epi8(__m128i a, __mmask16 k, __m256i b);
+
+VPMOVWB __m128i _mm256_maskz_cvtepi16_epi8( __mmask16 k, __m256i b);
+
+VPMOVWB void _mm256_mask_cvtepi16_storeu_epi8(void * , __mmask16 k, __m256i b);
+
+VPMOVWB __m128i _mm_cvtepi16_epi8(__m128i a);
+
+VPMOVWB __m128i _mm_mask_cvtepi16_epi8(__m128i a, __mmask8 k, __m128i b);
+
+VPMOVWB __m128i _mm_maskz_cvtepi16_epi8( __mmask8 k, __m128i b);
+
+VPMOVWB void _mm_mask_cvtepi16_storeu_epi8(void * , __mmask8 k, __m128i b);
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS <a
+href="./vpmovwb:vpmovswb:vpmovuswb.html#simd-floating-point-exceptions"
+class="anchor">¶
+
 .PP
-.RS
+None.
 
-.nf
-VPMOVUSWB \_\_m256i \_mm512\_cvtusepi16\_epi8(\_\_m512i a);
+.SS OTHER EXCEPTIONS  href="./vpmovwb:vpmovswb:vpmovuswb.html#other-exceptions"
+class="anchor">¶
 
-VPMOVUSWB \_\_m256i \_mm512\_mask\_cvtusepi16\_epi8(\_\_m256i a, \_\_mmask32 k, \_\_m512i b);
-
-VPMOVUSWB \_\_m256i \_mm512\_maskz\_cvtusepi16\_epi8( \_\_mmask32 k, \_\_m512i b);
-
-VPMOVUSWB void \_mm512\_mask\_cvtusepi16\_storeu\_epi8(void * , \_\_mmask32 k, \_\_m512i b);
-
-VPMOVSWB \_\_m256i \_mm512\_cvtsepi16\_epi8(\_\_m512i a);
-
-VPMOVSWB \_\_m256i \_mm512\_mask\_cvtsepi16\_epi8(\_\_m256i a, \_\_mmask32 k, \_\_m512i b);
-
-VPMOVSWB \_\_m256i \_mm512\_maskz\_cvtsepi16\_epi8( \_\_mmask32 k, \_\_m512i b);
-
-VPMOVSWB void \_mm512\_mask\_cvtsepi16\_storeu\_epi8(void * , \_\_mmask32 k, \_\_m512i b);
-
-VPMOVWB \_\_m256i \_mm512\_cvtepi16\_epi8(\_\_m512i a);
-
-VPMOVWB \_\_m256i \_mm512\_mask\_cvtepi16\_epi8(\_\_m256i a, \_\_mmask32 k, \_\_m512i b);
-
-VPMOVWB \_\_m256i \_mm512\_maskz\_cvtepi16\_epi8( \_\_mmask32 k, \_\_m512i b);
-
-VPMOVWB void \_mm512\_mask\_cvtepi16\_storeu\_epi8(void * , \_\_mmask32 k, \_\_m512i b);
-
-VPMOVUSWB \_\_m128i \_mm256\_cvtusepi16\_epi8(\_\_m256i a);
-
-VPMOVUSWB \_\_m128i \_mm256\_mask\_cvtusepi16\_epi8(\_\_m128i a, \_\_mmask16 k, \_\_m256i b);
-
-VPMOVUSWB \_\_m128i \_mm256\_maskz\_cvtusepi16\_epi8( \_\_mmask16 k, \_\_m256i b);
-
-VPMOVUSWB void \_mm256\_mask\_cvtusepi16\_storeu\_epi8(void * , \_\_mmask16 k, \_\_m256i b);
-
-VPMOVUSWB \_\_m128i \_mm\_cvtusepi16\_epi8(\_\_m128i a);
-
-VPMOVUSWB \_\_m128i \_mm\_mask\_cvtusepi16\_epi8(\_\_m128i a, \_\_mmask8 k, \_\_m128i b);
-
-VPMOVUSWB \_\_m128i \_mm\_maskz\_cvtusepi16\_epi8( \_\_mmask8 k, \_\_m128i b);
-
-VPMOVUSWB void \_mm\_mask\_cvtusepi16\_storeu\_epi8(void * , \_\_mmask8 k, \_\_m128i b);
-
-VPMOVSWB \_\_m128i \_mm256\_cvtsepi16\_epi8(\_\_m256i a);
-
-VPMOVSWB \_\_m128i \_mm256\_mask\_cvtsepi16\_epi8(\_\_m128i a, \_\_mmask16 k, \_\_m256i b);
-
-VPMOVSWB \_\_m128i \_mm256\_maskz\_cvtsepi16\_epi8( \_\_mmask16 k, \_\_m256i b);
-
-VPMOVSWB void \_mm256\_mask\_cvtsepi16\_storeu\_epi8(void * , \_\_mmask16 k, \_\_m256i b);
-
-VPMOVSWB \_\_m128i \_mm\_cvtsepi16\_epi8(\_\_m128i a);
-
-VPMOVSWB \_\_m128i \_mm\_mask\_cvtsepi16\_epi8(\_\_m128i a, \_\_mmask8 k, \_\_m128i b);
-
-VPMOVSWB \_\_m128i \_mm\_maskz\_cvtsepi16\_epi8( \_\_mmask8 k, \_\_m128i b);
-
-VPMOVSWB void \_mm\_mask\_cvtsepi16\_storeu\_epi8(void * , \_\_mmask8 k, \_\_m128i b);
-
-VPMOVWB \_\_m128i \_mm256\_cvtepi16\_epi8(\_\_m256i a);
-
-VPMOVWB \_\_m128i \_mm256\_mask\_cvtepi16\_epi8(\_\_m128i a, \_\_mmask16 k, \_\_m256i b);
-
-VPMOVWB \_\_m128i \_mm256\_maskz\_cvtepi16\_epi8( \_\_mmask16 k, \_\_m256i b);
-
-VPMOVWB void \_mm256\_mask\_cvtepi16\_storeu\_epi8(void * , \_\_mmask16 k, \_\_m256i b);
-
-VPMOVWB \_\_m128i \_mm\_cvtepi16\_epi8(\_\_m128i a);
-
-VPMOVWB \_\_m128i \_mm\_mask\_cvtepi16\_epi8(\_\_m128i a, \_\_mmask8 k, \_\_m128i b);
-
-VPMOVWB \_\_m128i \_mm\_maskz\_cvtepi16\_epi8( \_\_mmask8 k, \_\_m128i b);
-
-VPMOVWB void \_mm\_mask\_cvtepi16\_storeu\_epi8(void * , \_\_mmask8 k, \_\_m128i b);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
-None
+EVEX-encoded instruction, see Table
+2-53, “Type E6 Class Exception Conditions.”
 
-.SS Other Exceptions
 .PP
-EVEX\-encoded instruction, see Exceptions Type E6.
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If EVEX.vvvv != 1111B.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

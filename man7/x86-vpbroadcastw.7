@@ -1,83 +1,72 @@
+'\" t
 .nh
-.TH "X86-VPBROADCASTB-VPBROADCASTW-VPBROADCASTD-VPBROADCASTQ" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VPBROADCASTB-VPBROADCASTW-VPBROADCASTD-VPBROADCASTQ" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VPBROADCASTB-VPBROADCASTW-VPBROADCASTD-VPBROADCASTQ - LOAD WITH BROADCAST INTEGER DATA FROM GENERAL PURPOSE REGISTER
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 EVEX.128.66.0F38.W0 7A /r VPBROADCASTB xmm1 {k1}{z}, reg
-T}
-	A	V/V	AVX512VL AVX512BW	T{
-Broadcast an 8\-bit value from a GPR to all bytes in the 128\-bit destination subject to writemask k1.
+T}	A	V/V	AVX512VL AVX512BW	T{
+Broadcast an 8-bit value from a GPR to all bytes in the 128-bit destination subject to writemask k1.
 T}
 T{
 EVEX.256.66.0F38.W0 7A /r VPBROADCASTB ymm1 {k1}{z}, reg
-T}
-	A	V/V	AVX512VL AVX512BW	T{
-Broadcast an 8\-bit value from a GPR to all bytes in the 256\-bit destination subject to writemask k1.
+T}	A	V/V	AVX512VL AVX512BW	T{
+Broadcast an 8-bit value from a GPR to all bytes in the 256-bit destination subject to writemask k1.
 T}
 T{
 EVEX.512.66.0F38.W0 7A /r VPBROADCASTB zmm1 {k1}{z}, reg
-T}
-	A	V/V	AVX512BW	T{
-Broadcast an 8\-bit value from a GPR to all bytes in the 512\-bit destination subject to writemask k1.
+T}	A	V/V	AVX512BW	T{
+Broadcast an 8-bit value from a GPR to all bytes in the 512-bit destination subject to writemask k1.
 T}
 T{
 EVEX.128.66.0F38.W0 7B /r VPBROADCASTW xmm1 {k1}{z}, reg
-T}
-	A	V/V	AVX512VL AVX512BW	T{
-Broadcast a 16\-bit value from a GPR to all words in the 128\-bit destination subject to writemask k1.
+T}	A	V/V	AVX512VL AVX512BW	T{
+Broadcast a 16-bit value from a GPR to all words in the 128-bit destination subject to writemask k1.
 T}
 T{
 EVEX.256.66.0F38.W0 7B /r VPBROADCASTW ymm1 {k1}{z}, reg
-T}
-	A	V/V	AVX512VL AVX512BW	T{
-Broadcast a 16\-bit value from a GPR to all words in the 256\-bit destination subject to writemask k1.
+T}	A	V/V	AVX512VL AVX512BW	T{
+Broadcast a 16-bit value from a GPR to all words in the 256-bit destination subject to writemask k1.
 T}
 T{
 EVEX.512.66.0F38.W0 7B /r VPBROADCASTW zmm1 {k1}{z}, reg
-T}
-	A	V/V	AVX512BW	T{
-Broadcast a 16\-bit value from a GPR to all words in the 512\-bit destination subject to writemask k1.
+T}	A	V/V	AVX512BW	T{
+Broadcast a 16-bit value from a GPR to all words in the 512-bit destination subject to writemask k1.
 T}
 T{
 EVEX.128.66.0F38.W0 7C /r VPBROADCASTD xmm1 {k1}{z}, r32
-T}
-	A	V/V	AVX512VL AVX512F	T{
-Broadcast a 32\-bit value from a GPR to all double\-words in the 128\-bit destination subject to writemask k1.
+T}	A	V/V	AVX512VL AVX512F	T{
+Broadcast a 32-bit value from a GPR to all doublewords in the 128-bit destination subject to writemask k1.
 T}
 T{
 EVEX.256.66.0F38.W0 7C /r VPBROADCASTD ymm1 {k1}{z}, r32
-T}
-	A	V/V	AVX512VL AVX512F	T{
-Broadcast a 32\-bit value from a GPR to all double\-words in the 256\-bit destination subject to writemask k1.
+T}	A	V/V	AVX512VL AVX512F	T{
+Broadcast a 32-bit value from a GPR to all doublewords in the 256-bit destination subject to writemask k1.
 T}
 T{
 EVEX.512.66.0F38.W0 7C /r VPBROADCASTD zmm1 {k1}{z}, r32
-T}
-	A	V/V	AVX512F	T{
-Broadcast a 32\-bit value from a GPR to all double\-words in the 512\-bit destination subject to writemask k1.
+T}	A	V/V	AVX512F	T{
+Broadcast a 32-bit value from a GPR to all doublewords in the 512-bit destination subject to writemask k1.
 T}
 T{
 EVEX.128.66.0F38.W1 7C /r VPBROADCASTQ xmm1 {k1}{z}, r64
-T}
-	A	V/N.E.1	AVX512VL AVX512F	T{
-Broadcast a 64\-bit value from a GPR to all quad\-words in the 128\-bit destination subject to writemask k1.
+T}	A	V/N.E.1	AVX512VL AVX512F	T{
+Broadcast a 64-bit value from a GPR to all quadwords in the 128-bit destination subject to writemask k1.
 T}
 T{
 EVEX.256.66.0F38.W1 7C /r VPBROADCASTQ ymm1 {k1}{z}, r64
-T}
-	A	V/N.E.1	AVX512VL AVX512F	T{
-Broadcast a 64\-bit value from a GPR to all quad\-words in the 256\-bit destination subject to writemask k1.
+T}	A	V/N.E.1	AVX512VL AVX512F	T{
+Broadcast a 64-bit value from a GPR to all quadwords in the 256-bit destination subject to writemask k1.
 T}
 T{
 EVEX.512.66.0F38.W1 7C /r VPBROADCASTQ zmm1 {k1}{z}, r64
-T}
-	A	V/N.E.1	AVX512F	T{
-Broadcast a 64\-bit value from a GPR to all quad\-words in the 512\-bit destination subject to writemask k1.
+T}	A	V/N.E.1	AVX512F	T{
+Broadcast a 64-bit value from a GPR to all quadwords in the 512-bit destination subject to writemask k1.
 T}
 .TE
 
@@ -85,24 +74,30 @@ T}
 .RS
 
 .PP
-1\&. EVEX.W in non\-64 bit is ignored; the instructions behaves as if
-the W0 version is used.
+1\&. EVEX.W in non-64 bit is ignored; the instruction behaves as if the
+W0 version is used.
 
 .RE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING <a
+href="./vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Tuple1 Scalar	ModRM:reg (w)	ModRM:r/m (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Tuple1 Scalar	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
 .TE
 
-.SS Description
+.SS DESCRIPTION <a
+href="./vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq.html#description"
+class="anchor">¶
+
 .PP
-Broadcasts a 8\-bit, 16\-bit, 32\-bit or 64\-bit value from a
-general\-purpose register (the second operand) to all the locations in
+Broadcasts a 8-bit, 16-bit, 32-bit or 64-bit value from a
+general-purpose register (the second operand) to all the locations in
 the destination vector register (the first operand) using the writemask
 k1.
 
@@ -110,185 +105,182 @@ k1.
 EVEX.vvvv is reserved and must be 1111b otherwise instructions will
 #UD.
 
-.SS Operation
-.SS VPBROADCASTB (EVEX encoded versions)
-.PP
-.RS
+.SS OPERATION <a
+href="./vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq.html#operation"
+class="anchor">¶
 
-.nf
+.SS VPBROADCASTB (EVEX ENCODED VERSIONS) <a
+href="./vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq.html#vpbroadcastb--evex-encoded-versions-"
+class="anchor">¶
+
+.EX
 (KL, VL) = (16, 128), (32, 256), (64, 512)
-FOR j←0 TO KL\-1
-    i←j * 8
+FOR j := 0 TO KL-1
+    i := j * 8
     IF k1[j] OR *no writemask*
-        THEN DEST[i+7:i]←SRC[7:0]
+        THEN DEST[i+7:i] := SRC[7:0]
         ELSE
-            IF *merging\-masking*
-                        ; merging\-masking
+            IF *merging-masking*
+                        ; merging-masking
                 THEN *DEST[i+7:i] remains unchanged*
                 ELSE
-                        ; zeroing\-masking
-                    DEST[i+7:i] ← 0
+                        ; zeroing-masking
+                    DEST[i+7:i] := 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS VPBROADCASTW (EVEX ENCODED VERSIONS) <a
+href="./vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq.html#vpbroadcastw--evex-encoded-versions-"
+class="anchor">¶
 
-.SS VPBROADCASTW (EVEX encoded versions)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (8, 128), (16, 256), (32, 512)
-FOR j←0 TO KL\-1
-    i←j * 16
+FOR j := 0 TO KL-1
+    i := j * 16
     IF k1[j] OR *no writemask*
-        THEN DEST[i+15:i]←SRC[15:0]
+        THEN DEST[i+15:i] := SRC[15:0]
         ELSE
-            IF *merging\-masking*
-                        ; merging\-masking
+            IF *merging-masking*
+                        ; merging-masking
                 THEN *DEST[i+15:i] remains unchanged*
                 ELSE
-                        ; zeroing\-masking
-                    DEST[i+15:i] ← 0
+                        ; zeroing-masking
+                    DEST[i+15:i] := 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS VPBROADCASTD (EVEX ENCODED VERSIONS) <a
+href="./vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq.html#vpbroadcastd--evex-encoded-versions-"
+class="anchor">¶
 
-.SS VPBROADCASTD (EVEX encoded versions)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (4, 128), (8, 256), (16, 512)
-FOR j←0 TO KL\-1
-    i←j * 32
+FOR j := 0 TO KL-1
+    i := j * 32
     IF k1[j] OR *no writemask*
-        THEN DEST[i+31:i]←SRC[31:0]
+        THEN DEST[i+31:i] := SRC[31:0]
         ELSE
-            IF *merging\-masking*
-                        ; merging\-masking
+            IF *merging-masking*
+                        ; merging-masking
                 THEN *DEST[i+31:i] remains unchanged*
                 ELSE
-                        ; zeroing\-masking
-                    DEST[i+31:i] ← 0
+                        ; zeroing-masking
+                    DEST[i+31:i] := 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS VPBROADCASTQ (EVEX ENCODED VERSIONS) <a
+href="./vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq.html#vpbroadcastq--evex-encoded-versions-"
+class="anchor">¶
 
-.SS VPBROADCASTQ (EVEX encoded versions)
-.PP
-.RS
-
-.nf
+.EX
 (KL, VL) = (2, 128), (4, 256), (8, 512)
-FOR j←0 TO KL\-1
-    i←j * 64
+FOR j := 0 TO KL-1
+    i := j * 64
     IF k1[j] OR *no writemask*
-        THEN DEST[i+63:i]←SRC[63:0]
+        THEN DEST[i+63:i] := SRC[63:0]
         ELSE
-            IF *merging\-masking*
+            IF *merging-masking*
                 THEN *DEST[i+63:i] remains unchanged*
-                ELSE ; zeroing\-masking
-                    DEST[i+63:i] ← 0
+                ELSE ; zeroing-masking
+                    DEST[i+63:i] := 0
             FI
     FI;
 ENDFOR
-DEST[MAXVL\-1:VL] ← 0
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT <a
+href="./vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
+.EX
+VPBROADCASTB __m512i _mm512_mask_set1_epi8(__m512i s, __mmask64 k, int a);
+
+VPBROADCASTB __m512i _mm512_maskz_set1_epi8( __mmask64 k, int a);
+
+VPBROADCASTB __m256i _mm256_mask_set1_epi8(__m256i s, __mmask32 k, int a);
+
+VPBROADCASTB __m256i _mm256_maskz_set1_epi8( __mmask32 k, int a);
+
+VPBROADCASTB __m128i _mm_mask_set1_epi8(__m128i s, __mmask16 k, int a);
+
+VPBROADCASTB __m128i _mm_maskz_set1_epi8( __mmask16 k, int a);
+
+VPBROADCASTD __m512i _mm512_mask_set1_epi32(__m512i s, __mmask16 k, int a);
+
+VPBROADCASTD __m512i _mm512_maskz_set1_epi32( __mmask16 k, int a);
+
+VPBROADCASTD __m256i _mm256_mask_set1_epi32(__m256i s, __mmask8 k, int a);
+
+VPBROADCASTD __m256i _mm256_maskz_set1_epi32( __mmask8 k, int a);
+
+VPBROADCASTD __m128i _mm_mask_set1_epi32(__m128i s, __mmask8 k, int a);
+
+VPBROADCASTD __m128i _mm_maskz_set1_epi32( __mmask8 k, int a);
+
+VPBROADCASTQ __m512i _mm512_mask_set1_epi64(__m512i s, __mmask8 k, __int64 a);
+
+VPBROADCASTQ __m512i _mm512_maskz_set1_epi64( __mmask8 k, __int64 a);
+
+VPBROADCASTQ __m256i _mm256_mask_set1_epi64(__m256i s, __mmask8 k, __int64 a);
+
+VPBROADCASTQ __m256i _mm256_maskz_set1_epi64( __mmask8 k, __int64 a);
+
+VPBROADCASTQ __m128i _mm_mask_set1_epi64(__m128i s, __mmask8 k, __int64 a);
+
+VPBROADCASTQ __m128i _mm_maskz_set1_epi64( __mmask8 k, __int64 a);
+
+VPBROADCASTW __m512i _mm512_mask_set1_epi16(__m512i s, __mmask32 k, int a);
+
+VPBROADCASTW __m512i _mm512_maskz_set1_epi16( __mmask32 k, int a);
+
+VPBROADCASTW __m256i _mm256_mask_set1_epi16(__m256i s, __mmask16 k, int a);
+
+VPBROADCASTW __m256i _mm256_maskz_set1_epi16( __mmask16 k, int a);
+
+VPBROADCASTW __m128i _mm_mask_set1_epi16(__m128i s, __mmask8 k, int a);
+
+VPBROADCASTW __m128i _mm_maskz_set1_epi16( __mmask8 k, int a);
+.EE
+
+.SS EXCEPTIONS <a
+href="./vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq.html#exceptions"
+class="anchor">¶
+
 .PP
-.RS
+EVEX-encoded instructions, see Table
+2-55, “Type E7NM Class Exception Conditions.”
 
-.nf
-VPBROADCASTB \_\_m512i \_mm512\_mask\_set1\_epi8(\_\_m512i s, \_\_mmask64 k, int a);
-
-VPBROADCASTB \_\_m512i \_mm512\_maskz\_set1\_epi8( \_\_mmask64 k, int a);
-
-VPBROADCASTB \_\_m256i \_mm256\_mask\_set1\_epi8(\_\_m256i s, \_\_mmask32 k, int a);
-
-VPBROADCASTB \_\_m256i \_mm256\_maskz\_set1\_epi8( \_\_mmask32 k, int a);
-
-VPBROADCASTB \_\_m128i \_mm\_mask\_set1\_epi8(\_\_m128i s, \_\_mmask16 k, int a);
-
-VPBROADCASTB \_\_m128i \_mm\_maskz\_set1\_epi8( \_\_mmask16 k, int a);
-
-VPBROADCASTD \_\_m512i \_mm512\_mask\_set1\_epi32(\_\_m512i s, \_\_mmask16 k, int a);
-
-VPBROADCASTD \_\_m512i \_mm512\_maskz\_set1\_epi32( \_\_mmask16 k, int a);
-
-VPBROADCASTD \_\_m256i \_mm256\_mask\_set1\_epi32(\_\_m256i s, \_\_mmask8 k, int a);
-
-VPBROADCASTD \_\_m256i \_mm256\_maskz\_set1\_epi32( \_\_mmask8 k, int a);
-
-VPBROADCASTD \_\_m128i \_mm\_mask\_set1\_epi32(\_\_m128i s, \_\_mmask8 k, int a);
-
-VPBROADCASTD \_\_m128i \_mm\_maskz\_set1\_epi32( \_\_mmask8 k, int a);
-
-VPBROADCASTQ \_\_m512i \_mm512\_mask\_set1\_epi64(\_\_m512i s, \_\_mmask8 k, \_\_int64 a);
-
-VPBROADCASTQ \_\_m512i \_mm512\_maskz\_set1\_epi64( \_\_mmask8 k, \_\_int64 a);
-
-VPBROADCASTQ \_\_m256i \_mm256\_mask\_set1\_epi64(\_\_m256i s, \_\_mmask8 k, \_\_int64 a);
-
-VPBROADCASTQ \_\_m256i \_mm256\_maskz\_set1\_epi64( \_\_mmask8 k, \_\_int64 a);
-
-VPBROADCASTQ \_\_m128i \_mm\_mask\_set1\_epi64(\_\_m128i s, \_\_mmask8 k, \_\_int64 a);
-
-VPBROADCASTQ \_\_m128i \_mm\_maskz\_set1\_epi64( \_\_mmask8 k, \_\_int64 a);
-
-VPBROADCASTW \_\_m512i \_mm512\_mask\_set1\_epi16(\_\_m512i s, \_\_mmask32 k, int a);
-
-VPBROADCASTW \_\_m512i \_mm512\_maskz\_set1\_epi16( \_\_mmask32 k, int a);
-
-VPBROADCASTW \_\_m256i \_mm256\_mask\_set1\_epi16(\_\_m256i s, \_\_mmask16 k, int a);
-
-VPBROADCASTW \_\_m256i \_mm256\_maskz\_set1\_epi16( \_\_mmask16 k, int a);
-
-VPBROADCASTW \_\_m128i \_mm\_mask\_set1\_epi16(\_\_m128i s, \_\_mmask8 k, int a);
-
-VPBROADCASTW \_\_m128i \_mm\_maskz\_set1\_epi16( \_\_mmask8 k, int a);
-
-.fi
-.RE
-
-.SS Exceptions
 .PP
-EVEX\-encoded instructions, see Exceptions Type E7NM.
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	If EVEX.vvvv != 1111B.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

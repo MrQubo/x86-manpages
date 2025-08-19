@@ -1,52 +1,50 @@
+'\" t
 .nh
-.TH "X86-KORTESTW-KORTESTB-KORTESTQ-KORTESTD" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-KORTESTW-KORTESTB-KORTESTQ-KORTESTD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 KORTESTW-KORTESTB-KORTESTQ-KORTESTD - OR MASKS AND SET FLAGS
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp/E n\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 VEX.L0.0F.W0 98 /r KORTESTW k1, k2
-T}
-	RR	V/V	AVX512F	T{
+T}	RR	V/V	AVX512F	T{
 Bitwise OR 16 bits masks k1 and k2 and update ZF and CF accordingly.
 T}
 T{
 VEX.L0.66.0F.W0 98 /r KORTESTB k1, k2
-T}
-	RR	V/V	AVX512DQ	T{
+T}	RR	V/V	AVX512DQ	T{
 Bitwise OR 8 bits masks k1 and k2 and update ZF and CF accordingly.
 T}
 T{
 VEX.L0.0F.W1 98 /r KORTESTQ k1, k2
-T}
-	RR	V/V	AVX512BW	T{
+T}	RR	V/V	AVX512BW	T{
 Bitwise OR 64 bits masks k1 and k2 and update ZF and CF accordingly.
 T}
 T{
 VEX.L0.66.0F.W1 98 /r KORTESTD k1, k2
-T}
-	RR	V/V	AVX512BW	T{
+T}	RR	V/V	AVX512BW	T{
 Bitwise OR 32 bits masks k1 and k2 and update ZF and CF accordingly.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING <a
+href="./kortestw:kortestb:kortestq:kortestd.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l 
 l l l .
-Op/En	Operand 1	Operand 2
-RR	ModRM:reg (w)	ModRM:r/m (r, ModRM:
-[
-7:6
-]
- must be 11b)
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP
+RR	ModRM:reg (w)	ModRM:r/m (r, ModRM:[7:6] must be 11b)
 .TE
 
-.SH DESCRIPTION
+.SH DESCRIPTION  href="./kortestw:kortestb:kortestq:kortestd.html#description"
+class="anchor">¶
+
 .PP
 Performs a bitwise OR between the vector mask register k2, and the
 vector mask register k1, and sets CF and ZF based on the operation
@@ -56,116 +54,105 @@ result.
 ZF flag is set if both sources are 0x0. CF is set if, after the OR
 operation is done, the operation result is all 1’s.
 
-.SH OPERATION
-.SS KORTESTW
-.PP
-.RS
+.SH OPERATION  href="./kortestw:kortestb:kortestq:kortestd.html#operation"
+class="anchor">¶
 
-.nf
-TMP[15:0]←DEST[15:0] BITWISE OR SRC[15:0]
+.SS KORTESTW  href="./kortestw:kortestb:kortestq:kortestd.html#kortestw"
+class="anchor">¶
+
+.EX
+TMP[15:0] := DEST[15:0] BITWISE OR SRC[15:0]
 IF(TMP[15:0]=0)
-    THEN ZF←1
-    ELSE ZF←0
+    THEN ZF := 1
+    ELSE ZF := 0
 FI;
 IF(TMP[15:0]=FFFFh)
-    THEN CF←1
-    ELSE CF←0
+    THEN CF := 1
+    ELSE CF := 0
 FI;
+.EE
 
-.fi
-.RE
+.SS KORTESTB  href="./kortestw:kortestb:kortestq:kortestd.html#kortestb"
+class="anchor">¶
 
-.SS KORTESTB
-.PP
-.RS
-
-.nf
-TMP[7:0]←DEST[7:0] BITWISE OR SRC[7:0]
+.EX
+TMP[7:0] := DEST[7:0] BITWISE OR SRC[7:0]
 IF(TMP[7:0]=0)
-    THEN ZF←1
-    ELSE ZF←0
+    THEN ZF := 1
+    ELSE ZF := 0
 FI;
 IF(TMP[7:0]==FFh)
-    THEN CF←1
-    ELSE CF←0
+    THEN CF := 1
+    ELSE CF := 0
 FI;
+.EE
 
-.fi
-.RE
+.SS KORTESTQ  href="./kortestw:kortestb:kortestq:kortestd.html#kortestq"
+class="anchor">¶
 
-.SS KORTESTQ
-.PP
-.RS
-
-.nf
-TMP[63:0]←DEST[63:0] BITWISE OR SRC[63:0]
+.EX
+TMP[63:0] := DEST[63:0] BITWISE OR SRC[63:0]
 IF(TMP[63:0]=0)
-    THEN ZF←1
-    ELSE ZF←0
+    THEN ZF := 1
+    ELSE ZF := 0
 FI;
-IF(TMP[63:0]==FFFFFFFF\_FFFFFFFFh)
-    THEN CF←1
-    ELSE CF←0
+IF(TMP[63:0]==FFFFFFFF_FFFFFFFFh)
+    THEN CF := 1
+    ELSE CF := 0
 FI;
+.EE
 
-.fi
-.RE
+.SS KORTESTD  href="./kortestw:kortestb:kortestq:kortestd.html#kortestd"
+class="anchor">¶
 
-.SS KORTESTD
-.PP
-.RS
-
-.nf
-TMP[31:0]←DEST[31:0] BITWISE OR SRC[31:0]
+.EX
+TMP[31:0] := DEST[31:0] BITWISE OR SRC[31:0]
 IF(TMP[31:0]=0)
-    THEN ZF←1
-    ELSE ZF←0
+    THEN ZF := 1
+    ELSE ZF := 0
 FI;
 IF(TMP[31:0]=FFFFFFFFh)
-    THEN CF←1
-    ELSE CF←0
+    THEN CF := 1
+    ELSE CF := 0
 FI;
+.EE
 
-.fi
-.RE
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT <a
+href="./kortestw:kortestb:kortestq:kortestd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT
-.PP
-.RS
+.EX
+KORTESTW __mmask16 _mm512_kortest[cz](__mmask16 a, __mmask16 b);
+.EE
 
-.nf
-KORTESTW \_\_mmask16 \_mm512\_kortest[cz](\_\_mmask16 a, \_\_mmask16 b);
-
-.fi
-.RE
-
-.SH FLAGS AFFECTED
-.PP
-The ZF flag is set if the result of OR\-ing both sources is all 0s.
+.SH FLAGS AFFECTED  href="./kortestw:kortestb:kortestq:kortestd.html#flags-affected"
+class="anchor">¶
 
 .PP
-The CF flag is set if the result of OR\-ing both sources is all 1s.
+The ZF flag is set if the result of OR-ing both sources is all 0s.
+
+.PP
+The CF flag is set if the result of OR-ing both sources is all 1s.
 
 .PP
 The OF, SF, AF, and PF flags are set to 0.
 
-.SH OTHER EXCEPTIONS
-.PP
-See Exceptions Type K20.
+.SH OTHER EXCEPTIONS  href="./kortestw:kortestb:kortestq:kortestd.html#other-exceptions"
+class="anchor">¶
 
-.SH SEE ALSO
 .PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+See Table 2-63, “TYPE K20 Exception
+Definition (VEX-Encoded OpMask Instructions w/o Memory Arg).”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

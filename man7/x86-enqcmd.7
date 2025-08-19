@@ -1,0 +1,252 @@
+'\" t
+.nh
+.TH "X86-ENQCMD" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
+.SH NAME
+ENQCMD - ENQUEUE COMMAND
+.TS
+allbox;
+l l l l l 
+l l l l l .
+\fBOpcode/Instruction\fP	\fBOp/En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
+T{
+F2 0F 38 F8 !(11):rrr:bbb ENQCMD r32/r64, m512
+T}	A	V/V	ENQCMD	T{
+Atomically enqueue 64-byte user command from source memory operand to destination offset in ES segment specified in register operand as offset in ES segment.
+T}
+.TE
+
+.SH INSTRUCTION OPERAND ENCODING
+.TS
+allbox;
+l l l l l l 
+l l l l l l .
+\fBOp/En\fP	\fBTuple\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:reg (w)	ModRM:r/m (r)	N/A	N/A
+.TE
+
+.SS DESCRIPTION
+The ENQCMD instruction allows software to write commands to \fBenqueue
+registers\fP, which are special device registers accessed using
+memory-mapped I/O (MMIO).
+
+.PP
+Enqueue registers expect writes to have the following format:
+
+.PP
+Bits 19:0 convey the process address space identifier (PASID), a value
+which system software may assign to individual software threads. Bit 31
+contains privilege identification (0 = user; 1 = supervisor). Devices
+implementing enqueue registers may use these two values along with a
+device-specific command in the upper 60 bytes.
+
+.PP
+The ENQCMD instruction begins by reading 64 bytes of command data from
+its source memory operand. This is an ordinary load with cacheability
+and memory ordering implied normally by the memory type. The source
+operand need not be aligned, and there is no guarantee that all 64 bytes
+are loaded atomically. Bits 31:0 of the source operand must be zero.
+
+.PP
+The instruction then formats those 64 bytes into \fBcommand data\fP with a
+format consistent with that given in Figure
+3-16
+\[la]enqcmd.html#fig\-3\-16\[ra]:
+.IP \(bu 2
+Command[19:0] get IA32_PASID[19:0]\&.1
+.IP \(bu 2
+Command[30:20] are zero.
+.IP \(bu 2
+Command[31] is 0 (indicating user; this value is used regardless
+of CPL).
+.IP \(bu 2
+Command[511:32] get bits 511:32 of the source operand that was
+read from memory.
+
+.PP
+The ENQCMD instruction uses an \fBenqueue store\fP (defined below) to
+write this command data to the destination operand. The address of the
+destination operand is specified in a general-purpose register as an
+offset into the ES segment (the segment cannot be
+overridden).2 The destination linear address must be 64-byte
+aligned. The operation of an enqueue store disregards the memory type of
+the destination memory address.
+
+.PP
+.RS
+
+.PP
+1\&.
+ItisexpectedthatsystemsoftwarewillloadtheIA32_PASIDMSRsothatbits19:0containthePASIDofthecurrentsoft-ware
+thread. The MSR’s valid bit, IA32_PASID[31], must be 1. For
+additional details on the IA32_PASID MSR, see the Intel®
+64 and IA-32 Architectures Software Developer’s Manual, Volume 4.
+
+.PP
+2\&.
+In64-bitmode,thewidthoftheregisteroperandis64bits(32bitswitha67Hprefix).Outside64-bitmodewhenCS.D=
+1, the width is 32 bits (16 bits with a 67H prefix). Outside 64-bit
+mode when CS.D=0, the width is 16 bits (32 bits with a 67H prefix).
+
+.RE
+
+.PP
+An enqueue store is not ordered relative to older stores to WB or WC
+memory (including non-temporal stores) or to executions of the
+CLFLUSHOPT or CLWB (when applied to addresses other than that of the
+enqueue store). Software can enforce such ordering by executing a
+fencing instruction such as SFENCE or MFENCE before the enqueue store.
+
+.PP
+An enqueue store does not write the data into the cache hierarchy, nor
+does it fetch any data into the cache hierarchy. An enqueue store’s
+command data is never combined with that of any other store to the same
+address.
+
+.PP
+Unlike other stores, an enqueue store returns a status, which the ENQCMD
+instruction loads into the ZF flag in the RFLAGS register:
+.IP \(bu 2
+ZF = 0 (success) reports that the 64-byte command data was written
+atomically to a device’s enqueue register and has been accepted by
+the device. (It does not guarantee that the device has acted on the
+command; it may have queued it for later execution.)
+.IP \(bu 2
+ZF = 1 (retry) reports that the command data was not accepted. This
+status is returned if the destination address is an enqueue register
+but the command was not accepted due to capacity or other temporal
+reasons. This status is also returned if the destination address was
+not an enqueue register (including the case of a memory address); in
+these cases, the store is dropped and is written neither to MMIO nor
+to memory.
+
+.PP
+Availability of the ENQCMD instruction is indicated by the presence of
+the CPUID feature flag ENQCMD (CPUID.(EAX=07H, ECX=0H):ECX[bit 29]).
+
+.SS OPERATION
+.EX
+IF IA32_PASID[31] = 0
+    THEN #GP;
+ELSE
+    COMMAND := (SRC & ~FFFFFFFFH) | (IA32_PASID & FFFFFH);
+    DEST := COMMAND;
+FI;
+.EE
+
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="enqcmd.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
+
+.EX
+ENQCMD int_enqcmd(void *dst, const void *src)
+.EE
+
+.SS FLAGS AFFECTED
+The ZF flag is set if the enqueue-store completion returns the retry
+status; otherwise it is cleared. All other flags are cleared.
+
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="enqcmd.html#simd-floating-point-exceptions"
+class="anchor">¶
+
+.PP
+None.
+
+.SS PROTECTED MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP(0)	T{
+For an illegal memory operand effective address in the CS, DS, ES, FS or GS segments.
+T}
+	T{
+If destination linear address is not aligned to a 64-byte boundary.
+T}
+	T{
+If the PASID Valid field (bit 31) is 0 in IA32_PASID MSR.
+T}
+	T{
+If bits 31:0 of the source operand are not all zero.
+T}
+#SS(0)	T{
+For an illegal address in the SS segment.
+T}
+#PF(fault-code)	For a page fault.
+#UD	If CPUID.07H.0H:ECX.ENQCMD[bit 29] = 0.
+	If the LOCK prefix is used.
+.TE
+
+.SS REAL-ADDRESS MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#GP	T{
+If any part of the operand lies outside the effective address space from 0 to FFFFH.
+T}
+	T{
+If destination linear address is not aligned to a 64-byte boundary.
+T}
+	T{
+If the PASID Valid field (bit 31) is 0 in IA32_PASID MSR.
+T}
+	T{
+If bits 31:0 of the source operand are not all zero.
+T}
+#UD	If CPUID.07H.0H:ECX.ENQCMD[bit 29] = 0.
+	If the LOCK prefix is used.
+.TE
+
+.SS VIRTUAL-8086 MODE EXCEPTIONS
+Same exceptions as in real-address mode. Additionally:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#PF(fault-code)	For a page fault.
+.TE
+
+.SS COMPATIBILITY MODE EXCEPTIONS
+Same exceptions as in protected mode.
+
+.SS 64-BIT MODE EXCEPTIONS
+.TS
+allbox;
+l l 
+l l .
+\fB\fP	\fB\fP
+#SS(0)	T{
+If a memory address referencing the SS segment is in non-canonical form.
+T}
+#GP(0)	T{
+If the memory address is in non-canonical form.
+T}
+	T{
+If destination linear address is not aligned to a 64-byte boundary.
+T}
+	T{
+If the PASID Valid field (bit 31) is 0 in IA32_PASID MSR.
+T}
+	T{
+If bits 31:0 of the source operand are not all zero.
+T}
+#PF(fault-code)	For a page fault.
+#UD	If CPUID.07H.0H:ECX.ENQCMD[bit 29]\&.
+	If the LOCK prefix is used.
+.TE
+
+.SH COLOPHON
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
+
+.br
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

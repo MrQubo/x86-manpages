@@ -1,44 +1,40 @@
+'\" t
 .nh
-.TH "X86-MOVNTDQ" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-MOVNTDQ" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 MOVNTDQ - STORE PACKED INTEGERS USING NON-TEMPORAL HINT
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp/En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp / En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 66 0F E7 /r MOVNTDQ m128, xmm1	A	V/V	SSE2	T{
-Move packed integer values in xmm1 to m128 using non\-temporal hint.
+Move packed integer values in xmm1 to m128 using non-temporal hint.
 T}
 T{
 VEX.128.66.0F.WIG E7 /r VMOVNTDQ m128, xmm1
-T}
-	A	V/V	AVX	T{
-Move packed integer values in xmm1 to m128 using non\-temporal hint.
+T}	A	V/V	AVX	T{
+Move packed integer values in xmm1 to m128 using non-temporal hint.
 T}
 T{
 VEX.256.66.0F.WIG E7 /r VMOVNTDQ m256, ymm1
-T}
-	A	V/V	AVX	T{
-Move packed integer values in ymm1 to m256 using non\-temporal hint.
+T}	A	V/V	AVX	T{
+Move packed integer values in ymm1 to m256 using non-temporal hint.
 T}
 T{
 EVEX.128.66.0F.W0 E7 /r VMOVNTDQ m128, xmm1
-T}
-	B	V/V	AVX512VL AVX512F	T{
-Move packed integer values in xmm1 to m128 using non\-temporal hint.
+T}	B	V/V	AVX512VL AVX512F	T{
+Move packed integer values in xmm1 to m128 using non-temporal hint.
 T}
 T{
 EVEX.256.66.0F.W0 E7 /r VMOVNTDQ m256, ymm1
-T}
-	B	V/V	AVX512VL AVX512F	T{
-Move packed integer values in zmm1 to m256 using non\-temporal hint.
+T}	B	V/V	AVX512VL AVX512F	T{
+Move packed integer values in zmm1 to m256 using non-temporal hint.
 T}
 T{
 EVEX.512.66.0F.W0 E7 /r VMOVNTDQ m512, zmm1
-T}
-	B	V/V	AVX512F	T{
-Move packed integer values in zmm1 to m512 using non\-temporal hint.
+T}	B	V/V	AVX512F	T{
+Move packed integer values in zmm1 to m512 using non-temporal hint.
 T}
 .TE
 
@@ -55,37 +51,36 @@ T}
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	NA	ModRM:r/m (w)	ModRM:reg (r)	NA	NA
-B	Full Mem	ModRM:r/m (w)	ModRM:reg (r)	NA	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	N/A	ModRM:r/m (w)	ModRM:reg (r)	N/A	N/A
+B	Full Mem	ModRM:r/m (w)	ModRM:reg (r)	N/A	N/A
 .TE
 
-.SS Description
-.PP
+.SH DESCRIPTION
 Moves the packed integers in the source operand (second operand) to the
-destination operand (first operand) using a non\-temporal hint to prevent
+destination operand (first operand) using a non-temporal hint to prevent
 caching of the data during the write to memory. The source operand is an
 XMM register, YMM register or ZMM register, which is assumed to contain
-integer data (packed bytes, words, double\-words, or quadwords). The
-destination operand is a 128\-bit, 256\-bit or 512\-bit memory location.
-The memory operand must be aligned on a 16\-byte (128\-bit version),
-32\-byte (VEX.256 encoded version) or 64\-byte (512\-bit version) boundary
-otherwise a general\-protection exception (#GP) will be generated.
+integer data (packed bytes, words, double-words, or quadwords). The
+destination operand is a 128-bit, 256-bit or 512-bit memory location.
+The memory operand must be aligned on a 16-byte (128-bit version),
+32-byte (VEX.256 encoded version) or 64-byte (512-bit version) boundary
+otherwise a general-protection exception (#GP) will be generated.
 
 .PP
-The non\-temporal hint is implemented by using a write combining (WC)
+The non-temporal hint is implemented by using a write combining (WC)
 memory type protocol when writing the data to memory. Using this
 protocol, the processor does not write the data into the cache
 hierarchy, nor does it fetch the corresponding cache line from memory
 into the cache hierarchy. The memory type of the region being written to
-can override the non\-temporal hint, if the memory address specified for
-the non\-temporal store is in an uncacheable (UC) or write protected (WP)
-memory region. For more information on non\-temporal stores, see “Caching
-of Temporal vs. Non\-Temporal Data” in Chapter 10 in the IA\-32 Intel
+can override the non-temporal hint, if the memory address specified for
+the non-temporal store is in an uncacheable (UC) or write protected (WP)
+memory region. For more information on non-temporal stores, see “Caching
+of Temporal vs. Non-Temporal Data” in Chapter 10 in the IA-32 Intel
 Architecture Software Developer’s Manual, Volume 1.
 
 .PP
-Because the WC protocol uses a weakly\-ordered memory consistency model,
+Because the WC protocol uses a weakly-ordered memory consistency model,
 a fencing operation implemented with the SFENCE or MFENCE instruction
 should be used in conjunction with VMOVNTDQ instructions if multiple
 processors might use different memory types to read/write the
@@ -95,76 +90,71 @@ destination memory locations.
 Note: VEX.vvvv and EVEX.vvvv are reserved and must be 1111b, VEX.L must
 be 0; otherwise instructions will #UD.
 
-.SS Operation
-.SS VMOVNTDQ(EVEX encoded versions)
-.PP
-.RS
+.SH OPERATION
+.SS VMOVNTDQ(EVEX ENCODED VERSIONS)  href="movntdq.html#vmovntdq-evex-encoded-versions-"
+class="anchor">¶
 
-.nf
+.EX
 VL = 128, 256, 512
-DEST[VL\-1:0] ← SRC[VL\-1:0]
-DEST[MAXVL\-1:VL] ← 0
+DEST[VL-1:0] := SRC[VL-1:0]
+DEST[MAXVL-1:VL] := 0
+.EE
 
-.fi
-.RE
+.SS MOVNTDQ (LEGACY AND VEX VERSIONS)  href="movntdq.html#movntdq--legacy-and-vex-versions-"
+class="anchor">¶
 
-.SS MOVNTDQ (Legacy and VEX versions)
-.PP
-.RS
+.EX
+DEST := SRC
+.EE
 
-.nf
-DEST ← SRC
+.SH INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="movntdq.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.fi
-.RE
+.EX
+VMOVNTDQ void _mm512_stream_si512(void * p, __m512i a);
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+VMOVNTDQ void _mm256_stream_si256 (__m256i * p, __m256i a);
 
-.nf
-VMOVNTDQ void \_mm512\_stream\_si512(void * p, \_\_m512i a);
+MOVNTDQ void _mm_stream_si128 (__m128i * p, __m128i a);
+.EE
 
-VMOVNTDQ void \_mm256\_stream\_si256 (\_\_m256i * p, \_\_m256i a);
-
-MOVNTDQ void \_mm\_stream\_si128 (\_\_m128i * p, \_\_m128i a);
-
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
-.PP
-None
-
-.SS Other Exceptions
-.PP
-Non\-EVEX\-encoded instruction, see Exceptions Type1.SSE2;
+.SH SIMD FLOATING-POINT EXCEPTIONS  href="movntdq.html#simd-floating-point-exceptions"
+class="anchor">¶
 
 .PP
-EVEX\-encoded instruction, see Exceptions Type E1NF.
+None.
+
+.SH OTHER EXCEPTIONS
+Non-EVEX-encoded instruction, see Exceptions Type1.SSE2 in
+Table 2-18, “Type 1 Class Exception
+Conditions.”
+
+.PP
+EVEX-encoded instruction, see Table
+2-45, “Type E1NF Class Exception Conditions.”
+
+.PP
+Additionally:
 
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #UD	T{
 If VEX.vvvv != 1111B or EVEX.vvvv != 1111B.
 T}
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

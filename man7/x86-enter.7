@@ -1,12 +1,13 @@
+'\" t
 .nh
-.TH "X86-ENTER" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-ENTER" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 ENTER - MAKE STACK FRAME FOR PROCEDURE PARAMETERS
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-\fB\fCOpcode\fR	\fB\fCInstruction\fR	\fB\fCOp/En\fR	\fB\fC64\-Bit Mode\fR	\fB\fCCompat/Leg Mode\fR	\fB\fCDescription\fR
+\fBOpcode\fP	\fBInstruction\fP	\fBOp/En\fP	\fB64-Bit Mode\fP	\fBCompat/Leg Mode\fP	\fBDescription\fP
 C8 iw 00	ENTER imm16, 0	II	Valid	Valid	T{
 Create a stack frame for a procedure.
 T}
@@ -23,13 +24,12 @@ T}
 allbox;
 l l l l l 
 l l l l l .
-Op/En	Operand 1	Operand 2	Operand 3	Operand 4
-II	iw	imm8	NA	NA
+\fBOp/En\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+II	iw	imm8	N/A	N/A
 .TE
 
 .SH DESCRIPTION
-.PP
-Creates a stack frame (comprising of space for dynamic storage and 1\-32
+Creates a stack frame (comprising of space for dynamic storage and 1-32
 frame pointer storage) for a procedure. The first operand (imm16)
 specifies the size of the dynamic storage in the stack frame (that is,
 the number of bytes of dynamically allocated on the stack for the
@@ -58,14 +58,15 @@ procedure (just before the RET instruction) to release the stack frame.
 If the nesting level is 0, the processor pushes the frame pointer from
 the BP/EBP/RBP register onto the stack, copies the current stack pointer
 from the SP/ESP/RSP register into the BP/EBP/RBP register, and loads the
-SP/ESP/RSP register with the current stack\-pointer value minus the value
+SP/ESP/RSP register with the current stack-pointer value minus the value
 in the size operand. For nesting levels of 1 or greater, the processor
 pushes additional frame pointers on the stack before adjusting the stack
 pointer. These additional frame pointers provide the called procedure
 with access points to other nested frames on the stack. See “Procedure
-Calls for Block\-Structured Languages” in Chapter 6 of the Intel® 64 and
-IA\-32 Architectures Software Developer’s Manual, Volume 1, for more
-information about the actions of the ENTER instruction.
+Calls for Block-Structured Languages” in Chapter 6 of the
+Intel® 64 and IA-32 Architectures Software Developer’s
+Manual, Volume 1, for more information about the actions of the ENTER
+instruction.
 
 .PP
 The ENTER instruction causes a page fault whenever a write using the
@@ -73,15 +74,13 @@ final value of the stack pointer (within the current stack segment)
 would do so.
 
 .PP
-In 64\-bit mode, default operation size is 64 bits; 32\-bit operation size
+In 64-bit mode, default operation size is 64 bits; 32-bit operation size
 cannot be encoded. Use of 66H prefix changes frame pointer operand size
 to 16 bits.
 
 .PP
 When the 66H prefix is used and causing the OperandSize attribute to be
 less than the StackAddrSize, software is responsible for the following:
-
-.RS
 .IP \(bu 2
 The companion LEAVE instruction must also use the 66H prefix,
 .IP \(bu 2
@@ -89,56 +88,55 @@ The value in the RBP/EBP register prior to executing “66H ENTER”
 must be within the same 16KByte region of the current stack pointer
 (RSP/ESP), such that the value of RBP/EBP after “66H ENTER” remains
 a valid address in the stack. This ensures “66H LEAVE” can restore
-16\-bits of data from the stack.
-
-.RE
+16-bits of data from the stack.
 
 .SH OPERATION
-.PP
-.RS
-
-.nf
-AllocSize ← imm16;
-NestingLevel ← imm8 MOD 32;
+.EX
+AllocSize := imm16;
+NestingLevel := imm8 MOD 32;
 IF (OperandSize = 64)
     THEN
         Push(RBP); (* RSP decrements by 8 *)
-        FrameTemp ← RSP;
+        FrameTemp := RSP;
     ELSE IF OperandSize = 32
         THEN
             Push(EBP); (* (E)SP decrements by 4 *)
-            FrameTemp ← ESP; FI;
+            FrameTemp := ESP; FI;
     ELSE (* OperandSize = 16 *)
             Push(BP); (* RSP or (E)SP decrements by 2 *)
-            FrameTemp ← SP;
+            FrameTemp := SP;
 FI;
 IF NestingLevel = 0
     THEN GOTO CONTINUE;
 FI;
 IF (NestingLevel > 1)
-    THEN FOR i ← 1 to (NestingLevel \- 1)
+    THEN FOR i := 1 to (NestingLevel - 1)
         DO
             IF (OperandSize = 64)
                 THEN
-                    RBP ← RBP \- 8;
+                    RBP := RBP - 8;
                     Push([RBP]); (* Quadword push *)
                 ELSE IF OperandSize = 32
                     THEN
                         IF StackSize = 32
-                            EBP ← EBP \- 4;
+                            EBP := EBP - 4;
                             Push([EBP]); (* Doubleword push *)
                         ELSE (* StackSize = 16 *)
-                            BP ← BP \- 4;
+                            BP := BP - 4;
                             Push([BP]); (* Doubleword push *)
                         FI;
                     FI;
                 ELSE (* OperandSize = 16 *)
-                    IF StackSize = 32
+                    IF StackSize = 64
                         THEN
-                            EBP ← EBP \- 2;
+                            RBP := RBP - 2;
+                            Push([RBP]); (* Word push *)
+                    ELSE IF StackSize = 32
+                        THEN
+                            EBP := EBP - 2;
                             Push([EBP]); (* Word push *)
                         ELSE (* StackSize = 16 *)
-                            BP ← BP \- 2;
+                            BP := BP - 2;
                             Push([BP]); (* Word push *)
                     FI;
                 FI;
@@ -154,25 +152,22 @@ IF (OperandSize = 64) (* nestinglevel 1 *)
             Push(FrameTemp); (* Word push and RSP|ESP|SP decrements by 2 *)
 FI;
 CONTINUE:
-IF 64\-Bit Mode (StackSize = 64)
+IF 64-Bit Mode (StackSize = 64)
     THEN
-            RBP ← FrameTemp;
-            RSP ← RSP − AllocSize;
+            RBP := FrameTemp;
+            RSP := RSP − AllocSize;
     ELSE IF OperandSize = 32
         THEN
-            EBP ← FrameTemp;
-            ESP ← ESP − AllocSize; FI;
+            EBP := FrameTemp;
+            ESP := ESP − AllocSize; FI;
     ELSE (* OperandSize = 16 *)
-            BP ← FrameTemp[15:1]; (* Bits 16 and above of applicable RBP/EBP are unmodified *)
-            SP ← SP − AllocSize;
+            BP := FrameTemp[15:1]; (* Bits 16 and above of applicable RBP/EBP are unmodified *)
+            SP := SP − AllocSize;
 FI;
 END;
-
-.fi
-.RE
+.EE
 
 .SH FLAGS AFFECTED
-.PP
 None.
 
 .SH PROTECTED MODE EXCEPTIONS
@@ -180,71 +175,70 @@ None.
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
 If the new value of the SP or ESP register is outside the stack segment limit.
 T}
-#PF(fault\-code)	T{
+#PF(fault-code)	T{
 If a page fault occurs or if a write using the final value of the stack pointer (within the current stack segment) would cause a page fault.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH REAL\-ADDRESS MODE EXCEPTIONS
+.SH REAL-ADDRESS MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS	T{
 If the new value of the SP or ESP register is outside the stack segment limit.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH VIRTUAL\-8086 MODE EXCEPTIONS
+.SH VIRTUAL-8086 MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
 If the new value of the SP or ESP register is outside the stack segment limit.
 T}
-#PF(fault\-code)	T{
+#PF(fault-code)	T{
 If a page fault occurs or if a write using the final value of the stack pointer (within the current stack segment) would cause a page fault.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
 .SH COMPATIBILITY MODE EXCEPTIONS
-.PP
 Same exceptions as in protected mode.
 
-.SH 64\-BIT MODE EXCEPTIONS
+.SH 64-BIT MODE EXCEPTIONS
 .TS
 allbox;
 l l 
 l l .
+\fB\fP	\fB\fP
 #SS(0)	T{
-If the stack address is in a non\-canonical form.
+If the stack address is in a non-canonical form.
 T}
-#PF(fault\-code)	T{
+#PF(fault-code)	T{
 If a page fault occurs or if a write using the final value of the stack pointer (within the current stack segment) would cause a page fault.
 T}
 #UD	If the LOCK prefix is used.
 .TE
 
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
-
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

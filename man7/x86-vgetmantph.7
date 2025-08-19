@@ -1,0 +1,220 @@
+'\" t
+.nh
+.TH "X86-VGETMANTPH" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
+.SH NAME
+VGETMANTPH - EXTRACT FP16 VECTOR OF NORMALIZED MANTISSAS FROM FP16 VECTOR
+.TS
+allbox;
+l l l l l 
+l l l l l .
+\fBInstruction En Bit Mode Flag Support Instruction En Bit Mode Flag Support 64/32 CPUID Feature Instruction En Bit Mode Flag CPUID Feature Instruction En Bit Mode Flag Op/ 64/32 CPUID Feature Instruction En Bit Mode Flag 64/32 CPUID Feature Instruction En Bit Mode Flag CPUID Feature Instruction En Bit Mode Flag Op/ 64/32 CPUID Feature\fP	\fB\fP	\fBSupport\fP	\fB\fP	\fBDescription\fP
+T{
+EVEX.128.NP.0F3A.W0 26 /r /ib VGETMANTPH xmm1{k1}{z}, xmm2/m128/m16bcst, imm8
+T}	A	V/V	AVX512-FP16 AVX512VL	T{
+Get normalized mantissa from FP16 vector xmm2/m128/m16bcst and store the result in xmm1, using imm8 for sign control and mantissa interval normalization, subject to writemask k1.
+T}
+T{
+EVEX.256.NP.0F3A.W0 26 /r /ib VGETMANTPH ymm1{k1}{z}, ymm2/m256/m16bcst, imm8
+T}	A	V/V	AVX512-FP16 AVX512VL	T{
+Get normalized mantissa from FP16 vector ymm2/m256/m16bcst and store the result in ymm1, using imm8 for sign control and mantissa interval normalization, subject to writemask k1.
+T}
+T{
+EVEX.512.NP.0F3A.W0 26 /r /ib VGETMANTPH zmm1{k1}{z}, zmm2/m512/m16bcst {sae}, imm8
+T}	A	V/V	AVX512-FP16	T{
+Get normalized mantissa from FP16 vector zmm2/m512/m16bcst and store the result in zmm1, using imm8 for sign control and mantissa interval normalization, subject to writemask k1.
+T}
+.TE
+
+.SH INSTRUCTION OPERAND ENCODING  href="vgetmantph.html#instruction-operand-encoding"
+class="anchor">¶
+
+.TS
+allbox;
+l l l l l l 
+l l l l l l .
+\fBOp/En\fP	\fBTuple\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Full	ModRM:reg (w)	ModRM:r/m (r)	imm8 (r)	N/A
+.TE
+
+.SS DESCRIPTION
+This instruction converts the FP16 values in the source operand (the
+second operand) to FP16 values with the mantissa normalization and sign
+control specified by the imm8 byte, see Table
+5-19
+\[la]vgetmantph.html#tbl\-5\-19\[ra]\&. The converted results are written to
+the destination operand (the first operand) using writemask k1. The
+normalized mantissa is specified by interv (imm8[1:0]) and the sign
+control (SC) is specified by bits 3:2 of the immediate byte.
+
+.PP
+The destination elements are updated according to the writemask.
+
+.PP
+For each input FP16 value x, The conversion operation is:
+
+.PP
+GetMant(x) = ±2k|x.significand|
+
+.PP
+where:
+
+.PP
+1 ≤ |x.significand| &lt; 2
+
+.PP
+Unbiased exponent k depends on the interval range defined by interv and
+whether the exponent of the source is even or odd. The sign of the final
+result is determined by the sign control and the source sign and the
+leading fraction bit.
+
+.PP
+The encoded value of imm8[1:0] and sign control are shown in Table
+5-19
+\[la]vgetmantph.html#tbl\-5\-19\[ra]\&.
+
+.PP
+Each converted FP16 result is encoded according to the sign control, the
+unbiased exponent k (adding bias) and a mantissa normalized to the range
+specified by interv.
+
+.PP
+The GetMant() function follows Table 5-20
+\[la]vgetmantph.html#tbl\-5\-20\[ra]
+when dealing with floating-point special numbers.
+
+.PP
+.RS
+
+.PP
+1\&. In case SC[1]==0, the sign of Getmant(SRC) is declared according
+to SC[0]\&.
+
+.RE
+
+.SS OPERATION
+.EX
+def getmant_fp16(src, sign_control, normalization_interval):
+    bias := 15
+    dst.sign := sign_control[0] ? 0 : src.sign
+    signed_one := sign_control[0] ? +1.0 : -1.0
+    dst.exp := src.exp
+    dst.fraction := src.fraction
+    zero := (dst.exp = 0) and (dst.fraction = 0)
+    denormal := (dst.exp = 0) and (dst.fraction != 0)
+    infinity := (dst.exp = 0x1F) and (dst.fraction = 0)
+    nan := (dst.exp = 0x1F) and (dst.fraction != 0)
+    src_signaling := src.fraction[9]
+    snan := nan and (src_signaling = 0)
+    positive := (src.sign = 0)
+    negative := (src.sign = 1)
+    if nan:
+        if snan:
+            MXCSR.IE := 1
+        return qnan(src)
+    if positive and (zero or infinity):
+        return 1.0
+    if negative:
+        if zero:
+            return signed_one
+        if infinity:
+            if sign_control[1]:
+                MXCSR.IE := 1
+                return QNaN_Indefinite
+            return signed_one
+        if sign_control[1]:
+            MXCSR.IE := 1
+            return QNaN_Indefinite
+    if denormal:
+        jbit := 0
+        dst.exp := bias // set exponent to bias value
+        while jbit = 0:
+            jbit := dst.fraction[9]
+            dst.fraction := dst.fraction << 1
+            dst.exp : = dst.exp - 1
+        MXCSR.DE := 1
+    unbaiased_exp := dst.exp - bias
+    odd_exp := unbaiased_exp[0]
+    signaling_bit := dst.fraction[9]
+    if normalization_interval = 0b00:
+        dst.exp := bias
+    else if normalization_interval = 0b01:
+        dst.exp := odd_exp ? bias-1 : bias
+    else if normalization_interval = 0b10:
+        dst.exp := bias-1
+    else if normalization_interval = 0b11:
+        dst.exp := signaling_bit ? bias-1 : bias
+    return dst
+.EE
+
+.SS VGETMANTPH DEST{K1}, SRC, IMM8  href="vgetmantph.html#vgetmantph-dest-k1---src--imm8"
+class="anchor">¶
+
+.EX
+VL = 128, 256 or 512
+KL := VL/16
+sign_control := imm8[3:2]
+normalization_interval := imm8[1:0]
+FOR i := 0 to KL-1:
+    IF k1[i] or *no writemask*:
+        IF SRC is memory and (EVEX.b = 1):
+            tsrc := src.fp16[0]
+        ELSE:
+            tsrc := src.fp16[i]
+        DEST.fp16[i] := getmant_fp16(tsrc, sign_control, normalization_interval)
+    ELSE IF *zeroing*:
+        DEST.fp16[i] := 0
+    //else DEST.fp16[i] remains unchanged
+DEST[MAXVL-1:VL] := 0
+.EE
+
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vgetmantph.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
+
+.EX
+VGETMANTPH __m128h _mm_getmant_ph (__m128h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign);
+
+VGETMANTPH __m128h _mm_mask_getmant_ph (__m128h src, __mmask8 k, __m128h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign);
+
+VGETMANTPH __m128h _mm_maskz_getmant_ph (__mmask8 k, __m128h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign);
+
+VGETMANTPH __m256h _mm256_getmant_ph (__m256h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign);
+
+VGETMANTPH __m256h _mm256_mask_getmant_ph (__m256h src, __mmask16 k, __m256h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign);
+
+VGETMANTPH __m256h _mm256_maskz_getmant_ph (__mmask16 k, __m256h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign);
+
+VGETMANTPH __m512h _mm512_getmant_ph (__m512h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign);
+
+VGETMANTPH __m512h _mm512_mask_getmant_ph (__m512h src, __mmask32 k, __m512h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign);
+
+VGETMANTPH __m512h _mm512_maskz_getmant_ph (__mmask32 k, __m512h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign);
+
+VGETMANTPH __m512h _mm512_getmant_round_ph (__m512h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign, const int sae);
+
+VGETMANTPH __m512h _mm512_mask_getmant_round_ph (__m512h src, __mmask32 k, __m512h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign, const int sae);
+
+VGETMANTPH __m512h _mm512_maskz_getmant_round_ph (__mmask32 k, __m512h a, _MM_MANTISSA_NORM_ENUM norm, _MM_MANTISSA_SIGN_ENUM sign, const int sae);
+.EE
+
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vgetmantph.html#simd-floating-point-exceptions"
+class="anchor">¶
+
+.PP
+Invalid, Denormal.
+
+.SS OTHER EXCEPTIONS
+EVEX-encoded instructions, see Table
+2-46, “Type E2 Class Exception Conditions.”
+
+.SH COLOPHON
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
+
+.br
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.

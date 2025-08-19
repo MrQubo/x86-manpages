@@ -1,43 +1,42 @@
+'\" t
 .nh
-.TH "X86-VPERMT2B" "7" "May 2019" "TTMO" "Intel x86-64 ISA Manual"
+.TH "X86-VPERMT2B" "7" "December 2023" "Intel" "Intel x86-64 ISA Manual"
 .SH NAME
 VPERMT2B - FULL PERMUTE OF BYTES FROM TWO TABLES OVERWRITING A TABLE
 .TS
 allbox;
 l l l l l 
 l l l l l .
-\fB\fCOpcode/Instruction\fR	\fB\fCOp /En\fR	\fB\fC64/32 bit Mode Support\fR	\fB\fCCPUID Feature Flag\fR	\fB\fCDescription\fR
+\fBOpcode/Instruction\fP	\fBOp /En\fP	\fB64/32 bit Mode Support\fP	\fBCPUID Feature Flag\fP	\fBDescription\fP
 T{
 EVEX.128.66.0F38.W0 7D /r VPERMT2B xmm1 {k1}{z}, xmm2, xmm3/m128
-T}
-	A	V/V	AVX512VL AVX512\_VBMI	T{
+T}	A	V/V	AVX512VL AVX512_VBMI	T{
 Permute bytes in xmm3/m128 and xmm1 using byte indexes in xmm2 and store the byte results in xmm1 using writemask k1.
 T}
 T{
 EVEX.256.66.0F38.W0 7D /r VPERMT2B ymm1 {k1}{z}, ymm2, ymm3/m256
-T}
-	A	V/V	AVX512VL AVX512\_VBMI	T{
+T}	A	V/V	AVX512VL AVX512_VBMI	T{
 Permute bytes in ymm3/m256 and ymm1 using byte indexes in ymm2 and store the byte results in ymm1 using writemask k1.
 T}
 T{
 EVEX.512.66.0F38.W0 7D /r VPERMT2B zmm1 {k1}{z}, zmm2, zmm3/m512
-T}
-	A	V/V	AVX512\_VBMI	T{
+T}	A	V/V	AVX512_VBMI	T{
 Permute bytes in zmm3/m512 and zmm1 using byte indexes in zmm2 and store the byte results in zmm1 using writemask k1.
 T}
 .TE
 
-.SH INSTRUCTION OPERAND ENCODING
+.SH INSTRUCTION OPERAND ENCODING  href="vpermt2b.html#instruction-operand-encoding"
+class="anchor">¶
+
 .TS
 allbox;
 l l l l l l 
 l l l l l l .
-Op/En	Tuple Type	Operand 1	Operand 2	Operand 3	Operand 4
-A	Full Mem	ModRM:reg (r, w)	EVEX.vvvv (r)	ModRM:r/m (r)	NA
+\fBOp/En\fP	\fBTuple Type\fP	\fBOperand 1\fP	\fBOperand 2\fP	\fBOperand 3\fP	\fBOperand 4\fP
+A	Full Mem	ModRM:reg (r, w)	EVEX.vvvv (r)	ModRM:r/m (r)	N/A
 .TE
 
-.SS Description
-.PP
+.SS DESCRIPTION
 Permutes byte values from two tables, comprising of the first operand
 (also the destination operand) and the third operand (the second source
 operand). The second operand (the first source operand) provides byte
@@ -50,7 +49,7 @@ The first and second operands are ZMM/YMM/XMM registers. The second
 operand contains input indices to select elements from the two input
 tables in the 1st and 3rd operands. The first operand is also the
 destination of the result. The second source operand can be a
-ZMM/YMM/XMM register, or a 512/256/128\-bit memory location. In each
+ZMM/YMM/XMM register, or a 512/256/128-bit memory location. In each
 index byte, the id bit for table selection is bit 6/5/4, and bits
 [5:0]/[4:0]/[3:0] selects element within each input table.
 
@@ -61,85 +60,77 @@ the second table and the indices can be reused in subsequent iterations,
 but the first table is overwritten.
 
 .PP
-Bits (MAX\_VL\-1:256/128) of the destination are zeroed for VL=256,128.
+Bits (MAX_VL-1:256/128) of the destination are zeroed for VL=256,128.
 
-.SS Operation
-.SS VPERMT2B (EVEX encoded versions)
-.PP
-.RS
+.SS OPERATION
+.SS VPERMT2B (EVEX ENCODED VERSIONS)  href="vpermt2b.html#vpermt2b--evex-encoded-versions-"
+class="anchor">¶
 
-.nf
+.EX
 (KL, VL) = (16, 128), (32, 256), (64, 512)
 IF VL = 128:
-    id ← 3;
+    id := 3;
 ELSE IF VL = 256:
-    id ← 4;
+    id := 4;
 ELSE IF VL = 512:
-    id ← 5;
+    id := 5;
 FI;
-TMP\_DEST[VL\-1:0] ← DEST[VL\-1:0];
-FOR j ← 0 TO KL\-1
-    off ← 8*SRC1[j*8 + id: j*8] ;
+TMP_DEST[VL-1:0] := DEST[VL-1:0];
+FOR j := 0 TO KL-1
+    off := 8*SRC1[j*8 + id: j*8] ;
     IF k1[j] OR *no writemask*:
-        DEST[j*8 + 7: j*8] ← SRC1[j*8+id+1]? SRC2[off+7:off] : TMP\_DEST[off+7:off];
-    ELSE IF *zeroing\-masking*
-        DEST[j*8 + 7: j*8] ← 0;
+        DEST[j*8 + 7: j*8] := SRC1[j*8+id+1]? SRC2[off+7:off] : TMP_DEST[off+7:off];
+    ELSE IF *zeroing-masking*
+        DEST[j*8 + 7: j*8] := 0;
     *ELSE
         DEST[j*8 + 7: j*8] remains unchanged*
     FI;
 ENDFOR
-DEST[MAX\_VL\-1:VL] ← 0;
+DEST[MAX_VL-1:VL] := 0;
+.EE
 
-.fi
-.RE
+.SS INTEL C/C++ COMPILER INTRINSIC EQUIVALENT  href="vpermt2b.html#intel-c-c++-compiler-intrinsic-equivalent"
+class="anchor">¶
 
-.SS Intel C/C++ Compiler Intrinsic Equivalent
-.PP
-.RS
+.EX
+VPERMT2B __m512i _mm512_permutex2var_epi8(__m512i a, __m512i idx, __m512i b);
 
-.nf
-VPERMT2B \_\_m512i \_mm512\_permutex2var\_epi8(\_\_m512i a, \_\_m512i idx, \_\_m512i b);
+VPERMT2B __m512i _mm512_mask_permutex2var_epi8(__m512i a, __mmask64 k, __m512i idx, __m512i b);
 
-VPERMT2B \_\_m512i \_mm512\_mask\_permutex2var\_epi8(\_\_m512i a, \_\_mmask64 k, \_\_m512i idx, \_\_m512i b);
+VPERMT2B __m512i _mm512_maskz_permutex2var_epi8(__mmask64 k, __m512i a, __m512i idx, __m512i b);
 
-VPERMT2B \_\_m512i \_mm512\_maskz\_permutex2var\_epi8(\_\_mmask64 k, \_\_m512i a, \_\_m512i idx, \_\_m512i b);
+VPERMT2B __m256i _mm256_permutex2var_epi8(__m256i a, __m256i idx, __m256i b);
 
-VPERMT2B \_\_m256i \_mm256\_permutex2var\_epi8(\_\_m256i a, \_\_m256i idx, \_\_m256i b);
+VPERMT2B __m256i _mm256_mask_permutex2var_epi8(__m256i a, __mmask32 k, __m256i idx, __m256i b);
 
-VPERMT2B \_\_m256i \_mm256\_mask\_permutex2var\_epi8(\_\_m256i a, \_\_mmask32 k, \_\_m256i idx, \_\_m256i b);
+VPERMT2B __m256i _mm256_maskz_permutex2var_epi8(__mmask32 k, __m256i a, __m256i idx, __m256i b);
 
-VPERMT2B \_\_m256i \_mm256\_maskz\_permutex2var\_epi8(\_\_mmask32 k, \_\_m256i a, \_\_m256i idx, \_\_m256i b);
+VPERMT2B __m128i _mm_permutex2var_epi8(__m128i a, __m128i idx, __m128i b);
 
-VPERMT2B \_\_m128i \_mm\_permutex2var\_epi8(\_\_m128i a, \_\_m128i idx, \_\_m128i b);
+VPERMT2B __m128i _mm_mask_permutex2var_epi8(__m128i a, __mmask16 k, __m128i idx, __m128i b);
 
-VPERMT2B \_\_m128i \_mm\_mask\_permutex2var\_epi8(\_\_m128i a, \_\_mmask16 k, \_\_m128i idx, \_\_m128i b);
+VPERMT2B __m128i _mm_maskz_permutex2var_epi8(__mmask16 k, __m128i a, __m128i idx, __m128i b);
+.EE
 
-VPERMT2B \_\_m128i \_mm\_maskz\_permutex2var\_epi8(\_\_mmask16 k, \_\_m128i a, \_\_m128i idx, \_\_m128i b);
+.SS SIMD FLOATING-POINT EXCEPTIONS  href="vpermt2b.html#simd-floating-point-exceptions"
+class="anchor">¶
 
-.fi
-.RE
-
-.SS SIMD Floating\-Point Exceptions
 .PP
 None.
 
-.SS Other Exceptions
-.PP
-See Exceptions Type E4NF.nb.
-
-.SH SEE ALSO
-.PP
-x86\-manpages(7) for a list of other x86\-64 man pages.
+.SS OTHER EXCEPTIONS
+See Exceptions Type E4NF.nb in Table
+2-50, “Type E4NF Class Exception Conditions.”
 
 .SH COLOPHON
-.PP
-This UNOFFICIAL, mechanically\-separated, non\-verified reference is
-provided for convenience, but it may be incomplete or broken in
-various obvious or non\-obvious ways. Refer to Intel® 64 and IA\-32
-Architectures Software Developer’s Manual for anything serious.
+This UNOFFICIAL, mechanically-separated, non-verified reference is
+provided for convenience, but it may be
+incomplete or
+broken in various obvious or non-obvious ways.
+Refer to Intel® 64 and IA-32 Architectures Software Developer’s
+Manual
+\[la]https://software.intel.com/en\-us/download/intel\-64\-and\-ia\-32\-architectures\-sdm\-combined\-volumes\-1\-2a\-2b\-2c\-2d\-3a\-3b\-3c\-3d\-and\-4\[ra]
+for anything serious.
 
 .br
-This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/ttmo-O/x86-manpages.
-
-.br
-MIT licensed by TTMO 2020 (Turkish Unofficial Chamber of Reverse Engineers - https://ttmo.re).
+This page is generated by scripts; therefore may contain visual or semantical bugs. Please report them (or better, fix them) on https://github.com/MrQubo/x86-manpages.
