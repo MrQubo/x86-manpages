@@ -26,7 +26,7 @@ stdenv.mkDerivation {
   meta = with lib; {
     description = "Manpages for x86 instructions";
     homepage = "https://github.com/MrQubo/x86-manpages";
-    platforms = platforms.all;
+    platforms = platforms.unix;
   };
 
   passthru.updateScript = unstableGitUpdater { };
